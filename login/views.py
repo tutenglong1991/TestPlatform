@@ -13,6 +13,6 @@ def login(request):
         account = json.loads(k)["account"]
         password = json.loads(k)["password"]
         if account == 'hemeilong' and password == '12345678':
-            return JsonResponse({"code": 200, "massage": "登录成功"})
+            return JsonResponse({"code": 200, "message": "欢迎光临，登录成功"})
         else:
-            return JsonResponse({"code": 101, "massage": "用户名或密码错误"})
+            return JsonResponse({"code": 101, "message": "用户名或密码错误"})
