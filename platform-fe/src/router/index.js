@@ -15,7 +15,10 @@ export default new Router({
     {
       path: '/home',
       name: 'HomePage',
-      component: HomePage
+      component: HomePage,
+      meta: {
+        is_login: false
+      }
     }
   ]
 })

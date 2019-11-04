@@ -11,7 +11,7 @@
       </div>
       <el-row class="commit_login">
         <el-button>取消</el-button>
-        <el-button type="primary" @click="login">确定</el-button>
+        <el-button :plain="true" type="primary" @click="login" href="http://www.baidu.com">确定</el-button>
       </el-row>
     </div>
   </div>
@@ -24,23 +24,30 @@ export default {
   data () {
     return {
       login_params: {
-        account: '',
-        password: ''
+        account: 'hemeilong',
+        password: '12345678'
       }
     }
   },
   methods: {
     login () {
+      const self = this
       let param = JSON.stringify(this.login_params)
       return this.$axios.post('/login', param).then(response => {
-        if (response.status === 200) {
-          console.log('get发送Ajax请求,请求成功', response.data)
-          // this.ResultOptions = response.data.testOptions
-          // if (jquery.isEmptyObject(this.ResultOptions)) {
-          //     this.isResultOptionsEmpty = 1
-          // } else {
-          //     this.isResultOptionsEmpty = 0
-          // }
+        if (response.status === 200 && response.data.code === 200) {
+          console.log('get发送Ajax请求,请求成功', response.data.message)
+          this.$message({
+            message: response.data.message,
+            type: 'success'
+          })
+          self.$router.push('/home')
+        } else {
+          this.$message({
+            showClose: true,
+            message: response.data.message,
+            type: 'error',
+            color: 'green'
+          })
         }
       }).catch(response => {
         console.log('get发送Ajax请求,' +

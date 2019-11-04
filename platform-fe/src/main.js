@@ -19,3 +19,19 @@ new Vue({
   components: { App },
   template: '<App/>'
 })
+
+router.beforeEach((to, form, next) => {
+  if (to.meta.is_login) {
+    if (localStorage.getItem('user')) {
+      next()
+    } else {
+      next(
+        {
+          path: '/'
+        }
+      )
+    }
+  } else {
+    next()
+  }
+})
