@@ -10,10 +10,22 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    // 只能在开发环境中进行跨域，上线了要进行反向代理nginx设置
+    proxyTable: {
+      //这里理解成用‘/api’代替target里面的地址，后面组件中我们掉接口时直接用api代替 比如我要调用'http://40.00.100.100:3002/user/add'，直接写‘/api/user/add’即可
+      '/login': {
+        target: 'http://127.0.0.1:8000',//你要跨域的网址  比如  'http://news.baidu.com',
+        secure: true,  // 如果是https接口，需要配置这个参数
+        changeOrigin: true,//这个参数是用来回避跨站问题的，配置完之后发请求时会自动修改http header里面的host，但是不会修改别的
+        pathRewrite: {
+          '^/login': 'login'//路径的替换规则
+        //每次修改后需要重新npm run dev才能生效
+        }
+      }
+    },
 
     // Various Dev Server settings
-    host: 'localhost', // can be overwritten by process.env.HOST
+    host: '127.0.0.1', // can be overwritten by process.env.HOST
     port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: false,
     errorOverlay: true,
@@ -42,7 +54,6 @@ module.exports = {
 
     cssSourceMap: true
   },
-
   build: {
     // Template for index.html
     index: path.resolve(__dirname, '../dist/index.html'),
