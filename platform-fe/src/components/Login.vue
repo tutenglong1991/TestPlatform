@@ -1,19 +1,33 @@
 <template>
   <div id="login" style="height:100%; width:100%">
-    <div class="login_message">
-      <div style="margin-top: 50px">
-        <el-input class="login_infos" placeholder="请输入账号" v-model="login_params.account">
-        </el-input>
-      </div>
-      <div style="margin-top: 25px;">
-        <el-input class="login_infos" placeholder="请输入密码" v-model="login_params.password">
-        </el-input>
-      </div>
-      <el-row class="commit_login">
-        <el-button>取消</el-button>
-        <el-button :plain="true" type="primary" @click="login" href="http://www.baidu.com">确定</el-button>
-      </el-row>
-    </div>
+    <el-container style="height:100%; width:100%">
+      <el-header>
+        <el-row>
+          <el-clo class="platform_name">接口测试平台</el-clo>
+          <el-clo class="login_btn">
+            <el-button class="login_sign_in" @click="go_to_login">Sign In</el-button>
+            <el-button class="login_sign_out">Sign Out</el-button>
+          </el-clo>
+        </el-row>
+      </el-header>
+      <el-main>
+        <div v-if="is_sign_in" class="login_message">
+          <div style="margin-top: 55px">
+            <el-input class="login_infos" placeholder="请输入账号" v-model="login_params.account">
+            </el-input>
+          </div>
+          <div style="margin-top: 25px;">
+            <el-input class="login_infos" placeholder="请输入密码" v-model="login_params.password">
+            </el-input>
+          </div>
+          <el-row class="commit_login">
+            <el-button>取消</el-button>
+            <el-button :plain="true" type="primary" @click="login">确定</el-button>
+          </el-row>
+        </div>
+      </el-main>
+      <el-footer>© 2019 - 2020 环球易购-电子产品研发中心. All Rights Reserved.</el-footer>
+    </el-container>
   </div>
 </template>
 
@@ -26,10 +40,14 @@ export default {
       login_params: {
         account: 'hemeilong',
         password: '12345678'
-      }
+      },
+      is_sign_in: false
     }
   },
   methods: {
+    go_to_login () {
+      this.is_sign_in = true
+    },
     login () {
       const self = this
       let param = JSON.stringify(this.login_params)
@@ -56,41 +74,111 @@ export default {
     }
   },
   mounted () {
-    console.log(this.account)
   }
 }
 </script>
 
 <style scoped>
-  #login {
-    background: url("../assets/login_bg.jpg");
-    background-size: cover;
-    position: relative;
+  .el-container {
+    background-color: #161616;
   }
+  .el-header {
+    color: #ffffff;
+    line-height: 60px;
+    font-size: 14px;
+    display: block;
+    text-align: center;
+  }
+  .el-footer {
+    width: 70%;
+    color: #ffffff;
+    line-height: 60px;
+    font-size: 14px;
+    display: block;
+    text-align: center;
+    margin: auto;
+    border-top: 1px solid grey;
+  }
+  /*图片居中处理*/
+  /*#login {*/
+  /*  background: url("../assets/login_bg.jpg");*/
+  /*  background: #f4f4f4;*/
+  /*  background-size: cover;*/
+  /*  position: relative;*/
+  /*}*/
   .login_message {
-    background-color: #5183c7ba;
+    background-color: #2e3033;
     height: 350px;
     width: 450px;
     /*以下三项为居中设置*/
     margin: auto;
     position: absolute;
     top: 0; left: 0; bottom: 0; right: 0;
-    border-top: 7px solid #0c5def99;
+    border-top: 8px solid #5c6067;
+    border-left:1px solid #303133;
+    border-right:1px solid #303133;
+    border-bottom: 1px solid #303133;
     border-radius: 6px;
   }
   .login_infos {
     width: 65%;
     border-radius: 4px;
-    font-size: inherit;
   }
   .login_infos>>>.el-input__inner {
-    background-color: #ffffff8a;
-    color: #333333;
+    background-color: #fff0;
+    border-color: #ffffff;
+    color: #ffffff;
   }
   .login_infos>>>.el-input__inner::-webkit-input-placeholder {
-    color: #333333;
+    color: #ffffff;
+    font-size: 9px;
+  }
+  .platform_name{
+    float: left;
+    margin-left: 20px;
+    font-size: 17px;
+  }
+  .login_btn{
+    float: right;
+    margin-right: 10px;
+  }
+  .login_btn>>>.el-button {
+    margin-top: 10px;
+    font-size: 17px;
+    color: #ffffff;
+    border-color: #161616
+  }
+  .login_sign_in.el-button {
+    background: #04aa51;
+    font-weight: bold;
+  }
+  .login_sign_in.el-button:hover {
+    background: #0faa22;
+  }
+  .login_sign_out.el-button:hover {
+    color: #04aa51;
+    background: #161616;
   }
   .el-button {
     margin-top: 85px;
+    color: #ffffff;
+    background-color: #ffffff00;
+    border-color: #ffffff
+  }
+  /*.el-button:focus, .el-button:hover {*/
+  /*  background: white;*/
+  /*  color: black;*/
+  /*}*/
+  /*.el-button--primary {*/
+  /*  color: white;*/
+  /*  background-color: #ffffff00;*/
+  /*  border-color: #ffffff*/
+  /*}*/
+  .el-button--primary:focus, .el-button--primary:hover {
+    background: #04aa51;
+    border-color: #04aa51;
+  }
+  .el-main {
+    background: #161616;
   }
 </style>
