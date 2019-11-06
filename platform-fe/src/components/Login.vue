@@ -2,13 +2,13 @@
   <div id="login" style="height:100%; width:100%">
     <el-container style="height:100%; width:100%">
       <el-header>
-        <el-row>
-          <el-clo class="platform_name">接口测试平台</el-clo>
-          <el-clo class="login_btn">
+        <el-menu background-color="#161616" text-color="#ffffff" active-text-color="#ffffff">
+          <el-menu-item class="platform_name">接口测试平台</el-menu-item>
+          <el-menu-item class="login_btn" index='/'>
             <el-button class="login_sign_in" @click="go_to_login">Sign In</el-button>
             <el-button class="login_sign_out">Sign Out</el-button>
-          </el-clo>
-        </el-row>
+          </el-menu-item>
+        </el-menu>
       </el-header>
       <el-main>
         <div v-if="is_sign_in" class="login_message">
@@ -41,7 +41,7 @@ export default {
         account: 'hemeilong',
         password: '12345678'
       },
-      is_sign_in: false
+      is_sign_in: true
     }
   },
   methods: {
@@ -58,7 +58,7 @@ export default {
             message: response.data.message,
             type: 'success'
           })
-          self.$router.push('/home')
+          self.$router.push('/home/apitest')
         } else {
           this.$message({
             showClose: true,
@@ -89,15 +89,39 @@ export default {
     display: block;
     text-align: center;
   }
-  .el-footer {
-    width: 70%;
-    color: #ffffff;
-    line-height: 60px;
-    font-size: 14px;
-    display: block;
-    text-align: center;
+  .el-menu {
+    border-right: solid 1px #161616;
+  }
+  .el-header.el-menu {
+    list-style: none;
+    position: relative;
+    margin: 0;
+    padding-left: 0;
+  }
+  .platform_name{
+    float: left;
+    margin-left: 20px;
+    font-size: 17px;
+  }
+  .login_btn{
+    float: right;
+  }
+  .login_btn>>>.el-button {
     margin: auto;
-    border-top: 1px solid grey;
+    font-size: 17px;
+    color: #ffffff;
+    border-color: #161616
+  }
+  .login_sign_in.el-button {
+    background: #04aa51;
+    font-weight: bold;
+  }
+  .login_sign_in.el-button:hover {
+    background: #0faa22;
+  }
+  .login_sign_out.el-button:hover {
+    color: #04aa51;
+    background: #161616;
   }
   /*图片居中处理*/
   /*#login {*/
@@ -133,52 +157,27 @@ export default {
     color: #ffffff;
     font-size: 9px;
   }
-  .platform_name{
-    float: left;
-    margin-left: 20px;
-    font-size: 17px;
-  }
-  .login_btn{
-    float: right;
-    margin-right: 10px;
-  }
-  .login_btn>>>.el-button {
-    margin-top: 10px;
-    font-size: 17px;
-    color: #ffffff;
-    border-color: #161616
-  }
-  .login_sign_in.el-button {
-    background: #04aa51;
-    font-weight: bold;
-  }
-  .login_sign_in.el-button:hover {
-    background: #0faa22;
-  }
-  .login_sign_out.el-button:hover {
-    color: #04aa51;
-    background: #161616;
-  }
   .el-button {
     margin-top: 85px;
     color: #ffffff;
     background-color: #ffffff00;
     border-color: #ffffff
   }
-  /*.el-button:focus, .el-button:hover {*/
-  /*  background: white;*/
-  /*  color: black;*/
-  /*}*/
-  /*.el-button--primary {*/
-  /*  color: white;*/
-  /*  background-color: #ffffff00;*/
-  /*  border-color: #ffffff*/
-  /*}*/
   .el-button--primary:focus, .el-button--primary:hover {
     background: #04aa51;
     border-color: #04aa51;
   }
   .el-main {
     background: #161616;
+  }
+  .el-footer {
+    width: 100%;
+    color: #ffffff;
+    line-height: 60px;
+    font-size: 14px;
+    display: block;
+    text-align: center;
+    margin: auto;
+    border-top: 1px solid grey;
   }
 </style>

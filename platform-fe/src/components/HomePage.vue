@@ -2,38 +2,27 @@
   <el-container style="height:100%; width:100%">
     <el-header>
       <el-menu :default-active="$route.path" class="el-menu-demo" mode="horizontal" background-color="#161616" text-color="#a9a9a9" active-text-color="#ffffff" router>
-        <el-submenu index="/apiAuto">
+        <el-submenu index="/home">
           <template slot="title">接口自动化</template>
-          <el-menu-item index="/home">功能自动化</el-menu-item>
+          <el-menu-item index="/home/apitest">功能自动化</el-menu-item>
         </el-submenu>
         <el-submenu index="/creativecloud">
-          <template slot="title">创意云</template>
-          <el-menu-item index="/creativecloud/export">线上作品导出工具</el-menu-item>
-          <el-menu-item index="/creativecloud/appinfo">作品信息查询工具</el-menu-item>
-          <el-menu-item index="/creativecloud/reviewad">腾讯社交广告审核</el-menu-item>
-          <el-menu-item index="/creativecloud/recharg">测试环境账号充值</el-menu-item>
-          <el-menu-item index="/op">开放平台测试</el-menu-item>
-          <el-menu-item index="/thirdaudit">第三方作品审核</el-menu-item>
+          <template slot="title">GBT</template>
+          <el-menu-item index="/creativecloud/export">测试小工具</el-menu-item>
+          <el-menu-item index="/op">sku查询</el-menu-item>
         </el-submenu>
-        <el-menu-item index='/deviceinfo'>手机设备管理</el-menu-item>
-        <el-menu-item class="login_btn" index='/deviceinfo'>
+        <el-menu-item index='/'>test111</el-menu-item>
+        <el-menu-item index='/'>test222</el-menu-item>
+        <el-menu-item class="login_btn" index='/'>
           <el-button class="login_sign_in">Sign In</el-button>
           <el-button class="login_sign_out">Sign Out</el-button>
         </el-menu-item>
-<!--        <el-row>-->
-<!--          <el-clo class="login_btn">-->
-<!--            <el-button class="login_sign_in">Sign In</el-button>-->
-<!--            <el-button class="login_sign_out">Sign Out</el-button>-->
-<!--          </el-clo>-->
-<!--        </el-row>-->
       </el-menu>
-      <router-view></router-view>
     </el-header>
     <el-container>
-      <el-aside width="200px">Aside</el-aside>
-      <el-main>Main</el-main>
-      <el-footer>© 2019 - 2020 环球易购-电子产品研发中心. All Rights Reserved.</el-footer>
+      <router-view></router-view>
     </el-container>
+    <el-footer>© 2019 - 2020 环球易购-电子产品研发中心. All Rights Reserved.</el-footer>
   </el-container>
 </template>
 
@@ -42,13 +31,9 @@ export default {
   name: 'HomePage',
   data () {
     return {
-      activeIndex: '1'
     }
   },
   methods: {
-    //   handleselect (key, keyPath) {
-    //   console.log(key, keyPath)
-    // }
   }
 }
 </script>
@@ -62,24 +47,11 @@ export default {
     line-height: 60px;
     font-size: 14px;
   }
-  .el-menu-demo {
-    float: left;
-  }
-  .el-footer {
-    background-color: #161616;
-    color: #ffffff;
-    text-align: center;
-    line-height: 60px;
-    font-size: 14px;
-  }
-
   .login_btn{
-    /*float: right;*/
-    margin-right: 10px;
-    margin-left: 700px;
+    float: right;
   }
   .login_btn>>>.el-button {
-    margin-top: 10px;
+    margin: auto;
     font-size: 17px;
     color: #161616;
   }
@@ -100,17 +72,12 @@ export default {
   .login_sign_out.el-button:hover {
     background: #0faa22;
   }
-  .el-aside {
-    background-color: #D3DCE6;
-    color: #333;
+  .el-footer {
+    background-color: #161616;
+    color: #ffffff;
     text-align: center;
-    line-height: 200px;
-  }
-  .el-main {
-    background-color: #ffffff;
-    color: #333;
-    text-align: center;
-    line-height: 160px;
+    line-height: 60px;
+    font-size: 14px;
   }
   body > .el-container {
     margin-bottom: 40px;
