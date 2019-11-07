@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import HomePage from '@/components/HomePage'
 import Login from '@/components/Login'
 import apiAutotest from '@/components/apiAutotest'
+import projectManage from '@/components/projectManage'
 
 Vue.use(Router)
 
@@ -20,16 +21,13 @@ export default new Router({
       children: [{
         path: '/home/apitest',
         name: 'apiAutotest',
-        component: apiAutotest
-      }],
-      meta: {
-        is_login: false
-      }
-    },
-    {
-      path: '/home/apitest',
-      name: 'apiAutotest',
-      component: apiAutotest
+        component: apiAutotest,
+        children: [{
+          path: '/home/apitest/projectList',
+          name: 'projectManage',
+          component: projectManage
+        }]
+      }]
     }
   ]
 })

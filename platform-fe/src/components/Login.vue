@@ -102,6 +102,7 @@ export default {
     float: left;
     margin-left: 20px;
     font-size: 17px;
+    font-weight: bolder;
   }
   .login_btn{
     float: right;

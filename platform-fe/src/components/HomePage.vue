@@ -5,14 +5,15 @@
         <el-submenu index="/home">
           <template slot="title">接口自动化</template>
           <el-menu-item index="/home/apitest">功能自动化</el-menu-item>
+          <el-menu-item index="/">性能自动化</el-menu-item>
         </el-submenu>
+        <el-menu-item index='/'>UI自动化</el-menu-item>
+        <el-menu-item index='/'>埋点自动测试</el-menu-item>
         <el-submenu index="/creativecloud">
-          <template slot="title">GBT</template>
-          <el-menu-item index="/creativecloud/export">测试小工具</el-menu-item>
-          <el-menu-item index="/op">sku查询</el-menu-item>
+          <template slot="title">测试小工具</template>
+          <el-menu-item index="/creativecloud/export">sku查询</el-menu-item>
+          <el-menu-item index="/op">测试账号创建</el-menu-item>
         </el-submenu>
-        <el-menu-item index='/'>test111</el-menu-item>
-        <el-menu-item index='/'>test222</el-menu-item>
         <el-menu-item class="login_btn" index='/'>
           <el-button class="login_sign_in">Sign In</el-button>
           <el-button class="login_sign_out">Sign Out</el-button>
@@ -46,6 +47,16 @@ export default {
     text-align: center;
     line-height: 60px;
     font-size: 14px;
+  }
+  .el-menu-demo>.el-menu-item {
+    font-size: 15px;
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    font-weight: bolder;
+  }
+  .el-menu-demo>>>.el-submenu__title {
+    font-size: 15px;
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    font-weight: bolder;
   }
   .login_btn{
     float: right;
