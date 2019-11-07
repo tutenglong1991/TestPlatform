@@ -25,7 +25,8 @@ export default new Router({
         children: [{
           path: '/home/apitest/projectList',
           name: 'projectManage',
-          component: projectManage
+          component: projectManage,
+          test: ''
         }]
       }]
     }
