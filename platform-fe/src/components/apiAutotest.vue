@@ -67,7 +67,6 @@ export default {
     }
   },
   mounted () {
-    console.log(this.$route.path.indexOf('projectManage'))
   }
 }
 </script>

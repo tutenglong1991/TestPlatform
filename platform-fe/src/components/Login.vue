@@ -179,6 +179,6 @@ export default {
     display: block;
     text-align: center;
     margin: auto;
-    border-top: 1px solid grey;
+    border-top: 1px solid  #60626659;
   }
 </style>
