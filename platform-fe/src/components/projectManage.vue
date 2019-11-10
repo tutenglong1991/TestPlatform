@@ -35,7 +35,7 @@
           </el-form-item>
         </el-form>
         <el-button class="searchBtn" type="primary">搜索</el-button>
-        <el-button class="addProjectBtn">新增</el-button>
+        <el-button class="addProjectBtn" size="mini" @click="onCreateProject">新增</el-button>
       </div>
       <div class="projectTableList">
         <el-table
@@ -88,11 +88,12 @@
             <template slot-scope="scope">
               <el-button
                 size="mini"
-                @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                @click="projectEdit(scope.$index, scope.row)">编辑
+              </el-button>
               <el-button
                 size="mini"
-                type="danger"
-                @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                @click="projectDelete(scope.$index, scope.row)">删除
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -101,7 +102,10 @@
   </el-container>
 </template>
 <script>
+import ConfirmMixin from '../assets/confirm_mixin'
+import createProject from './createProject.vue'
 export default {
+  mixins: [ConfirmMixin],
   data () {
     return {
       input: '',
@@ -150,11 +154,83 @@ export default {
     }
   },
   methods: {
-    handleEdit (index, row) {
-      console.log(index, row)
+    onCreateProject () {
+      this.confirmBox({
+        title: '创建项目',
+        customClass: 'createProject_alert',
+        showCancelButton: true,
+        confirmButtonText: '确定',
+        component: createProject,
+        componentName: 'createProject',
+        confirmValidate: (action, cpt, done) => {
+          console.log(action)
+          console.log(cpt)
+          if (action === 'cancel') {
+            cpt.clearValidate()
+            return done()
+          }
+          cpt.validate(valid => {
+            if (!valid) return
+            console.log('{userData}: ', { ...cpt.userData })
+            cpt.clearValidate()
+            done()
+          })
+        }
+      }).catch(() => { })
     },
-    handleDelete (index, row) {
-      console.log(index, row)
+    projectAdd () {
+      this.$prompt('请输入邮箱', '提示', {
+        title: '创建项目',
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
+        inputErrorMessage: '邮箱格式不正确'
+      }).then(({ value }) => {
+        this.$message({
+          type: 'success',
+          message: '你的邮箱是: ' + value
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消输入'
+        })
+      })
+    },
+    projectEdit () {
+      this.$prompt('请输入邮箱', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
+        inputErrorMessage: '邮箱格式不正确'
+      }).then(({ value }) => {
+        this.$message({
+          type: 'success',
+          message: '你的邮箱是: ' + value
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消输入'
+        })
+      })
+    },
+    projectDelete (index, row) {
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
     }
   }
 }
@@ -196,7 +272,7 @@ export default {
   .el-input-group__prepend div.el-select>>>.el-input__inner {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
   }
-  .el-input.is-active >>>.el-input__inner, >>>.el-input__inner:focus {
+  .el-input.is-active >>>.el-input__inner:focus {
     border-color: #04aa51;
   }
   .el-select.select_projectStatus>>>.el-input__inner:focus {
@@ -227,10 +303,13 @@ export default {
   .projectTableList {
     margin-top: 30px;
   }
-  .projectTableList>>>.el-table th, >>>.el-table tr {
+  .projectTableList>>>.el-table th {
     background-color: #f4f5f975;
   }
-  /*.projectTableList.el-table el-table--fit.el-table__body-wrapper.el-table__body>>>.el-table__row {*/
-  /*  border-bottom: red;*/
-  /*}*/
+  .projectTableList>>>.el-table tr {
+    background-color: #f4f5f975;
+  }
+  .searchProject>>>.el-button.addProjectBtn.el-button--default.el-button--mini {
+    padding: 14px 22px;
+  }
 </style>
