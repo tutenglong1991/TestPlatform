@@ -56,7 +56,7 @@
               <span>{{ scope.row.ownDept }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="所属项目编号" width="180">
+          <el-table-column label="项目编号" width="180">
             <template slot-scope="scope">
               <span>{{ scope.row.ownProjectCode }}</span>
             </template>
@@ -157,23 +157,44 @@ export default {
     onCreateProject () {
       this.confirmBox({
         title: '创建项目',
-        customClass: 'createProject_alert',
+        customClass: 'createProject_confirmBox',
+        closeOnClickModal: false, // 是否可通过点击遮罩关闭 MessageBox
         showCancelButton: true,
+        showConfirmButton: true,
         confirmButtonText: '确定',
         component: createProject,
         componentName: 'createProject',
         confirmValidate: (action, cpt, done) => {
-          console.log(action)
-          console.log(cpt)
           if (action === 'cancel') {
-            cpt.clearValidate()
-            return done()
+            cpt.clearValidate() // 清空输入项
+            return done() // done用于关闭 MessageBox 实例
           }
           cpt.validate(valid => {
             if (!valid) return
-            console.log('{userData}: ', { ...cpt.userData })
-            cpt.clearValidate()
+            console.log('{userData}: ', { ...cpt.ruleForm })
+            cpt.clearValidate() // 清空输入项
             done()
+            let param = JSON.stringify({account: 'hemeilong', password: '12345678'})
+            return this.$axios.post('/login', param).then(response => {
+              if (response.status === 200 && response.data.code === 200) {
+                console.log('get发送Ajax请求,请求成功', response.data.message)
+                this.$message({
+                  message: response.data.message,
+                  type: 'success'
+                })
+                self.$router.push('/home/apitest')
+              } else {
+                this.$message({
+                  showClose: true,
+                  message: response.data.message,
+                  type: 'error',
+                  color: 'green'
+                })
+              }
+            }).catch(response => {
+              console.log('get发送Ajax请求,' +
+              '请求失败', response)
+            })
           })
         }
       }).catch(() => { })

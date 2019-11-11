@@ -1,52 +1,100 @@
 <template>
     <div class="createProject-form">
-        <el-form ref="fm" :model="userData" label-width="100px" :rules="rules">
-            <el-form-item label="用户名" prop="userName">
-                <el-input v-model="userData.userName"/>
-            </el-form-item>
-            <el-form-item label="密码" prop="password">
-                <el-input v-model="userData.password"/>
-            </el-form-item>
-            <el-form-item label="重新密码" prop="repassword">
-                <el-input v-model="userData.repassword"/>
-            </el-form-item>
-        </el-form>
+      <el-form :model="ruleForm" status-icon :rules="rules" ref="rfm" label-width="100px" size="650px">
+        <el-form-item label="项目名称" prop="pass">
+          <el-input type="password" v-model="ruleForm.pass" autocomplete="off" placeholder="请输入项目名称"></el-input>
+        </el-form-item>
+        <el-form-item label="项目类型" prop="checkPass">
+          <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="项目编号" prop="age">
+          <el-input v-model.number="ruleForm.age"></el-input>
+        </el-form-item>
+        <el-form-item label="所属部门" prop="code">
+          <el-input v-model.number="ruleForm.code"></el-input>
+        </el-form-item>
+      </el-form>
     </div>
 </template>
-
 <script>
 export default {
   name: 'createProject',
   data () {
+    var checkAge = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error('年龄不能为空'))
+      }
+      setTimeout(() => {
+        if (!Number.isInteger(value)) {
+          callback(new Error('请输入数字值'))
+        } else {
+          if (value < 18) {
+            callback(new Error('必须年满18岁'))
+          } else {
+            callback()
+          }
+        }
+      }, 1000)
+    }
+    var validatePass = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入密码'))
+      } else {
+        if (this.ruleForm.checkPass !== '') {
+          this.$refs.rfm.validateField('checkPass')
+        }
+        callback()
+      }
+    }
+    var validatePass2 = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请再次输入密码'))
+      } else if (value !== this.ruleForm.pass) {
+        callback(new Error('两次输入密码不一致!'))
+      } else {
+        callback()
+      }
+    }
     return {
-      userData: {
-        userName: '',
-        password: '',
-        repassword: ''
+      ruleForm: {
+        pass: '',
+        checkPass: '',
+        age: '',
+        code: ''
       },
       rules: {
-        userName: { required: true, message: '请输入用户名', trigger: 'blur' },
-        password: { required: true, message: '请输入密码', trigger: 'blur' },
-        repassword: {
-          validator: (rule, value, callback) => {
-            if (value !== this.userData.password) {
-              return callback(new Error('两次输入密码不一致'))
-            }
-            callback()
-          },
-          trigger: 'blur'
-        }
+        pass: [
+          { validator: validatePass, trigger: 'blur' }
+        ],
+        checkPass: [
+          { validator: validatePass2, trigger: 'blur' }
+        ],
+        age: [
+          { validator: checkAge, trigger: 'blur' }
+        ]
       }
     }
   },
   methods: {
+    // submitForm (formName) {
+    //   this.$refs[formName].validate((valid) => {
+    //     if (valid) {
+    //     } else {
+    //       console.log('error submit!!')
+    //       return false
+    //     }
+    //   })
+    // },
     validate (cb) {
-      return this.$refs.fm.validate(cb)
+      return this.$refs.rfm.validate(cb)
     },
     clearValidate () {
-      this.$refs.fm.resetFields()
-      this.$refs.fm.clearValidate()
+      this.$refs.rfm.resetFields()
+      this.$refs.rfm.clearValidate()
     }
+    // resetForm (formName) {
+    //   this.$refs[formName].resetFields()
+    // }
   }
 }
 </script>
