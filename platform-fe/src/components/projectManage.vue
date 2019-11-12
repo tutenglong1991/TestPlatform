@@ -51,14 +51,14 @@
               <span>{{ scope.row.type }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="所属部门" width="180">
-            <template slot-scope="scope">
-              <span>{{ scope.row.ownDept }}</span>
-            </template>
-          </el-table-column>
           <el-table-column label="项目编号" width="180">
             <template slot-scope="scope">
               <span>{{ scope.row.ownProjectCode }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="所属部门" width="180">
+            <template slot-scope="scope">
+              <span>{{ scope.row.ownDept }}</span>
             </template>
           </el-table-column>
           <el-table-column label="IT部产品线" width="180">
@@ -72,7 +72,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            label="日期"
+            label="项目周期"
             width="180">
             <template slot-scope="scope">
               <i class="el-icon-time"></i>

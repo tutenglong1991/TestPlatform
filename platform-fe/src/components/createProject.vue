@@ -1,17 +1,23 @@
 <template>
     <div class="createProject-form">
-      <el-form :model="ruleForm" status-icon :rules="rules" ref="rfm" label-width="100px" size="650px">
-        <el-form-item label="项目名称" prop="pass">
-          <el-input type="password" v-model="ruleForm.pass" autocomplete="off" placeholder="请输入项目名称"></el-input>
+      <el-form :model="ruleForm" status-icon :rules="rules" ref="rfm" label-width="100px" size="small">
+        <el-form-item label="项目名称" prop="projectName">
+          <el-input v-model="ruleForm.projectName" autocomplete="off" placeholder="请输入项目名称"></el-input>
         </el-form-item>
-        <el-form-item label="项目类型" prop="checkPass">
-          <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
+        <el-form-item label="项目类型" prop="projectType">
+          <el-input v-model="ruleForm.projectType" autocomplete="off" placeholder="请选择项目类型"></el-input>
         </el-form-item>
-        <el-form-item label="项目编号" prop="age">
-          <el-input v-model.number="ruleForm.age"></el-input>
+        <el-form-item label="项目编号" prop="code">
+          <el-input v-model.number="ruleForm.code" placeholder="请输入项目编号"></el-input>
         </el-form-item>
-        <el-form-item label="所属部门" prop="code">
-          <el-input v-model.number="ruleForm.code"></el-input>
+        <el-form-item label="所属部门" prop="dept">
+          <el-input v-model="ruleForm.dept" placeholder="请输入部门"></el-input>
+        </el-form-item>
+        <el-form-item label="IT部产品线" prop="productLine">
+          <el-input v-model="ruleForm.productLine" placeholder="请输入IT部产品线"></el-input>
+        </el-form-item>
+        <el-form-item label="项目周期" prop="projectCycle">
+          <el-input v-model="ruleForm.projectCycle" placeholder="请选择项目开始时间和结束时间"></el-input>
         </el-form-item>
       </el-form>
     </div>
@@ -57,10 +63,12 @@ export default {
     }
     return {
       ruleForm: {
-        pass: '',
-        checkPass: '',
-        age: '',
-        code: ''
+        projectName: '',
+        projectType: '',
+        code: '',
+        dept: '',
+        productLine: '',
+        projectCycle: ''
       },
       rules: {
         pass: [
@@ -98,3 +106,12 @@ export default {
   }
 }
 </script>
+<style socped>
+  .el-message-box.createProject_confirmBox {
+    width: 550px;
+  }
+  .createProject-form {
+    width: 350px;
+    margin-left: 20px;
+  }
+</style>
