@@ -6,5 +6,5 @@ from django.urls import path
 from apitest import views
 
 urlpatterns = [
-    path('project/<operate>/', views.project_manage)
+    path('/projectList/<operate>', views.project_manage)
 ]

@@ -150,7 +150,8 @@ export default {
         status: '结束',
         createDate: '2019-11-08',
         creater: 'hemeilong'
-      }]
+      }],
+      addProjectParams: {}
     }
   },
   methods: {
@@ -164,29 +165,29 @@ export default {
         confirmButtonText: '确定',
         component: createProject,
         componentName: 'createProject',
-        confirmValidate: (action, cpt, done) => {
+        confirmValidate: (action, formParms, done) => {
           if (action === 'cancel') {
-            cpt.clearValidate() // 清空输入项
+            formParms.clearValidate() // 清空输入项
             return done() // done用于关闭 MessageBox 实例
           }
-          cpt.validate(valid => {
+          formParms.validate(valid => {
             if (!valid) return
-            console.log('{userData}: ', { ...cpt.ruleForm })
-            cpt.clearValidate() // 清空输入项
+            this.addProjectParams = {...formParms.ruleForm}
+            console.log(this.addProjectParams)
+            formParms.clearValidate() // 清空输入项
             done()
-            let param = JSON.stringify({account: 'hemeilong', password: '12345678'})
-            return this.$axios.post('/login', param).then(response => {
-              if (response.status === 200 && response.data.code === 200) {
-                console.log('get发送Ajax请求,请求成功', response.data.message)
+            let param = JSON.stringify(this.addProjectParams)
+            return this.$axios.post('/home/apitest/projectList/add', param).then(response => {
+              if (response.status === 200) {
+                console.log('get发送Ajax请求,请求成功', response.data)
                 this.$message({
-                  message: response.data.message,
+                  message: '项目创建成功',
                   type: 'success'
                 })
-                self.$router.push('/home/apitest')
               } else {
                 this.$message({
                   showClose: true,
-                  message: response.data.message,
+                  message: '项目创建失败',
                   type: 'error',
                   color: 'green'
                 })
