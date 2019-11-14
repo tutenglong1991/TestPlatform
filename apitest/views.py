@@ -1,23 +1,35 @@
 #!/usr/bin/env python
 # -*-coding:utf-8-*-
 
-# from apitest.api.project_manage_obj import *
+from apitest.api.project_manage_obj import *
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 
 @csrf_exempt
 def project_manage(request, operate):
-	resp = request.POST.dict()
-	print(resp)
-	# if operate == 'find':
-	# 	pro_data = find_project(**resp)
-	# elif operate == 'editPro':
-	# 	pro_data = edit_pro(**resp)
-	# elif operate == 'updatePro':
-	# 	pro_data = update_pro(**resp)
-	# elif operate == 'delPro':
-	# 	resp_get = request.POST.dict()
-	# 	print(resp_get)
-	# 	pro_data = del_pro(**resp_get)
-	return JsonResponse({"pro_data": "test"})
+    if request.method == "POST":
+        resp = request.POST.dict()
+        try:
+            if operate == 'add':
+                resp = request.POST.dict()
+                pro_data = add_project(**resp)
+            elif operate == 'editPro':
+                pro_data = edit_pro(**resp)
+            elif operate == 'updatePro':
+                pro_data = update_pro(**resp)
+            elif operate == 'delPro':
+                pro_data = del_pro(**resp)
+            return JsonResponse({"code": 200, "pro_data": pro_data})
+        except Exception as e:
+            return JsonResponse({"code": 500, "msg": e})
+    else:
+        resp = request.GET.dict()
+        print(resp)
+        print(type(resp))
+        try:
+            if operate == 'find':
+                pro_data = find_project(**resp)
+            return JsonResponse({"code": 200, "pro_data": pro_data})
+        except Exception as e:
+            return JsonResponse({"code": 500, "msg": e})

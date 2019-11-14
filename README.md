@@ -10,6 +10,7 @@
 #### 安装教程
 
 1. 安装依赖,执行 pip install -r requirement.txt
+2. 若项目应用文件下没有migrations文件需要先创建一个这样的文件，再执行python manage.py makemigrations
 2. 始初始化数据库,执行 python manage.py migrate
 3. 创建超管，执行 python manage.py createsuperuser
 
