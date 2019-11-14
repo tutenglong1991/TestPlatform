@@ -34,7 +34,7 @@
             <el-input v-model="form.name"></el-input>
           </el-form-item>
         </el-form>
-        <el-button class="searchBtn" type="primary">搜索</el-button>
+        <el-button class="searchBtn" type="primary" @click="queryProject">搜索</el-button>
         <el-button class="addProjectBtn" size="mini" @click="onCreateProject">新增</el-button>
       </div>
       <div class="projectTableList">
@@ -43,27 +43,27 @@
           style="width: 100%">
           <el-table-column label="姓名" width="180">
             <template slot-scope="scope">
-              <span>{{ scope.row.name }}</span>
+              <span>{{ scope.row.projectName }}</span>
             </template>
           </el-table-column>
           <el-table-column label="类型" width="180">
             <template slot-scope="scope">
-              <span>{{ scope.row.type }}</span>
+              <span>{{ scope.row.projectType }}</span>
             </template>
           </el-table-column>
           <el-table-column label="项目编号" width="180">
             <template slot-scope="scope">
-              <span>{{ scope.row.ownProjectCode }}</span>
+              <span>{{ scope.row.code }}</span>
             </template>
           </el-table-column>
           <el-table-column label="所属部门" width="180">
             <template slot-scope="scope">
-              <span>{{ scope.row.ownDept }}</span>
+              <span>{{ scope.row.dept }}</span>
             </template>
           </el-table-column>
           <el-table-column label="IT部产品线" width="180">
             <template slot-scope="scope">
-              <span>{{ scope.row.itProductLine }}</span>
+              <span>{{ scope.row.productLine }}</span>
             </template>
           </el-table-column>
           <el-table-column label="状态" width="180">
@@ -76,14 +76,14 @@
             width="180">
             <template slot-scope="scope">
               <i class="el-icon-time"></i>
-              <span style="margin-left: 10px">{{ scope.row.createDate }}</span>
+              <span style="margin-left: 10px">{{ scope.row.projectCycle }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="创建者" width="180">
-            <template slot-scope="scope">
-              <span>{{ scope.row.creater }}</span>
-            </template>
-          </el-table-column>
+<!--          <el-table-column label="创建者" width="180">-->
+<!--            <template slot-scope="scope">-->
+<!--              <span>{{ scope.row.creater }}</span>-->
+<!--            </template>-->
+<!--          </el-table-column>-->
           <el-table-column label="操作">
             <template slot-scope="scope">
               <el-button
@@ -108,6 +108,9 @@ export default {
   mixins: [ConfirmMixin],
   data () {
     return {
+      searchParams: {
+        projectName: ''
+      },
       input: '',
       select: '',
       form: {
@@ -121,41 +124,12 @@ export default {
         label: '结束'
       }],
       value: '',
-      tableData: [{
-        name: '选推项目',
-        type: 'Epic',
-        ownDept: 'IT产品总部',
-        ownProjectCode: 'ITPM20190800000075-选推服务',
-        itProductLine: 'GB-选推服务',
-        status: '进行中',
-        createDate: '2016-05-02',
-        creater: 'hemeilong'
-      },
-      {
-        name: '选推项目',
-        type: 'Epic',
-        ownDept: 'IT产品总部',
-        ownProjectCode: 'ITPM20190800000075-选推服务',
-        itProductLine: 'GB-选推服务',
-        status: '进行中',
-        createDate: '2019-11-08',
-        creater: 'hemeilong'
-      },
-      {
-        name: '选推项目',
-        type: 'Epic',
-        ownDept: 'IT产品总部',
-        ownProjectCode: 'ITPM20190800000075-选推服务',
-        itProductLine: 'GB-选推服务',
-        status: '结束',
-        createDate: '2019-11-08',
-        creater: 'hemeilong'
-      }],
+      tableData: [],
       addProjectParams: {}
     }
   },
   methods: {
-    onCreateProject () {
+    onCreateProject () { // 创建项目方法
       this.confirmBox({
         title: '创建项目',
         customClass: 'createProject_confirmBox',
@@ -200,23 +174,17 @@ export default {
         }
       }).catch(() => { })
     },
-    projectAdd () {
-      this.$prompt('请输入邮箱', '提示', {
-        title: '创建项目',
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
-        inputErrorMessage: '邮箱格式不正确'
-      }).then(({ value }) => {
-        this.$message({
-          type: 'success',
-          message: '你的邮箱是: ' + value
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '取消输入'
-        })
+    queryProject () {
+      // let params = JSON.stringify(this.searchParams)
+      return this.$axios.get('/home/apitest/projectList/find' + '?projectName=' + this.searchParams['projectName'], {timeout: 4000}).then(response => {
+        if (response.status === 200) {
+          console.log('get发送Ajax请求,请求成功', response.data)
+          let responseJsonData = response.data
+          this.tableData = responseJsonData['pro_data']['data']
+        }
+      }).catch(response => {
+        console.log('get发送Ajax请求,' +
+            '请求失败', response)
       })
     },
     projectEdit () {
@@ -254,6 +222,9 @@ export default {
         })
       })
     }
+  },
+  mounted () {
+    this.queryProject()
   }
 }
 </script>
