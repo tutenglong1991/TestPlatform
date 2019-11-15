@@ -9,32 +9,35 @@
     </el-header>
     <el-main>
       <div class="searchProject">
-        <el-input placeholder="请输入内容" v-model="input" class="input-with-select">
-          <el-select v-model="select" slot="prepend" placeholder="请选择">
-            <el-option label="项目名称" value="1"></el-option>
-            <el-option label="类型" value="2"></el-option>
-            <el-option label="IT部产品线" value="3"></el-option>
-            <el-option label="项目编号" value="4"></el-option>
-          </el-select>
-        </el-input>
-        <el-form class="select_projectStatus" ref="form" :model="form" label-width="80px">
-          <el-form-item label="项目状态">
-            <el-select class="select_projectStatus" v-model="value" clearable placeholder="请选择">
+<!--        <el-input placeholder="请输入内容" @change="onSelectInputChange" v-model="searchParams.selectedParamValue" class="input-with-select">-->
+<!--          <el-select @change="getQueryParam" v-model="selectedParams" slot="prepend" clearable placeholder="请选择">-->
+<!--            <el-option v-for="item in searchParams.paramsSelection" :key="item.value" :label="item.label" :value="item.value"></el-option>-->
+<!--          </el-select>-->
+<!--        </el-input>-->
+        <el-form ref="form" :model="finalSearchParams" label-width="80px" style="display: contents">
+          <el-input placeholder="请输入内容" @change="onSelectInputChange" v-model="searchParams.selectedParamValue" class="input-with-select">
+            <el-select @change="getQueryParam" v-model="searchParams.selectedParams" slot="prepend" clearable placeholder="请选择">
+              <el-option v-for="item in searchParams.paramsSelection" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            </el-select>
+          </el-input>
+          <el-form-item label="项目周期" prop="projectCycle">
+            <el-input class="select_projectCycle" v-model="finalSearchParams.projectCycle"></el-input>
+          </el-form-item>
+          <el-form-item label="创建者" prop="creator" style="margin-left:30px">
+            <el-input class="select_projectCreate" v-model="finalSearchParams.creator"></el-input>
+          </el-form-item>
+          <el-form-item label="项目状态" prop="status" style="margin-left:30px">
+            <el-select class="select_projectStatus" @change="getQueryStatus" v-model="searchParams.status" clearable placeholder="请选择">
               <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
+                v-for="status in searchParams.statusSelection"
+                :key="status.value"
+                :label="status.label"
+                :value="status.value">
               </el-option>
             </el-select>
           </el-form-item>
         </el-form>
-        <el-form class="select_projectCreate" ref="form" :model="form" label-width="80px">
-          <el-form-item label="创建者">
-            <el-input v-model="form.name"></el-input>
-          </el-form-item>
-        </el-form>
-        <el-button class="searchBtn" type="primary" @click="queryProject">搜索</el-button>
+        <el-button class="searchBtn" type="primary" @click="submitForm">搜索</el-button>
         <el-button class="addProjectBtn" size="mini" @click="onCreateProject">新增</el-button>
       </div>
       <div class="projectTableList">
@@ -108,24 +111,44 @@ export default {
   mixins: [ConfirmMixin],
   data () {
     return {
-      searchParams: {
-        projectName: ''
+      searchParams: { // 搜索前端展示参数
+        paramsSelection: [{
+          value: 'projectName',
+          label: '项目名称'
+        },
+        {
+          value: 'projectType',
+          label: '类型'
+        },
+        {
+          value: 'productLine',
+          label: 'IT部产品线'
+        },
+        {
+          value: 'code',
+          label: '项目编号'
+        }],
+        selectedParams: '项目名称',
+        selectedParamValue: '',
+        status: '进行中',
+        statusSelection: [
+          {
+            value: '1',
+            label: '进行中'
+          },
+          {
+            value: '0',
+            label: '结束'
+          }]
       },
-      input: '',
-      select: '',
-      form: {
-        name: ''
+      finalSearchParams: {
+        status: '进行中',
+        projectCycle: '',
+        creator: ''
       },
-      options: [{
-        value: '选项1',
-        label: '进行中'
-      }, {
-        value: '选项2',
-        label: '结束'
-      }],
-      value: '',
       tableData: [],
-      addProjectParams: {}
+      addProjectParams: {
+      }
     }
   },
   methods: {
@@ -174,17 +197,58 @@ export default {
         }
       }).catch(() => { })
     },
+    getQueryParam (item) { // 在查询条件选择组件变更后更新查询条件的key和value，value为当前输入框输入的值
+      let tempSelectParam = {}
+      tempSelectParam[item] = this.searchParams.selectedParamValue
+      this.finalSearchParams = tempSelectParam
+      this.searchParams.selectedParamValue = '' // 切换后清空搜索条件
+    },
+    onSelectInputChange (input) { // 在输入框变更时，更新查询条件组件当前选择条件对应的value
+      for (let k in this.finalSearchParams) {
+        this.finalSearchParams[k] = input
+      }
+    },
+    getQueryStatus (status) {
+      if (typeof status === 'undefined') {
+        this.finalSearchParams['status'] = '' // 若未选择任一种项目状态则后台默认查询全部
+      } else {
+        this.finalSearchParams['status'] = status
+        console.log(this.finalSearchParams)
+      }
+    },
     queryProject () {
       // let params = JSON.stringify(this.searchParams)
-      return this.$axios.get('/home/apitest/projectList/find' + '?projectName=' + this.searchParams['projectName'], {timeout: 4000}).then(response => {
+      return this.$axios.get('/home/apitest/projectList/find' + '?projectName=' + 'test', {timeout: 4000}).then(response => {
         if (response.status === 200) {
           console.log('get发送Ajax请求,请求成功', response.data)
           let responseJsonData = response.data
           this.tableData = responseJsonData['pro_data']['data']
+          console.log(this.finalSearchParams)
         }
       }).catch(response => {
         console.log('get发送Ajax请求,' +
             '请求失败', response)
+      })
+    },
+    submitForm (finalSearchParams) {
+      // if (this.sizeForm['companyId'] === '') {
+      //   delete this.sizeForm['companyId']
+      // }
+      this.$refs[finalSearchParams].validate(valid => {
+        if (valid) {
+          this.$axios
+            .get('/home/apitest/projectList/find', { params: this.finalSearchParams })
+            .then(response => {
+              this.textarea = response.data.data
+              console.log(response.data.data)
+            })
+            .catch(error => {
+              console.log('系统错误' + error)
+            })
+        } else {
+          console.log('error submit!!')
+          return false
+        }
       })
     },
     projectEdit () {
@@ -224,6 +288,7 @@ export default {
     }
   },
   mounted () {
+    this.getQueryParam('projectName')
     this.queryProject()
   }
 }
@@ -247,9 +312,9 @@ export default {
     border-bottom: 1px solid #bbbcbf59;
   }
   .searchProject>.input-with-select {
-    width: 25%;
+    width: 23%;
     height: 30px;
-    margin-right: 50px;
+    margin-right: 40px;
   }
   .input-with-select>>>.el-input-group__prepend {
     background-color: #fff;
@@ -268,20 +333,32 @@ export default {
   .el-input.is-active >>>.el-input__inner:focus {
     border-color: #04aa51;
   }
-  .el-select.select_projectStatus>>>.el-input__inner:focus {
-    border-color: #04aa51;
-  }
   .el-select.select_projectStatus>>>.el-input__inner {
     color: #606266;
     font-size: 14px;
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     width: 100px;
   }
-  .select_projectCreate {
-    width: 15%;
-    height: 30px;
-    margin-right: 100px;
-    margin-left: 20px;
+  .el-select.select_projectStatus>>>.el-input__inner:focus {
+    border-color: #04aa51;
+  }
+  .el-select.select_projectStatus>>>.el-input__inner:hover {
+    border-color: #04aa51;
+  }
+  .select_projectCreate.el-input>>>.el-input__inner:focus {
+    border-color: #04aa51;
+  }
+  .select_projectCreate.el-input>>>.el-input__inner:hover {
+    border-color: #04aa51;
+  }
+  .select_projectCycle.el-input>>>.el-input__inner:focus {
+    border-color: #04aa51;
+  }
+  .select_projectCycle.el-input>>>.el-input__inner:hover {
+    border-color: #04aa51;
+  }
+  .searchBtn {
+    margin-left: 100px;
   }
   .searchProject>.el-button:focus, .el-button:hover {
     color: #ffffff;
