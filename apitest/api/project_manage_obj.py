@@ -25,7 +25,7 @@ def find_project(**resp):
     if pro_name == '':
         pro_queryset = Project.objects.all().values_list().order_by('created_time')
     else:
-        pro_queryset = Project.objects.filter(proname=pro_name).values_list()
+        pro_queryset = Project.objects.filter(projectName=pro_name).values_list()
     for qs in pro_queryset:
         project_datas = dict()
         project_datas['id'] = qs[0]

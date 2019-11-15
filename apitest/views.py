@@ -12,7 +12,6 @@ def project_manage(request, operate):
         resp = request.POST.dict()
         try:
             if operate == 'add':
-                resp = request.POST.dict()
                 pro_data = add_project(**resp)
             elif operate == 'editPro':
                 pro_data = edit_pro(**resp)
@@ -26,10 +25,11 @@ def project_manage(request, operate):
     else:
         resp = request.GET.dict()
         print(resp)
-        print(type(resp))
+        # resp_json = json.dumps(resp)
+        # print(resp_json)
         try:
             if operate == 'find':
                 pro_data = find_project(**resp)
             return JsonResponse({"code": 200, "pro_data": pro_data})
         except Exception as e:
-            return JsonResponse({"code": 500, "msg": e})
+            return JsonResponse({"code": 500, "msg": "查找项目失败"})
