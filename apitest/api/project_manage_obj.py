@@ -9,8 +9,9 @@ import json
 def add_project(**resp):
     for key in resp:
         dict_key = json.loads(key)
-        pro_add_data = {'projectName': dict_key['projectName'], 'projectType': dict_key['projectType'], 'dept': dict_key['dept'],
-                        'code': dict_key['code'], 'productLine': dict_key['productLine'], 'projectCycle': dict_key['projectCycle']}
+        print(dict_key)
+    projectCycle_list = dict_key['projectCycle']
+    pro_add_data = {'projectName': dict_key['projectName'], 'projectType': dict_key['projectType'], 'dept': dict_key['dept'],'code': dict_key['code'], 'productLine': dict_key['productLine'], 'projectStartTime': projectCycle_list[0], 'projectEndTime': projectCycle_list[1], 'status': dict_key['status'], 'creator': ['creator']}
     pro_add_data_obj = Project(**pro_add_data)
     pro_add_data_obj.save()
     msg = '添加项目成功'
@@ -26,6 +27,7 @@ def find_project(**resp):
         pro_queryset = Project.objects.all().values_list().order_by('created_time')
     else:
         pro_queryset = Project.objects.filter(projectName=pro_name).values_list()
+    print(pro_queryset)
     for qs in pro_queryset:
         project_datas = dict()
         project_datas['id'] = qs[0]
