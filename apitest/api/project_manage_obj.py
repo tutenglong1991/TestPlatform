@@ -11,7 +11,7 @@ def add_project(**resp):
         dict_key = json.loads(key)
         print(dict_key)
     projectCycle_list = dict_key['projectCycle']
-    pro_add_data = {'projectName': dict_key['projectName'], 'projectType': dict_key['projectType'], 'dept': dict_key['dept'],'code': dict_key['code'], 'productLine': dict_key['productLine'], 'projectStartTime': projectCycle_list[0], 'projectEndTime': projectCycle_list[1], 'status': dict_key['status'], 'creator': ['creator']}
+    pro_add_data = {'projectName': dict_key['projectName'], 'projectType': dict_key['projectType'], 'dept': dict_key['dept'], 'code': dict_key['code'], 'productLine': dict_key['productLine'], 'projectStartTime': projectCycle_list[0], 'projectEndTime': projectCycle_list[1], 'status': dict_key['status'], 'creator': dict_key['creator']}
     pro_add_data_obj = Project(**pro_add_data)
     pro_add_data_obj.save()
     msg = '添加项目成功'
@@ -27,7 +27,7 @@ def find_project(**resp):
         pro_queryset = Project.objects.all().values_list().order_by('created_time')
     else:
         pro_queryset = Project.objects.filter(projectName=pro_name).values_list()
-    print(pro_queryset)
+    print(pro_name)
     for qs in pro_queryset:
         project_datas = dict()
         project_datas['id'] = qs[0]
@@ -36,10 +36,16 @@ def find_project(**resp):
         project_datas['dept'] = qs[3]
         project_datas['code'] = qs[4]
         project_datas['productLine'] = qs[5]
-        project_datas['status'] = qs[6]
-        project_datas['projectCycle'] = qs[7]
-        project_datas['created_time'] = datetime.datetime.strftime(qs[8], "%Y-%m-%d %H:%M:%S")
-        project_datas['update_time'] = datetime.datetime.strftime(qs[9], "%Y-%m-%d %H:%M:%S")
+        if qs[6] == '1':
+            project_datas['status'] = '进行中'
+        elif qs[6] == '0':
+            project_datas['status'] = '已结束'
+        elif qs[6] == '2':
+            project_datas['status'] = '未开始'
+        project_datas['creator'] = qs[7]
+        project_datas['projectCycle'] = qs[8] + '-' + qs[9]
+        project_datas['created_time'] = datetime.datetime.strftime(qs[10], "%Y-%m-%d %H:%M:%S")
+        project_datas['update_time'] = datetime.datetime.strftime(qs[11], "%Y-%m-%d %H:%M:%S")
         project_data.append(project_datas)
     query_result['data'] = project_data
     return query_result

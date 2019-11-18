@@ -9,7 +9,7 @@ class Project(models.Model):
     dept = models.CharField(max_length=200, null=True, verbose_name='所属部门')
     code = models.CharField(max_length=500, null=True, verbose_name='项目编号')
     productLine = models.CharField(max_length=200, null=True, verbose_name='IT部产品线')
-    status = models.CharField(max_length=, null=True, verbose_name='项目状态')
+    status = models.CharField(max_length=10, null=True, verbose_name='项目状态')
     creator = models.CharField(max_length=200, null=True, verbose_name='创建人')
     projectStartTime = models.CharField(max_length=200, null=True, verbose_name='项目开始时间')
     projectEndTime = models.CharField(max_length=200, null=True, verbose_name='项目结束时间')

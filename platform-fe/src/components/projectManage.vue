@@ -11,17 +11,17 @@
       <div class="searchProject">
         <el-form ref="searchForm" :model="finalSearchParams" :rules="rules" label-width="85px" style="display:flex; justify-content: left;">
           <el-form-item prop="selectedParamsValue" class="choose_params">
-            <el-input placeholder="请输入内容" @change="onSelectInputChange" v-model="finalSearchParams.selectedParamsValue" class="input-with-select">
+            <el-input placeholder="请输入内容" @change="onSelectInputChange" v-model="finalSearchParams.selectedParamsValue" clearable  class="input-with-select">
               <el-select @change="getChangedParam" v-model="defaultSelectedParamsLabel" slot="prepend" placeholder="请选择">
                 <el-option v-for="item in searchParams.paramsSelection" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-input>
           </el-form-item>
           <el-form-item label="项目周期" prop="projectCycle" style="margin-left: 40px">
-            <el-input class="select_projectCycle" v-model="finalSearchParams.projectCycle"></el-input>
+            <el-input class="select_projectCycle" v-model="finalSearchParams.projectCycle" clearable></el-input>
           </el-form-item>
           <el-form-item label="创建者" prop="creator" style="margin-left:30px">
-            <el-input class="select_projectCreate" v-model="finalSearchParams.creator"></el-input>
+            <el-input class="select_projectCreate" v-model="finalSearchParams.creator" clearable></el-input>
           </el-form-item>
           <el-form-item label="项目状态" prop="status" style="margin-left:30px">
             <el-select class="select_projectStatus" @change="getQueryStatus" v-model="defaultSelectedStatus" clearable placeholder="请选择">
@@ -48,7 +48,7 @@
               <span>{{ scope.row.projectName }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="类型" width="150">
+          <el-table-column label="类型" width="160">
             <template slot-scope="scope">
               <span>{{ scope.row.projectType }}</span>
             </template>
@@ -70,18 +70,18 @@
           </el-table-column>
           <el-table-column
             label="项目周期"
-            width="200">
+            width="160">
             <template slot-scope="scope">
-              <i class="el-icon-time"></i>
+<!--              <i class="el-icon-time"></i>-->
               <span style="margin-left: 10px">{{ scope.row.projectCycle }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="状态" width="100">
+          <el-table-column label="状态" width="160">
             <template slot-scope="scope">
               <span>{{ scope.row.status }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="创建人" width="140">
+          <el-table-column label="创建人" width="160">
             <template slot-scope="scope">
               <span>{{ scope.row.creator }}</span>
             </template>
@@ -184,7 +184,7 @@ export default {
             this.addProjectParams = {...formParms.ruleForm}
             console.log(this.addProjectParams)
             let projectStartTime = new Date(this.addProjectParams.projectCycle[0])
-            if (projectStartTime.getTime() > new Date().getTime()) {
+            if (projectStartTime.getTime() > new Date().getTime()) { // 还需要设置控件开始时间只能选择大于等于当前时间
               this.addProjectParams['status'] = '1'
             }
             formParms.clearValidate() // 清空输入项

@@ -33,4 +33,5 @@ def project_manage(request, operate):
                 pro_data = find_project(**resp)
             return JsonResponse({"code": 200, "pro_data": pro_data})
         except Exception as e:
+            print(e)
             return JsonResponse({"code": 500, "msg": "查找项目失败"})
