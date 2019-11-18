@@ -24,9 +24,10 @@ def project_manage(request, operate):
             return JsonResponse({"code": 500, "msg": e})
     else:
         resp = request.GET.dict()
-        print(resp)
-        # resp_json = json.dumps(resp)
-        # print(resp_json)
+        key = resp['selectedParamsKey']
+        resp[key] = resp['selectedParamsValue']
+        resp.pop('selectedParamsKey')
+        resp.pop('selectedParamsValue')
         try:
             if operate == 'find':
                 pro_data = find_project(**resp)

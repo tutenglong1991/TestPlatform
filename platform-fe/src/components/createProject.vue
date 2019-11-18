@@ -17,7 +17,16 @@
           <el-input v-model="ruleForm.productLine" placeholder="请输入IT部产品线"></el-input>
         </el-form-item>
         <el-form-item label="项目周期" prop="projectCycle">
-          <el-input v-model="ruleForm.projectCycle" placeholder="请选择项目开始时间和结束时间"></el-input>
+            <div class="block">
+              <el-date-picker
+                v-model="ruleForm.projectCycle"
+                type="datetimerange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                value-format='yyyy-MM-dd HH:mm:ss'>
+              </el-date-picker>
+            </div>
         </el-form-item>
       </el-form>
     </div>
