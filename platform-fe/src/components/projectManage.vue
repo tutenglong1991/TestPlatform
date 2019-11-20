@@ -107,6 +107,7 @@
 <script>
 import ConfirmMixin from '../assets/confirm_mixin'
 import createProject from './createProject.vue'
+import editProject from './editProject.vue'
 export default {
   mixins: [ConfirmMixin],
   data () {
@@ -197,15 +198,15 @@ export default {
                 console.log('get发送Ajax请求,请求成功', response.data)
                 this.$message({
                   message: '项目创建成功',
-                  type: 'success'
+                  type: 'success',
+                  color: 'green'
                 })
-                this.queryProject()
+                this.queryProject('searchForm')
               } else {
                 this.$message({
                   showClose: true,
                   message: '项目创建失败',
-                  type: 'error',
-                  color: 'green'
+                  type: 'error'
                 })
               }
             }).catch(response => {
@@ -237,6 +238,9 @@ export default {
             .get('/home/apitest/projectList/find', { params: this.finalSearchParams })
             .then(response => {
               let responseJsonData = response.data
+              // data1.forEach(element => {
+              //   element['edit'] = true
+              // })
               this.tableData = responseJsonData['pro_data']['data']
             })
             .catch(error => {
@@ -256,16 +260,17 @@ export default {
         showCancelButton: true,
         showConfirmButton: true,
         confirmButtonText: '确定',
-        component: createProject,
-        componentName: 'createProject',
+        component: editProject,
+        componentName: 'editProject',
         confirmData: row,
-        confirmValidate: (action, row, done) => {
+        confirmValidate: (action, instance, done) => {
           if (action === 'cancel') {
+            console.log(this.scope)
             return done() // done用于关闭 MessageBox 实例
           }
-          row.validate(valid => {
+          instance.validate(valid => {
             if (!valid) return
-            this.addProjectParams = {...row.editRuleForm}
+            this.addProjectParams = {...instance.editRuleForm}
             let projectStartTime = new Date(this.addProjectParams.projectCycle[0])
             let projectEndTime = new Date(this.addProjectParams.projectCycle[1])
             if (projectStartTime.getTime() >= new Date().getTime()) { // 还需要设置控件开始时间只能选择大于等于当前时间
@@ -285,7 +290,6 @@ export default {
             delete (this.addProjectParams.created_time)
             delete (this.addProjectParams.update_time)
             let param = JSON.stringify(this.addProjectParams)
-            console.log(this.addProjectParams)
             return this.$axios.post('/home/apitest/projectList/add', param).then(response => {
               if (response.status === 200) {
                 console.log('get发送Ajax请求,请求成功', response.data)
