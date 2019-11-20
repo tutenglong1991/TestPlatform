@@ -1,25 +1,25 @@
 <template>
-    <div class="createProject-form">
-      <el-form :model="ruleForm" status-icon :rules="rules" ref="rfm" label-width="100px" size="small">
+    <div v-if="add" class="createProject-form">
+      <el-form :model="addRuleForm" status-icon :rules="rules" ref="rfm" label-width="100px" size="small">
         <el-form-item label="项目名称" prop="projectName">
-          <el-input v-model="ruleForm.projectName" autocomplete="off" placeholder="请输入项目名称"></el-input>
+          <el-input v-model="addRuleForm.projectName" autocomplete="off" placeholder="请输入项目名称"></el-input>
         </el-form-item>
         <el-form-item label="项目类型" prop="projectType">
-          <el-input v-model="ruleForm.projectType" autocomplete="off" placeholder="请选择项目类型"></el-input>
+          <el-input v-model="addRuleForm.projectType" autocomplete="off" placeholder="请选择项目类型"></el-input>
         </el-form-item>
         <el-form-item label="项目编号" prop="code">
-          <el-input v-model.number="ruleForm.code" placeholder="请输入项目编号"></el-input>
+          <el-input v-model.number="addRuleForm.code" placeholder="请输入项目编号"></el-input>
         </el-form-item>
         <el-form-item label="所属部门" prop="dept">
-          <el-input v-model="ruleForm.dept" placeholder="请输入部门"></el-input>
+          <el-input v-model="addRuleForm.dept" placeholder="请输入部门"></el-input>
         </el-form-item>
         <el-form-item label="IT部产品线" prop="productLine">
-          <el-input v-model="ruleForm.productLine" placeholder="请输入IT部产品线"></el-input>
+          <el-input v-model="addRuleForm.productLine" placeholder="请输入IT部产品线"></el-input>
         </el-form-item>
         <el-form-item label="项目周期" prop="projectCycle">
             <div class="block">
               <el-date-picker
-                v-model="ruleForm.projectCycle"
+                v-model="addRuleForm.projectCycle"
                 type="datetimerange"
                 range-separator="至"
                 start-placeholder="开始日期"
@@ -30,10 +30,64 @@
         </el-form-item>
       </el-form>
     </div>
+    <div v-else-if="edit" class="editProject-form">
+      <el-form :model="editRuleForm" status-icon :rules="rules" ref="rfm" label-width="100px" size="small">
+      <el-form-item label="项目名称" prop="projectName">
+        <el-input v-model="editRuleForm.projectName" autocomplete="off" placeholder="请输入项目名称"></el-input>
+      </el-form-item>
+      <el-form-item label="项目类型" prop="projectType">
+        <el-input v-model="editRuleForm.projectType" autocomplete="off" placeholder="请选择项目类型"></el-input>
+      </el-form-item>
+      <el-form-item label="项目编号" prop="code">
+        <el-input v-model.number="editRuleForm.code" placeholder="请输入项目编号"></el-input>
+      </el-form-item>
+      <el-form-item label="所属部门" prop="dept">
+        <el-input v-model="editRuleForm.dept" placeholder="请输入部门"></el-input>
+      </el-form-item>
+      <el-form-item label="IT部产品线" prop="productLine">
+        <el-input v-model="editRuleForm.productLine" placeholder="请输入IT部产品线"></el-input>
+      </el-form-item>
+      <el-form-item label="项目周期" prop="projectCycle">
+        <div class="block">
+          <el-date-picker
+            v-model="editRuleForm.projectCycle"
+            type="datetimerange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            value-format='yyyy-MM-dd HH:mm:ss'>
+          </el-date-picker>
+        </div>
+      </el-form-item>
+    </el-form>
+    </div>
 </template>
 <script>
 export default {
   name: 'createProject',
+  props: ['confirmData'],
+  watch: {
+    confirmData: {
+      deep: true,
+      async handler () {
+        let pn = this.confirmData
+        if (pn.projectName === '') {
+          this.addRuleForm = this.confirmData
+          this.add = true
+          this.edit = false
+        } else {
+          // console.log(typeof (this.confirmData.projectCycle))
+          // this.confirmData['projectCycle'] = this.confirmData.projectCycle.split('-')
+          // this.confirmData.projectCycle[0] = new Date(this.confirmData.projectCycle[0])
+          // this.confirmData.projectCycle[1] = new Date(this.confirmData.projectCycle[1])
+          this.editRuleForm = this.confirmData
+          console.log(this.confirmData)
+          this.edit = true
+          this.add = false
+        }
+      }
+    }
+  },
   data () {
     var checkAge = (rule, value, callback) => {
       if (!value) {
@@ -55,7 +109,7 @@ export default {
       if (value === '') {
         callback(new Error('请输入密码'))
       } else {
-        if (this.ruleForm.checkPass !== '') {
+        if (this.addRuleForm.checkPass !== '') {
           this.$refs.rfm.validateField('checkPass')
         }
         callback()
@@ -64,14 +118,14 @@ export default {
     var validatePass2 = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请再次输入密码'))
-      } else if (value !== this.ruleForm.pass) {
+      } else if (value !== this.addRuleForm.pass) {
         callback(new Error('两次输入密码不一致!'))
       } else {
         callback()
       }
     }
     return {
-      ruleForm: {
+      addRuleForm: {
         projectName: '',
         projectType: '',
         code: '',
@@ -79,6 +133,9 @@ export default {
         productLine: '',
         projectCycle: ''
       },
+      editRuleForm: {},
+      add: true,
+      edit: false,
       rules: {
         pass: [
           { validator: validatePass, trigger: 'blur' }
@@ -100,8 +157,18 @@ export default {
       this.$refs.rfm.resetFields()
       this.$refs.rfm.clearValidate()
     }
-    // resetForm (formName) {
-    //   this.$refs[formName].resetFields()
+  },
+  created () {
+    // let pn = this.confirmData
+    // console.log(this.confirmData.projectCycle)
+    // if (pn.projectName === '') {
+    //   this.addRuleForm = this.confirmData
+    //   this.add = true
+    //   this.edit = false
+    // } else {
+    //   this.editRuleForm = this.confirmData
+    //   this.edit = true
+    //   this.add = false
     // }
   }
 }

@@ -17,9 +17,6 @@
               </el-select>
             </el-input>
           </el-form-item>
-          <el-form-item label="项目周期" prop="projectCycle" style="margin-left: 40px">
-            <el-input class="select_projectCycle" v-model="finalSearchParams.projectCycle" clearable></el-input>
-          </el-form-item>
           <el-form-item label="创建者" prop="creator" style="margin-left:30px">
             <el-input class="select_projectCreate" v-model="finalSearchParams.creator" clearable></el-input>
           </el-form-item>
@@ -72,7 +69,6 @@
             label="项目周期"
             width="160">
             <template slot-scope="scope">
-<!--              <i class="el-icon-time"></i>-->
               <span style="margin-left: 10px">{{ scope.row.projectCycle }}</span>
             </template>
           </el-table-column>
@@ -147,20 +143,18 @@ export default {
       finalSearchParams: {
         selectedParamsKey: '',
         selectedParamsValue: '',
-        projectCycle: '',
         creator: '',
         status: ''
       },
       rules: {
         selectedParamsKey: [{require: true, message: '请选择任一种搜索方式', trigger: 'blur'}],
         selectedParamsValue: [{require: false, trigger: 'blur'}],
-        projectCycle: [{require: false, trigger: 'blur'}],
         creator: [{require: false, trigger: 'blur'}],
         status: [{require: false, trigger: 'blur'}]
       },
       tableData: [],
-      addProjectParams: {
-      }
+      addProjectParams: {},
+      editProjectParams: {}
     }
   },
   methods: {
@@ -181,11 +175,18 @@ export default {
           }
           formParms.validate(valid => {
             if (!valid) return
-            this.addProjectParams = {...formParms.ruleForm}
-            console.log(this.addProjectParams)
+            this.addProjectParams = {...formParms.addRuleForm}
             let projectStartTime = new Date(this.addProjectParams.projectCycle[0])
-            if (projectStartTime.getTime() > new Date().getTime()) { // 还需要设置控件开始时间只能选择大于等于当前时间
-              this.addProjectParams['status'] = '1'
+            let projectEndTime = new Date(this.addProjectParams.projectCycle[1])
+            if (projectStartTime.getTime() >= new Date().getTime()) { // 还需要设置控件开始时间只能选择大于等于当前时间
+              this.addProjectParams['status'] = '1' // 进行中
+            } else {
+              this.addProjectParams['status'] = '2' // 未开始
+            }
+            if (projectEndTime.getTime() < new Date().getTime()) {
+              this.addProjectParams['status'] = '0' // 已结束
+            } else {
+              this.addProjectParams['status'] = '1' // 进行中
             }
             formParms.clearValidate() // 清空输入项
             done()
@@ -198,6 +199,7 @@ export default {
                   message: '项目创建成功',
                   type: 'success'
                 })
+                this.queryProject()
               } else {
                 this.$message({
                   showClose: true,
@@ -226,7 +228,6 @@ export default {
         this.finalSearchParams['status'] = '' // 若未选择任一种项目状态则后台默认查询全部
       } else {
         this.finalSearchParams['status'] = status
-        console.log(this.finalSearchParams)
       }
     },
     queryProject (formName) {
@@ -247,23 +248,67 @@ export default {
         }
       })
     },
-    projectEdit () {
-      this.$prompt('请输入邮箱', '提示', {
+    projectEdit (index, row) {
+      this.confirmBox({
+        title: '编辑项目',
+        customClass: 'editProject_confirmBox',
+        closeOnClickModal: false, // 是否可通过点击遮罩关闭 MessageBox
+        showCancelButton: true,
+        showConfirmButton: true,
         confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
-        inputErrorMessage: '邮箱格式不正确'
-      }).then(({ value }) => {
-        this.$message({
-          type: 'success',
-          message: '你的邮箱是: ' + value
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '取消输入'
-        })
-      })
+        component: createProject,
+        componentName: 'createProject',
+        confirmData: row,
+        confirmValidate: (action, row, done) => {
+          if (action === 'cancel') {
+            return done() // done用于关闭 MessageBox 实例
+          }
+          row.validate(valid => {
+            if (!valid) return
+            this.addProjectParams = {...row.editRuleForm}
+            let projectStartTime = new Date(this.addProjectParams.projectCycle[0])
+            let projectEndTime = new Date(this.addProjectParams.projectCycle[1])
+            if (projectStartTime.getTime() >= new Date().getTime()) { // 还需要设置控件开始时间只能选择大于等于当前时间
+              this.addProjectParams['status'] = '1' // 进行中
+            } else {
+              this.addProjectParams['status'] = '2' // 未开始
+            }
+            if (projectEndTime.getTime() < new Date().getTime()) {
+              this.addProjectParams['status'] = '0' // 已结束
+            } else {
+              this.addProjectParams['status'] = '1' // 进行中
+            }
+            done()
+            this.addProjectParams['creator'] = 'hemeilong' // 后续需动态获取当前登录的用户名，暂时先写死
+            // 删除编辑会自动更新的字段
+            delete (this.addProjectParams.status)
+            delete (this.addProjectParams.created_time)
+            delete (this.addProjectParams.update_time)
+            let param = JSON.stringify(this.addProjectParams)
+            console.log(this.addProjectParams)
+            return this.$axios.post('/home/apitest/projectList/add', param).then(response => {
+              if (response.status === 200) {
+                console.log('get发送Ajax请求,请求成功', response.data)
+                this.$message({
+                  message: '项目创建成功',
+                  type: 'success'
+                })
+                this.queryProject()
+              } else {
+                this.$message({
+                  showClose: true,
+                  message: '项目创建失败',
+                  type: 'error',
+                  color: 'green'
+                })
+              }
+            }).catch(response => {
+              console.log('get发送Ajax请求,' +
+                '请求失败', response)
+            })
+          })
+        }
+      }).catch(() => { })
     },
     projectDelete (index, row) {
       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
@@ -314,6 +359,10 @@ export default {
     color: #606266;
     width: 100px;
     font-size: 14px;
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  }
+  .input-with-select.el-input-group--prepend>>>.el-input__inner {
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
   }
   .input-with-select>>>.el-input__inner::-webkit-input-placeholder {
     color: #c3c3c5;
@@ -322,9 +371,6 @@ export default {
     border-color: #04aa51;
   }
   .input-with-select>>>.el-input__inner:hover {
-    border-color: #04aa51;
-  }
-  .input-with-select>>>.el-input__inner:focus {
     border-color: #04aa51;
   }
   .el-input-group__prepend div.el-select>>>.el-input__inner {
@@ -342,16 +388,13 @@ export default {
   .el-select.select_projectStatus>>>.el-input__inner:hover {
     border-color: #04aa51;
   }
+  .select_projectCreate.el-input--suffix>>>.el-input__inner {
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  }
   .select_projectCreate.el-input>>>.el-input__inner:focus {
     border-color: #04aa51;
   }
   .select_projectCreate.el-input>>>.el-input__inner:hover {
-    border-color: #04aa51;
-  }
-  .select_projectCycle.el-input>>>.el-input__inner:focus {
-    border-color: #04aa51;
-  }
-  .select_projectCycle.el-input>>>.el-input__inner:hover {
     border-color: #04aa51;
   }
   .searchBtn {
