@@ -9,9 +9,11 @@ import json
 def add_project(**resp):
     for key in resp:
         dict_key = json.loads(key)
-        print(dict_key)
     projectCycle_list = dict_key['projectCycle']
-    pro_add_data = {'projectName': dict_key['projectName'], 'projectType': dict_key['projectType'], 'dept': dict_key['dept'], 'code': dict_key['code'], 'productLine': dict_key['productLine'], 'projectStartTime': projectCycle_list[0], 'projectEndTime': projectCycle_list[1], 'status': dict_key['status'], 'creator': dict_key['creator']}
+    pro_add_data = {'projectName': dict_key['projectName'], 'projectType': dict_key['projectType'],
+                    'dept': dict_key['dept'], 'code': dict_key['code'], 'productLine': dict_key['productLine'],
+                    'projectStartTime': projectCycle_list[0], 'projectEndTime': projectCycle_list[1],
+                    'status': dict_key['status'], 'creator': dict_key['creator']}
     pro_add_data_obj = Project(**pro_add_data)
     pro_add_data_obj.save()
     msg = '添加项目成功'
@@ -20,14 +22,19 @@ def add_project(**resp):
 
 def find_project(**resp):
     """ 查找项目 """
-    pro_name = resp['projectName']
+    print(resp)
     query_result = {}
     project_data = []
-    if pro_name == '':
-        pro_queryset = Project.objects.all().values_list().order_by('created_time')
+    sql_params = {}
+    for key in resp:
+        if resp[key] == '':
+            continue
+        else:
+            sql_params[key] = resp[key]
+    if len(sql_params) == 0:
+        pro_queryset = Project.objects.values_list().order_by('update_time').reverse()
     else:
-        pro_queryset = Project.objects.filter(projectName=pro_name).values_list()
-    print(pro_name)
+        pro_queryset = Project.objects.filter(**sql_params).values_list()
     for qs in pro_queryset:
         project_datas = dict()
         project_datas['id'] = qs[0]
