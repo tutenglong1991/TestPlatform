@@ -238,9 +238,6 @@ export default {
             .get('/home/apitest/projectList/find', { params: this.finalSearchParams })
             .then(response => {
               let responseJsonData = response.data
-              // data1.forEach(element => {
-              //   element['edit'] = true
-              // })
               this.tableData = responseJsonData['pro_data']['data']
             })
             .catch(error => {
@@ -253,6 +250,15 @@ export default {
       })
     },
     projectEdit (index, row) {
+      let tempRow = {}
+      for (const i in row) {
+        if (i === 'projectCycle') {
+          tempRow[i] = [new Date(row[i].slice(0, 19)), new Date(row[i].slice(19))] // 转换字符串为日期格式，便于显示原始数据
+          console.log(row[i])
+        } else {
+          tempRow[i] = row[i]
+        }
+      }
       this.confirmBox({
         title: '编辑项目',
         customClass: 'editProject_confirmBox',
@@ -262,10 +268,9 @@ export default {
         confirmButtonText: '确定',
         component: editProject,
         componentName: 'editProject',
-        confirmData: row,
+        confirmData: tempRow,
         confirmValidate: (action, instance, done) => {
           if (action === 'cancel') {
-            console.log(this.scope)
             return done() // done用于关闭 MessageBox 实例
           }
           instance.validate(valid => {
@@ -285,7 +290,7 @@ export default {
             }
             done()
             this.addProjectParams['creator'] = 'hemeilong' // 后续需动态获取当前登录的用户名，暂时先写死
-            // 删除编辑会自动更新的字段
+            // 去除编辑会自动更新的字段，无需提交
             delete (this.addProjectParams.status)
             delete (this.addProjectParams.created_time)
             delete (this.addProjectParams.update_time)
@@ -297,7 +302,7 @@ export default {
                   message: '项目创建成功',
                   type: 'success'
                 })
-                this.queryProject()
+                this.queryProject('searchForm')
               } else {
                 this.$message({
                   showClose: true,
