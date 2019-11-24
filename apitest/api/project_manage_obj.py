@@ -14,15 +14,15 @@ def add_project(**resp):
                     'dept': dict_key['dept'], 'code': dict_key['code'], 'productLine': dict_key['productLine'],
                     'projectStartTime': projectCycle_list[0], 'projectEndTime': projectCycle_list[1],
                     'status': dict_key['status'], 'creator': dict_key['creator']}
+    print(type(pro_add_data))
     pro_add_data_obj = Project(**pro_add_data)
     pro_add_data_obj.save()
     msg = '添加项目成功'
-    return {'status': 200, 'data': msg}
+    return {'status': 200, 'msg': msg}
 
 
 def find_project(**resp):
     """ 查找项目 """
-    print(resp)
     query_result = {}
     project_data = []
     sql_params = {}
@@ -78,46 +78,33 @@ def find_project(**resp):
 
 
 def edit_pro(**resp):
-    """ 返回待编辑项目信息 """
-    pro_id = resp['id']
-    _edit = Project.objects.filter(id=pro_id).values_list('id', 'proname', 'current_host', 'principal')
-    _edit_data = {
-        'id': _edit[0][0],
-        'proname': _edit[0][1],
-        'current_host': _edit[0][2],
-        'principal': _edit[0][3]
-    }
-    return _edit_data
-
-
-def update_pro(**resp):
+    for key in resp:
+        dict_key = json.loads(key)
+    projectCycle_list = dict_key['projectCycle']
+    dict_key['projectStartTime'] =  projectCycle_list[0]
+    dict_key['projectEndTime'] = projectCycle_list[1]
+    dict_key.pop('projectCycle')
     try:
-        _t = Project.objects.filter(proname=resp['proname'])
+        _t = Project.objects.filter(id=dict_key['id']).values_list()
         if _t:
-            _t.__dict__.update(**resp)
-            _t.save()
+            _t.update(**dict_key)
             msg = '更新项目数据数据成功'
         else:
-            """添加项目"""
-            pro_data = {'proname': resp['proname'], 'current_host': resp['current_host'],
-                        'principal': resp['principal']}
-            create_pro_data = Project(**pro_data)
-            create_pro_data.save()
-            msg = '添加项目成功'
+            msg = '编辑项目失败，未找到该项目'
     except Exception as e:
+        print(e)
         msg = '更新项目数据失败,请联系管理员'
-    return {'status': 500, 'data': msg}
+    return {'status': 200, 'data': msg}
 
 
 def del_pro(**resp):
-    pro_id = resp['id']
+    for key in resp:
+        dict_key = json.loads(key)
     try:
-        Project.objects.filter(id=pro_id).delete()
+        print(resp)
+        Project.objects.filter(id=dict_key['id']).delete()
         msg = '删除数据成功'
     except Exception as e:
+        print(e)
         msg = '删除数据失败，请联系管理员'
-    return {'status': 500, 'data': msg}
-
-
-class ProjectManage:
-    pass
+    return {'status': 200, 'data': msg}

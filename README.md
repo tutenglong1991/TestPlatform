@@ -10,7 +10,7 @@
 #### 安装教程
 
 1. 安装依赖,执行 pip install -r requirement.txt
-2. 若项目应用文件下没有migrations文件需要先创建一个这样的文件，再执行python manage.py makemigrations
+2. 若项目应用文件下没有migrations文件需要先创建一个这样的文件(要带__init__.py的)，再执行python manage.py makemigrations
 3. 始初始化数据库,执行 python manage.py migrate
 4. 提交到仓库时不要把本地migrations文件和db.sqlite3文件提交了，不然很容易冲突出错，造成数据混乱
 5. 创建超管，执行 python manage.py createsuperuser

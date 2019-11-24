@@ -95,7 +95,7 @@
               </el-button>
               <el-button
                 size="mini"
-                @click="projectDelete(scope.$index, scope.row)">删除
+                @click="projectDelete(scope.row)">删除
               </el-button>
             </template>
           </el-table-column>
@@ -193,9 +193,9 @@ export default {
             done()
             this.addProjectParams['creator'] = 'hemeilong' // 后续需动态获取当前登录的用户名，暂时先写死
             let param = JSON.stringify(this.addProjectParams)
-            return this.$axios.post('/home/apitest/projectList/add', param).then(response => {
+            return this.$axios.post('/home/apitest/projectList/addPro', param).then(response => {
               if (response.status === 200) {
-                console.log('get发送Ajax请求,请求成功', response.data)
+                console.log('发送Ajax请求,请求成功', response.data)
                 this.$message({
                   message: '项目创建成功',
                   type: 'success',
@@ -210,7 +210,7 @@ export default {
                 })
               }
             }).catch(response => {
-              console.log('get发送Ajax请求,' +
+              console.log('发送Ajax请求,' +
               '请求失败', response)
             })
           })
@@ -238,7 +238,7 @@ export default {
             .get('/home/apitest/projectList/find', { params: this.finalSearchParams })
             .then(response => {
               let responseJsonData = response.data
-              this.tableData = responseJsonData['pro_data']['data']
+              this.tableData = responseJsonData['data']['data']
             })
             .catch(error => {
               console.log('系统错误' + error)
@@ -253,8 +253,7 @@ export default {
       let tempRow = {}
       for (const i in row) {
         if (i === 'projectCycle') {
-          tempRow[i] = [new Date(row[i].slice(0, 19)), new Date(row[i].slice(19))] // 转换字符串为日期格式，便于显示原始数据
-          console.log(row[i])
+          tempRow[i] = [row[i].slice(0, 19), row[i].slice(20)] // 转换字符串为日期格式，便于显示原始数据
         } else {
           tempRow[i] = row[i]
         }
@@ -278,56 +277,72 @@ export default {
             this.addProjectParams = {...instance.editRuleForm}
             let projectStartTime = new Date(this.addProjectParams.projectCycle[0])
             let projectEndTime = new Date(this.addProjectParams.projectCycle[1])
-            if (projectStartTime.getTime() >= new Date().getTime()) { // 还需要设置控件开始时间只能选择大于等于当前时间
-              this.addProjectParams['status'] = '1' // 进行中
-            } else {
+            // this.addProjectParams.projectCycle[0] = new Date(this.addProjectParams.projectCycle[0]).getTime()
+            // this.addProjectParams.projectCycle[1] = new Date(this.addProjectParams.projectCycle[1]).getTime()
+            if (projectStartTime.getTime() > new Date().getTime()) { // 还需要设置控件开始时间只能选择大于等于当前时间，且结束时间不能小于开始时间
               this.addProjectParams['status'] = '2' // 未开始
+            } else if (projectStartTime.getTime() <= new Date().getTime() && projectEndTime.getTime() > new Date().getTime()) {
+              this.addProjectParams['status'] = '1' // 进行中
             }
             if (projectEndTime.getTime() < new Date().getTime()) {
               this.addProjectParams['status'] = '0' // 已结束
-            } else {
-              this.addProjectParams['status'] = '1' // 进行中
             }
             done()
             this.addProjectParams['creator'] = 'hemeilong' // 后续需动态获取当前登录的用户名，暂时先写死
             // 去除编辑会自动更新的字段，无需提交
-            delete (this.addProjectParams.status)
             delete (this.addProjectParams.created_time)
             delete (this.addProjectParams.update_time)
             let param = JSON.stringify(this.addProjectParams)
-            return this.$axios.post('/home/apitest/projectList/add', param).then(response => {
+            return this.$axios.post('/home/apitest/projectList/editPro', param).then(response => {
               if (response.status === 200) {
-                console.log('get发送Ajax请求,请求成功', response.data)
+                console.log('发送Ajax请求,请求成功', response.data)
                 this.$message({
-                  message: '项目创建成功',
+                  message: '项目编辑更新成功',
                   type: 'success'
                 })
                 this.queryProject('searchForm')
               } else {
                 this.$message({
                   showClose: true,
-                  message: '项目创建失败',
+                  message: '项目编辑更新失败',
                   type: 'error',
                   color: 'green'
                 })
               }
             }).catch(response => {
-              console.log('get发送Ajax请求,' +
+              console.log('发送Ajax请求,' +
                 '请求失败', response)
             })
           })
         }
       }).catch(() => { })
     },
-    projectDelete (index, row) {
+    projectDelete (row) {
       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
+        let param = JSON.stringify({'id': row.id})
+        return this.$axios.post('/home/apitest/projectList/delPro', param).then(response => {
+          if (response.status === 200) {
+            console.log('发送Ajax请求,请求成功', response.data)
+            this.$message({
+              message: '删除项目成功！',
+              type: 'success'
+            })
+            this.queryProject('searchForm')
+          } else {
+            this.$message({
+              showClose: true,
+              message: '删除项目失败',
+              type: 'error',
+              color: 'green'
+            })
+          }
+        }).catch(response => {
+          console.log('发送Ajax请求,' +
+            '请求失败', response)
         })
       }).catch(() => {
         this.$message({
