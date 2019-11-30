@@ -2,14 +2,14 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import App from './App'
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css' // 此项引入必须放在router前面，必然可能出现build打包编译后修改element-ui默认样式无效
 import router from './router'
 import axios from 'axios'
-import 'element-ui/lib/theme-chalk/index.css'
-import ElementUI from 'element-ui'
 import '../static/css/base.css'
 
-Vue.config.productionTip = false
 Vue.use(ElementUI)
+Vue.config.productionTip = false
 Vue.prototype.$axios = axios
 
 /* eslint-disable no-new */

@@ -19,6 +19,7 @@ def project_manage(request, operate):
                 pro_data = del_pro(**resp)
             return JsonResponse({"code": 200, "data": pro_data})
         except Exception as e:
+            print(e)
             return JsonResponse({"code": 500, "msg": e})
     else:
         resp = request.GET.dict()

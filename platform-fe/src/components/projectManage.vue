@@ -277,8 +277,6 @@ export default {
             this.addProjectParams = {...instance.editRuleForm}
             let projectStartTime = new Date(this.addProjectParams.projectCycle[0])
             let projectEndTime = new Date(this.addProjectParams.projectCycle[1])
-            // this.addProjectParams.projectCycle[0] = new Date(this.addProjectParams.projectCycle[0]).getTime()
-            // this.addProjectParams.projectCycle[1] = new Date(this.addProjectParams.projectCycle[1]).getTime()
             if (projectStartTime.getTime() > new Date().getTime()) { // 还需要设置控件开始时间只能选择大于等于当前时间，且结束时间不能小于开始时间
               this.addProjectParams['status'] = '2' // 未开始
             } else if (projectStartTime.getTime() <= new Date().getTime() && projectEndTime.getTime() > new Date().getTime()) {
@@ -288,10 +286,11 @@ export default {
               this.addProjectParams['status'] = '0' // 已结束
             }
             done()
+            console.log(new Date())
+            this.addProjectParams['update_time'] = new Date().getTime()
             this.addProjectParams['creator'] = 'hemeilong' // 后续需动态获取当前登录的用户名，暂时先写死
             // 去除编辑会自动更新的字段，无需提交
             delete (this.addProjectParams.created_time)
-            delete (this.addProjectParams.update_time)
             let param = JSON.stringify(this.addProjectParams)
             return this.$axios.post('/home/apitest/projectList/editPro', param).then(response => {
               if (response.status === 200) {

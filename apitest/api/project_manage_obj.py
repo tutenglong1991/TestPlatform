@@ -2,7 +2,7 @@
 # -*-coding:utf-8-*-
 
 from apitest.models import *
-import datetime
+import datetime, time
 import json
 
 
@@ -14,7 +14,6 @@ def add_project(**resp):
                     'dept': dict_key['dept'], 'code': dict_key['code'], 'productLine': dict_key['productLine'],
                     'projectStartTime': projectCycle_list[0], 'projectEndTime': projectCycle_list[1],
                     'status': dict_key['status'], 'creator': dict_key['creator']}
-    print(type(pro_add_data))
     pro_add_data_obj = Project(**pro_add_data)
     pro_add_data_obj.save()
     msg = '添加项目成功'
@@ -81,8 +80,14 @@ def edit_pro(**resp):
     for key in resp:
         dict_key = json.loads(key)
     projectCycle_list = dict_key['projectCycle']
-    dict_key['projectStartTime'] =  projectCycle_list[0]
+    dict_key['projectStartTime'] = projectCycle_list[0]
     dict_key['projectEndTime'] = projectCycle_list[1]
+    timestamp = dict_key['update_time']
+    # 转换成localtime
+    time_local = time.localtime(timestamp/1000)  # 注意需要将前端传过来的13位时间戳转成10位的
+    # 转换成新的时间格式(2019-11-30 17:18:54)
+    dt = time.strftime("%Y-%m-%d %H:%M:%S", time_local)
+    dict_key['update_time'] = dt
     dict_key.pop('projectCycle')
     try:
         _t = Project.objects.filter(id=dict_key['id']).values_list()
