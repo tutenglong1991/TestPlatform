@@ -8,22 +8,22 @@
         @open="handleOpen"
         @close="handleClose"
         router>
-        <el-submenu index="/home/apitest">
+        <el-submenu index="/home/apitest/projectManage">
           <template slot="title">
             <i class="el-icon-user-solid"></i>
             <span>项目管理</span>
           </template>
-          <el-menu-item index="/home/apitest/projectList">项目首页</el-menu-item>
+          <el-menu-item index="/home/apitest/projectHomePage">项目首页</el-menu-item>
           <el-menu-item index="/home/apitest/projectMembers">成员管理</el-menu-item>
         </el-submenu>
-        <el-submenu index="2">
+        <el-submenu index="home/apitest/apiManage">
           <template slot="title">
             <i class="el-icon-menu"></i>
             <span>接口管理</span>
           </template>
-          <el-menu-item index="2-1">接口列表</el-menu-item>
-          <el-menu-item index="2-2">接口详情</el-menu-item>
-          <el-menu-item index="2-2">分组管理</el-menu-item>
+          <el-menu-item index="home/apitest/apiList">接口列表</el-menu-item>
+          <el-menu-item index="home/apitest/apiDetail">接口详情</el-menu-item>
+          <el-menu-item index="home/apitest/apiGroup">分组管理</el-menu-item>
         </el-submenu>
         <el-menu-item index="3">
           <i class="el-icon-document"></i>
