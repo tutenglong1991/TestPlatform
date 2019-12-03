@@ -13,7 +13,7 @@
             <i class="el-icon-user-solid"></i>
             <span>项目管理</span>
           </template>
-          <el-menu-item index="/apiAutoTest/projectList">项目首页</el-menu-item>
+          <el-menu-item index="/apiAutoTest/projectList">项目列表</el-menu-item>
           <el-menu-item index="/apiAutoTest/projectMembers">成员管理</el-menu-item>
         </el-submenu>
         <el-submenu index="/apiAutoTest/apiManage">
@@ -23,7 +23,7 @@
           </template>
           <el-menu-item index="/apiAutoTest/apiList">接口列表</el-menu-item>
           <el-menu-item index="/apiAutoTest/apiDetail">接口详情</el-menu-item>
-          <el-menu-item index="/apiAutoTest/apiGroup">分组管理</el-menu-item>
+          <el-menu-item index="/apiAutoTest/apiGroup">接口分组</el-menu-item>
         </el-submenu>
         <el-submenu index="/apiAutoTest/caseManage">
           <template slot="title">

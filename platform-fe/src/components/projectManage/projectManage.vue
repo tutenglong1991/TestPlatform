@@ -2,8 +2,8 @@
   <el-container>
     <el-header style="height:35px">
       <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item>项目管理</el-breadcrumb-item>
-        <el-breadcrumb-item :to="{ path: '/apiAutoTest/projectList' }">项目首页</el-breadcrumb-item>
+        <el-breadcrumb-item>接口自动化</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/apiAutoTest/projectList' }">项目管理</el-breadcrumb-item>
         <el-breadcrumb-item>项目列表</el-breadcrumb-item>
       </el-breadcrumb>
     </el-header>
