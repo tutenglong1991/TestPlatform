@@ -3,7 +3,7 @@
 import Vue from 'vue'
 import App from './App'
 import ElementUI from 'element-ui'
-import 'element-ui/lib/theme-chalk/index.css' // 此项引入必须放在router前面，必然可能出现build打包编译后修改element-ui默认样式无效
+import 'element-ui/lib/theme-chalk/index.css' // 此项引入必须放在router前面，不然可能出现build打包编译后修改element-ui默认样式无效
 import router from './router'
 import axios from 'axios'
 import '../static/css/base.css'
