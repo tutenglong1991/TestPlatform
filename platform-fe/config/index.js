@@ -12,7 +12,7 @@ module.exports = {
     assetsPublicPath: '/',
     // 只能在开发环境中进行跨域，上线了要进行反向代理nginx设置
     proxyTable: {
-      //这里理解成用‘/api’代替target里面的地址，后面组件中我们掉接口时直接用api代替 比如我要调用'http://40.00.100.100:3002/user/add'，直接写‘/api/user/add’即可
+      //这里理解成用‘/apiManage’代替target里面的地址，后面组件中我们掉接口时直接用api代替 比如我要调用'http://40.00.100.100:3002/user/add'，直接写‘/apiManage/user/add’即可
       '/login': {
         target: 'http://127.0.0.1:8000',//你要跨域的网址  比如  'http://news.baidu.com',
         secure: true,  // 如果是https接口，需要配置这个参数

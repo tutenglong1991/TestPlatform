@@ -1,34 +1,30 @@
 <template>
-  <div id="login" style="height:100%; width:100%">
-    <el-container style="height:100%; width:100%">
-      <el-header>
-        <el-menu background-color="#161616" text-color="#ffffff" active-text-color="#ffffff">
-          <el-menu-item class="platform_name">接口测试平台</el-menu-item>
-          <el-menu-item class="login_btn" index='/'>
-            <el-button class="login_sign_in" @click="go_to_login">Sign In</el-button>
-            <el-button class="login_sign_out">Sign Out</el-button>
-          </el-menu-item>
-        </el-menu>
-      </el-header>
-      <el-main>
-        <div v-if="is_sign_in" class="login_message">
-          <div style="margin-top: 55px">
-            <el-input class="login_infos" placeholder="请输入账号" v-model="login_params.account">
-            </el-input>
-          </div>
-          <div style="margin-top: 25px;">
-            <el-input class="login_infos" placeholder="请输入密码" v-model="login_params.password">
-            </el-input>
-          </div>
-          <el-row class="commit_login">
-            <el-button>取消</el-button>
-            <el-button :plain="true" type="primary" @click="login">确定</el-button>
-          </el-row>
+  <el-container style="height:100%; width:100%">
+    <el-header>
+      <el-menu background-color="#161616" text-color="#ffffff" active-text-color="#ffffff">
+        <el-menu-item class="platform_name">接口测试平台</el-menu-item>
+        <el-menu-item class="login_btn" index='/'>
+          <el-button class="login_sign_in" @click="go_to_login">Sign In</el-button>
+        </el-menu-item>
+      </el-menu>
+    </el-header>
+    <el-main>
+      <div v-if="is_need_login" class="login_message">
+        <div style="margin-top: 75px">
+          <el-input class="login_infos" placeholder="请输入账号" v-model="login_params.account">
+          </el-input>
         </div>
-      </el-main>
-      <el-footer>© 2019 - 2020 环球易购-电子产品研发中心. All Rights Reserved.</el-footer>
-    </el-container>
-  </div>
+        <div style="margin-top: 35px;">
+          <el-input class="login_infos" placeholder="请输入密码" v-model="login_params.password">
+          </el-input>
+        </div>
+        <el-row class="commit_login">
+          <el-button  @click="cancel">取消</el-button>
+          <el-button :plain="true" type="primary" autofocus="true" @click="login">确定</el-button>
+        </el-row>
+      </div>
+    </el-main>
+  </el-container>
 </template>
 
 <script>
@@ -41,12 +37,13 @@ export default {
         account: 'hemeilong',
         password: '12345678'
       },
-      is_sign_in: true
+      is_need_login: true,
+      is_login: false
     }
   },
   methods: {
     go_to_login () {
-      this.is_sign_in = true
+      this.is_need_login = true
     },
     login () {
       const self = this
@@ -58,7 +55,10 @@ export default {
             message: response.data.message,
             type: 'success'
           })
-          self.$router.push('/home/apitest')
+          self.$router.push('/apiAutoTest/projectList')
+          self.is_need_login = false
+          self.is_login = true
+          self.$emit('transfer-loginStatus', self.is_login)
         } else {
           this.$message({
             showClose: true,
@@ -71,9 +71,23 @@ export default {
         console.log('get发送Ajax请求,' +
             '请求失败', response)
       })
+    },
+    cancel () {
+      this.is_need_login = false
+    },
+    watchCurrentRouter () {
+      let rt = this.$router.options.routes
+      for (let r in rt) {
+        if (rt[r].path === '/') {
+          this.is_need_login = true
+          this.is_login = false
+          this.$emit('transfer-loginStatus', this.is_login)
+        }
+      }
     }
   },
   mounted () {
+    this.watchCurrentRouter()
   }
 }
 </script>
@@ -145,9 +159,14 @@ export default {
     border-bottom: 1px solid #303133;
     border-radius: 6px;
   }
+  .commit_login.el-row {
+    display: flex;
+    justify-content: center;
+  }
   .login_infos {
     width: 65%;
     border-radius: 4px;
+    margin-left: 80px
   }
   .login_infos>>>.el-input__inner {
     background-color: #fff0;
@@ -159,10 +178,10 @@ export default {
     font-size: 9px;
   }
   .el-button {
-    margin-top: 85px;
+    margin-top: 75px;
     color: #ffffff;
     background-color: #ffffff00;
-    border-color: #ffffff
+    border-color: #ffffff;
   }
   .el-button--primary:focus, .el-button--primary:hover {
     background: #04aa51;
@@ -171,14 +190,8 @@ export default {
   .el-main {
     background: #161616;
   }
-  .el-footer {
-    width: 100%;
-    color: #ffffff;
-    line-height: 60px;
-    font-size: 14px;
-    display: block;
-    text-align: center;
-    margin: auto;
-    border-top: 1px solid  #60626659;
+  .el-main {
+    border-bottom: #b1b1b161 1px solid;
+    border-top: #b1b1b161 1px solid;
   }
 </style>

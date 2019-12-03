@@ -3,7 +3,7 @@
     <el-header style="height:35px">
       <el-breadcrumb separator-class="el-icon-arrow-right">
         <el-breadcrumb-item>项目管理</el-breadcrumb-item>
-        <el-breadcrumb-item :to="{ path: '/home/apitest/projectList' }">项目首页</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/apiAutoTest/projectList' }">项目首页</el-breadcrumb-item>
         <el-breadcrumb-item>项目列表</el-breadcrumb-item>
       </el-breadcrumb>
     </el-header>
@@ -105,7 +105,7 @@
   </el-container>
 </template>
 <script>
-import ConfirmMixin from '../assets/confirm_mixin'
+import ConfirmMixin from '../../assets/confirm_mixin'
 import createProject from './createProject.vue'
 import editProject from './editProject.vue'
 export default {

@@ -1,13 +1,20 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HomePage from '@/components/HomePage'
 import Login from '@/components/Login'
-import apiAutotest from '@/components/apiAutotest'
-import projectManage from '@/components/projectManage'
-import projectMembers from '@/components/projectMembers'
-import apiList from '@/components/apiList'
-import apiGroup from '@/components/apiGroup'
-import apiDetail from '@/components/apiDetail'
+import apiAutoTest from '@/components/apiAutoTest'
+import projectManage from '@/components/projectManage/projectManage'
+import projectMembers from '@/components/projectManage/projectMembers'
+import apiList from '@/components/apiManage/apiList'
+import apiGroup from '@/components/apiManage/apiGroup'
+import apiDetail from '@/components/apiManage/apiDetail'
+import caseList from '@/components/caseManage/caseList'
+import caseDetail from '@/components/caseManage/caseDetail'
+import taskList from '@/components/taskManage/taskList'
+import taskRunLog from '@/components/taskManage/taskRunLog'
+import programList from '@/components/programManage/programList'
+import programDetail from '@/components/programManage/programDetail'
+import reportList from '@/components/reportManage/reportList'
+import reportDetail from '@/components/reportManage/reportDetail'
 
 Vue.use(Router)
 
@@ -19,39 +26,73 @@ export default new Router({
       component: Login
     },
     {
-      path: '/home',
-      name: 'HomePage',
-      component: HomePage,
+      path: '/apiAuto/apiFunc',
+      name: 'apiAutoTest',
+      component: apiAutoTest,
       children: [{
-        path: '/home/apitest',
-        name: 'apiAutotest',
-        component: apiAutotest,
-        children: [{
-          path: '/home/apitest/projectHomePage',
-          name: 'projectManage',
-          component: projectManage
-        },
-        {
-          path: '/home/apitest/projectMembers',
-          name: 'projectMembers',
-          component: projectMembers
-        },
-        {
-          path: 'home/apitest/apiList',
-          name: 'apiList',
-          component: apiList
-        },
-        {
-          path: 'home/apitest/apiDetail',
-          name: 'apiDetail',
-          component: apiDetail
-        },
-        {
-          path: 'home/apitest/apiGroup',
-          name: 'apiGroup',
-          component: apiGroup
-        }
-        ]
+        path: '/apiAutoTest/projectList',
+        name: 'projectManage',
+        component: projectManage
+      },
+      {
+        path: '/apiAutoTest/projectMembers',
+        name: 'projectMembers',
+        component: projectMembers
+      },
+      {
+        path: '/apiAutoTest/apiList',
+        name: 'apiList',
+        component: apiList
+      },
+      {
+        path: '/apiAutoTest/apiGroup',
+        name: 'apiGroup',
+        component: apiGroup
+      },
+      {
+        path: '/apiAutoTest/apiDetail',
+        name: 'apiDetail',
+        component: apiDetail
+      },
+      {
+        path: '/apiAutoTest/caseList',
+        name: 'caseList',
+        component: caseList
+      },
+      {
+        path: '/apiAutoTest/caseDetail',
+        name: 'caseDetail',
+        component: caseDetail
+      },
+      {
+        path: '/apiAutoTest/taskList',
+        name: 'taskList',
+        component: taskList
+      },
+      {
+        path: '/apiAutoTest/taskRunLog',
+        name: 'taskRunLog',
+        component: taskRunLog
+      },
+      {
+        path: '/apiAutoTest/programDetail',
+        name: 'programDetail',
+        component: programDetail
+      },
+      {
+        path: '/apiAutoTest/programList',
+        name: 'programList',
+        component: programList
+      },
+      {
+        path: '/apiAutoTest/reportList',
+        name: 'reportList',
+        component: reportList
+      },
+      {
+        path: '/apiAutoTest/reportDetail',
+        name: 'reportDetail',
+        component: reportDetail
       }]
     }
   ]
