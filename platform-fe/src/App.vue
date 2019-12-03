@@ -78,7 +78,7 @@ body {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   font-weight: bolder;
 }
-.login_btn{
+.el-menu-demo>>>.login_btn{
   float: right;
 }
 .login_btn>>>.el-button {
