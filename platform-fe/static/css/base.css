@@ -6,7 +6,6 @@
 body, html, #app
 
 {
-  font-family: "yahei";
   height: 100%;
   width: 100%;
   box-sizing: border-box;
@@ -41,7 +40,6 @@ ul {
 input {
   padding-top: 0;
   padding-bottom: 0;
-  font-family: "SimSun", "宋体";
 }
 
 /*去掉行内替换元素空白缝隙*/

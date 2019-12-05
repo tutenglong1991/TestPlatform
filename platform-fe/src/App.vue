@@ -36,8 +36,11 @@ export default {
   },
   methods: {
     is_login_callback (status) {
-      console.log(status)
-      this.login_status = status
+      if (typeof (status) === 'undefined') { // 避免登录成功后刷新页面不展示头部，后面再通过一个全局变量记录登录状态
+        this.login_status = true
+      } else {
+        this.login_status = status
+      }
     },
     sign_out () {
       this.login_status = false

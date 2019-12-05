@@ -8,20 +8,31 @@
       </el-breadcrumb>
     </el-header>
     <el-main>
-      <div class="searchProject">
-        <el-form ref="searchForm" :model="finalSearchParams" :rules="rules" label-width="85px" style="display:flex; justify-content: left;">
-          <el-form-item prop="selectedParamsValue" class="choose_params">
-            <el-input placeholder="请输入内容" v-model="finalSearchParams.selectedParamsValue" clearable  class="input-with-select">
-              <el-select v-model="defaultSelectedParamsLabel" slot="prepend" placeholder="请选择">
-                <el-option v-for="item in searchParams.paramsSelection" :key="item.value" :label="item.label" :value="item.value"></el-option>
-              </el-select>
-            </el-input>
+      <div class="searchApi">
+        <el-form ref="searchForm" :model="finalSearchParams" :rules="rules" label-width="75px" style="display:flex; justify-content: left;">
+          <el-form-item class="ownPro" label="所属项目" prop="projects">
+            <el-cascader
+              placeholder="请选择或输入接口所属项目"
+              :options="searchParams.projects"
+              filterable>
+            </el-cascader>
           </el-form-item>
-          <el-form-item label="创建者" prop="creator" style="margin-left:30px">
-            <el-input class="select_projectCreate" v-model="finalSearchParams.creator" clearable></el-input>
+          <el-form-item label="所属分组" prop="apiGroup" style="margin-left:30px">
+            <el-cascader
+              placeholder="请选择或输入接口所属分组"
+              :options="searchParams.projects"
+              filterable>
+            </el-cascader>
           </el-form-item>
-          <el-form-item label="项目状态" prop="status" style="margin-left:30px">
-            <el-select class="select_projectStatus" v-model="defaultSelectedStatus" clearable placeholder="请选择">
+          <el-form-item label="名称/地址" prop="apiName" style="margin-left:30px">
+            <el-cascader
+              placeholder="请选择或输入接口所属项目"
+              :options="searchParams.projects"
+              filterable>
+            </el-cascader>
+          </el-form-item>
+          <el-form-item label="执行状态" prop="runStatus" style="margin-left:30px">
+            <el-select class="runStatus" @change="getQueryStatus" v-model="defaultSelectedStatus" clearable placeholder="请选择">
               <el-option
                 v-for="status in searchParams.statusSelection"
                 :key="status.value"
@@ -32,64 +43,69 @@
           </el-form-item>
           <el-form-item>
             <el-button class="searchBtn" type="primary">搜索</el-button>
-            <el-button class="addProjectBtn" size="mini">新增</el-button>
+            <el-button class="addApiBtn" size="mini">添加</el-button>
+            <el-button class="addApiBtn" size="mini" @click="toggleSelection(multipleSelection)">执行</el-button>
           </el-form-item>
         </el-form>
       </div>
-      <div class="projectTableList">
+      <div class="apiTableList">
         <el-table
-          :data="tableData"
+          ref="multipleTable"
+          tooltip-effect="dark"
+          @selection-change="handleSelectionChange"
+          :data="apiTableData"
           style="width: 100%">
-          <el-table-column label="名称" width="160">
-            <template slot-scope="scope">
-              <span>{{ scope.row.projectName }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="类型" width="160">
-            <template slot-scope="scope">
-              <span>{{ scope.row.projectType }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="项目编号" width="160">
-            <template slot-scope="scope">
-              <span>{{ scope.row.code }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="所属部门" width="160">
-            <template slot-scope="scope">
-              <span>{{ scope.row.dept }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="IT部产品线" width="160">
-            <template slot-scope="scope">
-              <span>{{ scope.row.productLine }}</span>
-            </template>
-          </el-table-column>
           <el-table-column
-            label="项目周期"
-            width="160">
+            type="selection"
+            width="55">
+          </el-table-column>
+          <el-table-column label="所属项目" width="160">
             <template slot-scope="scope">
-              <span style="margin-left: 10px">{{ scope.row.projectCycle }}</span>
+              <span>{{ scope.row.ownPro }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="状态" width="160">
+          <el-table-column label="所属分组" width="130">
             <template slot-scope="scope">
-              <span>{{ scope.row.status }}</span>
+              <span>{{ scope.row.ownGroup }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="创建人" width="160">
+          <el-table-column label="名称" width="140">
             <template slot-scope="scope">
-              <span>{{ scope.row.creator }}</span>
+              <span>{{ scope.row.apiName }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="更新时间" width="160">
+          <el-table-column label="域名/IP" width="180">
             <template slot-scope="scope">
-              <span>{{ scope.row.update_time }}</span>
+              <span>{{ scope.row.DemoOrIP }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="地址" width="200">
+            <template slot-scope="scope">
+              <span>{{ scope.row.apiPath }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="网络协议" width="100">
+            <template slot-scope="scope">
+              <span>{{ scope.row.netProtocol }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="请求方式" width="100">
+            <template slot-scope="scope">
+              <span>{{ scope.row.reqMethod }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="执行状态" width="100">
+            <template slot-scope="scope">
+              <span>{{ scope.row.runState }}</span>
             </template>
           </el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <el-button size="mini" >编辑
+              <el-button size="mini">执行日志
+              </el-button>
+              <el-button size="mini" >详情
+              </el-button>
+              <el-button size="mini" >关联用例
               </el-button>
               <el-button size="mini">删除
               </el-button>
@@ -107,7 +123,6 @@
 // import editProject from './editProject.vue'
 export default {
   name: 'apiList',
-  // mixins: [ConfirmMixin],
   data () {
     return {
       searchParams: { // 搜索前端展示参数
@@ -127,15 +142,14 @@ export default {
           value: 'code',
           label: '项目编号'
         }],
-        statusSelection: [
-          {
-            value: '1',
-            label: '进行中'
-          },
-          {
-            value: '0',
-            label: '结束'
-          }]
+        projects: [{
+          value: '1',
+          label: '进行中'
+        },
+        {
+          value: '0',
+          label: '结束'
+        }]
       },
       defaultSelectedParamsLabel: '项目名称',
       defaultSelectedStatus: '进行中',
@@ -151,214 +165,100 @@ export default {
         creator: [{require: false, trigger: 'blur'}],
         status: [{require: false, trigger: 'blur'}]
       },
-      tableData: [],
-      addProjectParams: {},
-      editProjectParams: {}
+      apiTableData: [{
+        'ownPro': '选推服务',
+        'ownGroup': '选品服务',
+        'apiName': '获取汇率',
+        'DemoOrIP': 'www.trader-gb.com',
+        'apiPath': 'cockpit/public/site-currency-list',
+        'netProtocol': 'http',
+        'reqMethod': 'get',
+        'runState': '成功'
+      },
+      {
+        'ownPro': '选推服务',
+        'ownGroup': '选品服务',
+        'apiName': '获取ips数据',
+        'DemoOrIP': 'www.trader-gb.com',
+        'apiPath': 'cockpit/public/main-data',
+        'netProtocol': 'http',
+        'reqMethod': 'get',
+        'runState': '失败'
+      }],
+      multipleSelection: []
+    }
+  },
+  methods: {
+    toggleSelection (rows) {
+      if (rows) {
+        rows.forEach(row => {
+          console.log(row)
+          this.$refs.multipleTable.toggleRowSelection(row)
+        })
+      } else {
+        this.$refs.multipleTable.clearSelection()
+      }
+    },
+    handleSelectionChange (val) {
+      console.log(val)
+      this.multipleSelection = val
     }
   }
-  // methods: {
-  //   onCreateProject () { // 创建项目方法
-  //     this.confirmBox({
-  //       title: '创建项目',
-  //       customClass: 'createProject_confirmBox',
-  //       closeOnClickModal: false, // 是否可通过点击遮罩关闭 MessageBox
-  //       showCancelButton: true,
-  //       showConfirmButton: true,
-  //       confirmButtonText: '确定',
-  //       component: createProject,
-  //       componentName: 'createProject',
-  //       confirmValidate: (action, formParms, done) => {
-  //         if (action === 'cancel') {
-  //           formParms.clearValidate() // 清空输入项
-  //           return done() // done用于关闭 MessageBox 实例
-  //         }
-  //         formParms.validate(valid => {
-  //           if (!valid) return
-  //           this.addProjectParams = {...formParms.addRuleForm}
-  //           let projectStartTime = new Date(this.addProjectParams.projectCycle[0])
-  //           let projectEndTime = new Date(this.addProjectParams.projectCycle[1])
-  //           if (projectStartTime.getTime() >= new Date().getTime()) { // 还需要设置控件开始时间只能选择大于等于当前时间
-  //             this.addProjectParams['status'] = '1' // 进行中
-  //           } else {
-  //             this.addProjectParams['status'] = '2' // 未开始
-  //           }
-  //           if (projectEndTime.getTime() < new Date().getTime()) {
-  //             this.addProjectParams['status'] = '0' // 已结束
-  //           } else {
-  //             this.addProjectParams['status'] = '1' // 进行中
-  //           }
-  //           formParms.clearValidate() // 清空输入项
-  //           done()
-  //           this.addProjectParams['creator'] = 'hemeilong' // 后续需动态获取当前登录的用户名，暂时先写死
-  //           let param = JSON.stringify(this.addProjectParams)
-  //           return this.$axios.post('/home/apitest/projectList/addPro', param).then(response => {
-  //             if (response.status === 200) {
-  //               console.log('发送Ajax请求,请求成功', response.data)
-  //               this.$message({
-  //                 message: '项目创建成功',
-  //                 type: 'success',
-  //                 color: 'green'
-  //               })
-  //               this.queryProject('searchForm')
-  //             } else {
-  //               this.$message({
-  //                 showClose: true,
-  //                 message: '项目创建失败',
-  //                 type: 'error'
-  //               })
-  //             }
-  //           }).catch(response => {
-  //             console.log('发送Ajax请求,' +
-  //             '请求失败', response)
-  //           })
-  //         })
-  //       }
-  //     }).catch(() => { })
-  //   },
-  //   getChangedParam (selectedTtem) { // 在查询条件选择组件变更后更新查询条件的key和value，value为当前输入框输入的值
-  //     this.finalSearchParams['selectedParamsKey'] = selectedTtem
-  //     this.finalSearchParams.selectedParamsValue = '' // 切换后清空搜索条件
-  //   },
-  //   onSelectInputChange (inputValue) { // 在输入框变更时，更新查询条件组件当前选择条件对应的value
-  //     this.finalSearchParams['selectedParamsValue'] = inputValue
-  //   },
-  //   getQueryStatus (status) {
-  //     if (typeof (status) === 'undefined') {
-  //       this.finalSearchParams['status'] = '' // 若未选择任一种项目状态则后台默认查询全部
-  //     } else {
-  //       this.finalSearchParams['status'] = status
-  //     }
-  //   },
-  //   queryProject (formName) {
-  //     this.$refs[formName].validate(valid => {
-  //       if (valid) {
-  //         this.$axios
-  //           .get('/home/apitest/projectList/find', { params: this.finalSearchParams })
-  //           .then(response => {
-  //             let responseJsonData = response.data
-  //             this.tableData = responseJsonData['data']['data']
-  //           })
-  //           .catch(error => {
-  //             console.log('系统错误' + error)
-  //           })
-  //       } else {
-  //         console.log('error submit!!')
-  //         return false
-  //       }
-  //     })
-  //   },
-  //   projectEdit (index, row) {
-  //     let tempRow = {}
-  //     for (const i in row) {
-  //       if (i === 'projectCycle') {
-  //         tempRow[i] = [row[i].slice(0, 19), row[i].slice(20)] // 转换字符串为日期格式，便于显示原始数据
-  //       } else {
-  //         tempRow[i] = row[i]
-  //       }
-  //     }
-  //     this.confirmBox({
-  //       title: '编辑项目',
-  //       customClass: 'editProject_confirmBox',
-  //       closeOnClickModal: false, // 是否可通过点击遮罩关闭 MessageBox
-  //       showCancelButton: true,
-  //       showConfirmButton: true,
-  //       confirmButtonText: '确定',
-  //       component: editProject,
-  //       componentName: 'editProject',
-  //       confirmData: tempRow,
-  //       confirmValidate: (action, instance, done) => {
-  //         if (action === 'cancel') {
-  //           return done() // done用于关闭 MessageBox 实例
-  //         }
-  //         instance.validate(valid => {
-  //           if (!valid) return
-  //           this.addProjectParams = {...instance.editRuleForm}
-  //           let projectStartTime = new Date(this.addProjectParams.projectCycle[0])
-  //           let projectEndTime = new Date(this.addProjectParams.projectCycle[1])
-  //           if (projectStartTime.getTime() > new Date().getTime()) { // 还需要设置控件开始时间只能选择大于等于当前时间，且结束时间不能小于开始时间
-  //             this.addProjectParams['status'] = '2' // 未开始
-  //           } else if (projectStartTime.getTime() <= new Date().getTime() && projectEndTime.getTime() > new Date().getTime()) {
-  //             this.addProjectParams['status'] = '1' // 进行中
-  //           }
-  //           if (projectEndTime.getTime() < new Date().getTime()) {
-  //             this.addProjectParams['status'] = '0' // 已结束
-  //           }
-  //           done()
-  //           console.log(new Date())
-  //           this.addProjectParams['update_time'] = new Date().getTime()
-  //           this.addProjectParams['creator'] = 'hemeilong' // 后续需动态获取当前登录的用户名，暂时先写死
-  //           // 去除编辑会自动更新的字段，无需提交
-  //           delete (this.addProjectParams.created_time)
-  //           let param = JSON.stringify(this.addProjectParams)
-  //           return this.$axios.post('/home/apitest/projectList/editPro', param).then(response => {
-  //             if (response.status === 200) {
-  //               console.log('发送Ajax请求,请求成功', response.data)
-  //               this.$message({
-  //                 message: '项目编辑更新成功',
-  //                 type: 'success'
-  //               })
-  //               this.queryProject('searchForm')
-  //             } else {
-  //               this.$message({
-  //                 showClose: true,
-  //                 message: '项目编辑更新失败',
-  //                 type: 'error',
-  //                 color: 'green'
-  //               })
-  //             }
-  //           }).catch(response => {
-  //             console.log('发送Ajax请求,' +
-  //               '请求失败', response)
-  //           })
-  //         })
-  //       }
-  //     }).catch(() => { })
-  //   },
-  //   projectDelete (row) {
-  //     this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-  //       confirmButtonText: '确定',
-  //       cancelButtonText: '取消',
-  //       type: 'warning'
-  //     }).then(() => {
-  //       let param = JSON.stringify({'id': row.id})
-  //       return this.$axios.post('/home/apitest/projectList/delPro', param).then(response => {
-  //         if (response.status === 200) {
-  //           console.log('发送Ajax请求,请求成功', response.data)
-  //           this.$message({
-  //             message: '删除项目成功！',
-  //             type: 'success'
-  //           })
-  //           this.queryProject('searchForm')
-  //         } else {
-  //           this.$message({
-  //             showClose: true,
-  //             message: '删除项目失败',
-  //             type: 'error',
-  //             color: 'green'
-  //           })
-  //         }
-  //       }).catch(response => {
-  //         console.log('发送Ajax请求,' +
-  //           '请求失败', response)
-  //       })
-  //     }).catch(() => {
-  //       this.$message({
-  //         type: 'info',
-  //         message: '已取消删除'
-  //       })
-  //     })
-  //   }
-  // },
-  // mounted () {
-  //   this.getChangedParam('projectName')
-  //   this.getQueryStatus('1')
-  //   this.queryProject('searchForm')
-  // }
 }
 </script>
 
 <style scoped>
   .el-breadcrumb>>>.el-breadcrumb__inner.is-link:hover {
-    color: #04aa51;;
+    color: #04aa51;
+  }
+  .el-form-item.ownPro>>>.el-form-item__label {  /* 首个搜索项对齐*/
+    text-align: left !important;
+  }
+  .el-cascader .el-input .el-input__inner {
+    font-size: 14px;
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  }
+  .el-cascader .el-input .el-input__inner:focus {
+    border-color: #04aa51;
+  }
+  .el-cascader .el-input .el-input__inner:hover {
+    border-color: #04aa51;
+  }
+  .el-select.runStatus>>>.el-input__inner {
+    color: #606266;
+    font-size: 14px;
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    width: 100px;
+  }
+  .el-select.runStatus>>>.el-input__inner:focus {
+    border-color: #04aa51;
+  }
+  .el-select.runStatus>>>.el-input__inner:hover {
+    border-color: #04aa51;
+  }
+  .searchBtn {
+    margin-left: 100px;
+  }
+  .searchApi>.el-button:focus, .el-button:hover {
+    color: #ffffff;
+    border-color: #04aa51;
+    background-color: #04aa51;
+  }
+  .el-button--primary {
+    color: #FFF;
+    background-color: #04aa51;
+    border-color: #04aa51;
+  }
+  .apiTableList {
+    margin-top: 30px;
+  }
+  .apiTableList>>>.el-table th {
+    background-color: #f4f5f975;
+  }
+  .apiTableList>>>.el-table tr {
+    background-color: #f4f5f975;
+  }
+  .searchApi>>>.el-button.addApiBtn.el-button--default.el-button--mini {
+    padding: 14px 22px;
   }
 </style>

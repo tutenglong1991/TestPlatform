@@ -7,6 +7,7 @@ import projectMembers from '@/components/projectManage/projectMembers'
 import apiList from '@/components/apiManage/apiList'
 import apiGroup from '@/components/apiManage/apiGroup'
 import apiDetail from '@/components/apiManage/apiDetail'
+import apiRunLog from '@/components/apiManage/apiRunLog'
 import caseList from '@/components/caseManage/caseList'
 import caseDetail from '@/components/caseManage/caseDetail'
 import taskList from '@/components/taskManage/taskList'
@@ -53,6 +54,11 @@ export default new Router({
         path: '/apiAutoTest/apiDetail',
         name: 'apiDetail',
         component: apiDetail
+      },
+      {
+        path: '/apiAutoTest/apiRunLog',
+        name: 'apiRunLog',
+        component: apiRunLog
       },
       {
         path: '/apiAutoTest/caseList',

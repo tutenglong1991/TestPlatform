@@ -9,7 +9,7 @@
     </el-header>
     <el-main>
       <div class="searchProject">
-        <el-form ref="searchForm" :model="finalSearchParams" :rules="rules" label-width="85px" style="display:flex; justify-content: left;">
+        <el-form ref="searchForm" :model="finalSearchParams" :rules="rules" label-width="75px" style="display:flex; justify-content: left;">
           <el-form-item prop="selectedParamsValue" class="choose_params">
             <el-input placeholder="请输入内容" @change="onSelectInputChange" v-model="finalSearchParams.selectedParamsValue" clearable  class="input-with-select">
               <el-select @change="getChangedParam" v-model="defaultSelectedParamsLabel" slot="prepend" placeholder="请选择">
@@ -18,7 +18,7 @@
             </el-input>
           </el-form-item>
           <el-form-item label="创建者" prop="creator" style="margin-left:30px">
-            <el-input class="select_projectCreate" v-model="finalSearchParams.creator" clearable></el-input>
+            <el-input class="select_projectCreate" v-model="finalSearchParams.creator" placeholder="请输入项目创建人" clearable></el-input>
           </el-form-item>
           <el-form-item label="项目状态" prop="status" style="margin-left:30px">
             <el-select class="select_projectStatus" @change="getQueryStatus" v-model="defaultSelectedStatus" clearable placeholder="请选择">
@@ -374,8 +374,8 @@ export default {
     padding-bottom: 40px;
     border-bottom: 1px solid #bbbcbf59;
   }
-  form.el-form.el-form-item.choose_params>>>.el-form-item__content {
-    background: #04aa51;
+  .el-form-item.choose_params.is-success>>>.el-form-item__content {
+    margin-left: 0px !important;
   }
   .input-with-select>>>.el-input-group__prepend {
     background-color: #fff;
