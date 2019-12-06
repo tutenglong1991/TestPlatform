@@ -5,6 +5,7 @@ import apiAutoTest from '@/components/apiAutoTest'
 import projectManage from '@/components/projectManage/projectManage'
 import projectMembers from '@/components/projectManage/projectMembers'
 import apiList from '@/components/apiManage/apiList'
+import apiAddPage from '@/components/apiManage/apiAddPage'
 import apiGroup from '@/components/apiManage/apiGroup'
 import apiDetail from '@/components/apiManage/apiDetail'
 import apiRunLog from '@/components/apiManage/apiRunLog'
@@ -44,6 +45,11 @@ export default new Router({
         path: '/apiAutoTest/apiList',
         name: 'apiList',
         component: apiList
+      },
+      {
+        path: '/apiAutoTest/apiAddPage',
+        name: 'apiAddPage',
+        component: apiAddPage
       },
       {
         path: '/apiAutoTest/apiGroup',
@@ -100,6 +106,5 @@ export default new Router({
         name: 'reportDetail',
         component: reportDetail
       }]
-    }
-  ]
+    }]
 })

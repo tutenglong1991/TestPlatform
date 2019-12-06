@@ -9,18 +9,18 @@
     </el-header>
     <el-main>
       <div class="searchApi">
-        <el-form ref="searchForm" :model="finalSearchParams" :rules="rules" label-width="75px" style="display:flex; justify-content: left;">
-          <el-form-item class="ownPro" label="所属项目" prop="projects">
+        <el-form ref="searchForm" :model="searchParams" :rules="rules" label-width="75px" style="display:flex; justify-content: left;">
+          <el-form-item class="ownPro" label="所属项目" prop="ownPro">
             <el-cascader
               placeholder="请选择或输入接口所属项目"
-              :options="searchParams.projects"
+              :options="searchParams.ownPro"
               filterable>
             </el-cascader>
           </el-form-item>
           <el-form-item label="所属分组" prop="apiGroup" style="margin-left:30px">
             <el-cascader
               placeholder="请选择或输入接口所属分组"
-              :options="searchParams.projects"
+              :options="searchParams.apiGroup"
               filterable>
             </el-cascader>
           </el-form-item>
@@ -32,9 +32,9 @@
             </el-cascader>
           </el-form-item>
           <el-form-item label="执行状态" prop="runStatus" style="margin-left:30px">
-            <el-select class="runStatus" @change="getQueryStatus" v-model="defaultSelectedStatus" clearable placeholder="请选择">
+            <el-select class="runStatus" v-model="searchParams.runStatus" clearable placeholder="请选择">
               <el-option
-                v-for="status in searchParams.statusSelection"
+                v-for="status in searchParams.runStatus"
                 :key="status.value"
                 :label="status.label"
                 :value="status.value">
@@ -43,7 +43,7 @@
           </el-form-item>
           <el-form-item>
             <el-button class="searchBtn" type="primary">搜索</el-button>
-            <el-button class="addApiBtn" size="mini">添加</el-button>
+            <el-button class="addApiBtn" size="mini" @click="goToAddPage">添加</el-button>
             <el-button class="addApiBtn" size="mini" @click="toggleSelection(multipleSelection)">执行</el-button>
           </el-form-item>
         </el-form>
@@ -118,46 +118,15 @@
 </template>
 
 <script>
-// import ConfirmMixin from '../../../assets/confirm_mixin'
-// import createProject from './createProject.vue'
-// import editProject from './editProject.vue'
 export default {
   name: 'apiList',
   data () {
     return {
-      searchParams: { // 搜索前端展示参数
-        paramsSelection: [{
-          value: 'projectName',
-          label: '项目名称'
-        },
-        {
-          value: 'projectType',
-          label: '类型'
-        },
-        {
-          value: 'productLine',
-          label: 'IT部产品线'
-        },
-        {
-          value: 'code',
-          label: '项目编号'
-        }],
-        projects: [{
-          value: '1',
-          label: '进行中'
-        },
-        {
-          value: '0',
-          label: '结束'
-        }]
-      },
-      defaultSelectedParamsLabel: '项目名称',
-      defaultSelectedStatus: '进行中',
-      finalSearchParams: {
-        selectedParamsKey: '',
-        selectedParamsValue: '',
-        creator: '',
-        status: ''
+      searchParams: {
+        ownPro: [],
+        apiGroup: [],
+        apiName: [],
+        runStatus: []
       },
       rules: {
         selectedParamsKey: [{require: true, message: '请选择任一种搜索方式', trigger: 'blur'}],
@@ -189,6 +158,12 @@ export default {
     }
   },
   methods: {
+    getSearchParams () {
+
+    },
+    goToAddPage () {
+      this.$router.push('/apiAutoTest/apiAddPage')
+    },
     toggleSelection (rows) {
       if (rows) {
         rows.forEach(row => {

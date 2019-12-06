@@ -3,7 +3,7 @@
     <el-header>
       <el-menu background-color="#161616" text-color="#ffffff" active-text-color="#ffffff">
         <el-menu-item class="platform_name">接口测试平台</el-menu-item>
-        <el-menu-item class="login_btn" index='/'>
+        <el-menu-item class="login_btn">
           <el-button class="login_sign_in" @click="go_to_login">Sign In</el-button>
         </el-menu-item>
       </el-menu>
@@ -20,7 +20,7 @@
         </div>
         <el-row class="commit_login">
           <el-button  @click="cancel">取消</el-button>
-          <el-button :plain="true" type="primary" autofocus="true" @click="login">确定</el-button>
+          <el-button :plain="true" type="primary" :autofocus="true" @click="login">确定</el-button>
         </el-row>
       </div>
     </el-main>
@@ -37,13 +37,15 @@ export default {
         account: 'hemeilong',
         password: '12345678'
       },
-      is_need_login: true,
-      is_login: false
+      is_need_login: true
     }
   },
   methods: {
     go_to_login () {
       this.is_need_login = true
+    },
+    cancel () {
+      this.is_need_login = false
     },
     login () {
       const self = this
@@ -56,9 +58,6 @@ export default {
             type: 'success'
           })
           self.$router.push('/apiAutoTest/projectList')
-          self.is_need_login = false
-          self.is_login = true
-          self.$emit('transfer-loginStatus', self.is_login)
         } else {
           this.$message({
             showClose: true,
@@ -71,23 +70,9 @@ export default {
         console.log('get发送Ajax请求,' +
             '请求失败', response)
       })
-    },
-    cancel () {
-      this.is_need_login = false
-    },
-    watchCurrentRouter () {
-      let rt = this.$router.options.routes
-      for (let r in rt) {
-        if (rt[r].path === '/') {
-          this.is_need_login = true
-          this.is_login = false
-          this.$emit('transfer-loginStatus', this.is_login)
-        }
-      }
     }
   },
   mounted () {
-    this.watchCurrentRouter()
   }
 }
 </script>
@@ -133,10 +118,6 @@ export default {
   }
   .login_sign_in.el-button:hover {
     background: #0faa22;
-  }
-  .login_sign_out.el-button:hover {
-    color: #04aa51;
-    background: #161616;
   }
   /*图片居中处理*/
   /*#login {*/
