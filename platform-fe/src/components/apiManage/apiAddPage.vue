@@ -8,37 +8,31 @@
       </el-breadcrumb>
     </el-header>
     <el-main>
-      <div class="createProject-form">
-        <el-form :model="addRuleForm" status-icon :rules="rules" ref="add_fm" label-width="100px" size="small">
-          <el-form-item label="项目名称" prop="projectName">
-            <el-input v-model="addRuleForm.projectName" autocomplete="off" placeholder="请输入项目名称"></el-input>
-          </el-form-item>
-          <el-form-item label="项目类型" prop="projectType">
-            <el-input v-model="addRuleForm.projectType" autocomplete="off" placeholder="请选择项目类型"></el-input>
-          </el-form-item>
-          <el-form-item label="项目编号" prop="code">
-            <el-input v-model.number="addRuleForm.code" placeholder="请输入项目编号"></el-input>
-          </el-form-item>
-          <el-form-item label="所属部门" prop="dept">
-            <el-input v-model="addRuleForm.dept" placeholder="请输入部门"></el-input>
-          </el-form-item>
-          <el-form-item label="IT部产品线" prop="productLine">
-            <el-input v-model="addRuleForm.productLine" placeholder="请输入IT部产品线"></el-input>
-          </el-form-item>
-          <el-form-item label="项目周期" prop="projectCycle">
-            <div class="block">
-              <el-date-picker
-                v-model="addRuleForm.projectCycle"
-                type="datetimerange"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                value-format='yyyy-MM-dd HH:mm:ss'>
-              </el-date-picker>
-            </div>
-          </el-form-item>
-        </el-form>
-      </div>
+      <el-form :model="dynamicValidateForm" ref="dynamicValidateForm" label-width="100px" class="demo-dynamic">
+        <el-form-item
+          prop="email"
+          :rules="[
+            { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+            { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+          ]">
+          <el-input v-model="dynamicValidateForm.email"></el-input>
+        </el-form-item>
+        <el-form-item
+          v-for="(domain, index) in dynamicValidateForm.domains"
+          :label="'域名' + index"
+          :key="domain.key"
+          :prop="'domains.' + index + '.value'"
+          :rules="{
+            required: true, message: '域名不能为空', trigger: 'blur'
+          }">
+          <el-input v-model="domain.value"></el-input><el-button @click.prevent="removeDomain(domain)">删除</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="submitForm('dynamicValidateForm')">提交</el-button>
+          <el-button @click="addDomain">新增域名</el-button>
+          <el-button @click="resetForm('dynamicValidateForm')">重置</el-button>
+        </el-form-item>
+      </el-form>
     </el-main>
   </el-container>
 </template>
@@ -46,70 +40,40 @@
 export default {
   name: 'apiAddPage',
   data () {
-    var checkAge = (rule, value, callback) => {
-      if (!value) {
-        return callback(new Error('年龄不能为空'))
-      }
-      setTimeout(() => {
-        if (!Number.isInteger(value)) {
-          callback(new Error('请输入数字值'))
-        } else {
-          if (value < 18) {
-            callback(new Error('必须年满18岁'))
-          } else {
-            callback()
-          }
-        }
-      }, 1000)
-    }
-    var validatePass = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请输入密码'))
-      } else {
-        if (this.addRuleForm.checkPass !== '') {
-          this.$refs.add_fm.validateField('checkPass')
-        }
-        callback()
-      }
-    }
-    var validatePass2 = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请再次输入密码'))
-      } else if (value !== this.addRuleForm.pass) {
-        callback(new Error('两次输入密码不一致!'))
-      } else {
-        callback()
-      }
-    }
     return {
-      addRuleForm: {
-        projectName: '',
-        projectType: '',
-        code: '',
-        dept: '',
-        productLine: '',
-        projectCycle: ''
-      },
-      rules: {
-        pass: [
-          { validator: validatePass, trigger: 'blur' }
-        ],
-        checkPass: [
-          { validator: validatePass2, trigger: 'blur' }
-        ],
-        age: [
-          { validator: checkAge, trigger: 'blur' }
-        ]
+      dynamicValidateForm: {
+        domains: [{
+          value: ''
+        }],
+        email: ''
       }
     }
   },
   methods: {
-    validate (cb) {
-      return this.$refs.add_fm.validate(cb)
+    submitForm (formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          alert('submit!')
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
     },
-    clearValidate () {
-      this.$refs.add_fm.resetFields()
-      this.$refs.add_fm.clearValidate()
+    resetForm (formName) {
+      this.$refs[formName].resetFields()
+    },
+    removeDomain (item) {
+      var index = this.dynamicValidateForm.domains.indexOf(item)
+      if (index !== -1) {
+        this.dynamicValidateForm.domains.splice(index, 1)
+      }
+    },
+    addDomain () {
+      this.dynamicValidateForm.domains.push({
+        value: '',
+        key: Date.now()
+      })
     }
   }
 }
@@ -117,12 +81,5 @@ export default {
 <style socped>
   .el-breadcrumb>>>.el-breadcrumb__inner.is-link:hover {
     color: #04aa51;
-  }
-  .el-message-box.createProject_confirmBox {
-    width: 550px;
-  }
-  .createProject-form {
-    width: 350px;
-    margin-left: 20px;
   }
 </style>
