@@ -9,6 +9,51 @@
     </el-header>
     <el-main>
       <el-form :model="dynamicValidateForm" ref="dynamicValidateForm" label-width="100px" class="demo-dynamic">
+        <el-form-item label="接口名称" prop="apiName">
+          <el-input autocomplete="off" placeholder="请输入接口名称"></el-input>
+        </el-form-item>
+        <el-form-item label="接口地址" prop="apiPath">
+          <el-input autocomplete="off" placeholder="请输入接口地址"></el-input>
+        </el-form-item>
+        <el-form-item label="域名/ip" prop="apiDomain">
+          <el-input autocomplete="off" placeholder="请选择域名/ip"></el-input>
+        </el-form-item>
+        <el-form-item label="网络协议" prop="netProtocol">
+          <el-input autocomplete="off" placeholder="请选择网络协议"></el-input>
+        </el-form-item>
+        <el-form-item label="请求方式" prop="reqMethods">
+          <el-input autocomplete="off" placeholder="请选择请求方式"></el-input>
+        </el-form-item>
+        <el-form-item label="所属分组" prop="ownGroup">
+          <el-input autocomplete="off" placeholder="请选择接口分组"></el-input>
+        </el-form-item>
+        <el-form-item label="所属项目" prop="ownPro">
+          <el-input autocomplete="off" placeholder="请选择所属项目"></el-input>
+        </el-form-item>
+        <el-row :gutter="20">
+          <el-col :span="4"><span>参数名</span></el-col>
+          <el-col :span="4"><span>参数值</span></el-col>
+          <el-col :span="4"><span>是否必选</span></el-col>
+          <el-col :span="4"><span>参数类型</span></el-col>
+          <el-col :span="4"><span>备注</span></el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="4">
+            <el-input placeholder="请输入参数名" size="small" clearable></el-input>
+          </el-col>
+          <el-col :span="4">
+            <el-input placeholder="请输入参数值" size="small" clearable></el-input>
+          </el-col>
+          <el-col :span="4">
+            <el-input placeholder="请输入参数值" size="small" clearable></el-input>
+          </el-col>
+          <el-col :span="4">
+            <el-input placeholder="请输入参数值" size="small" clearable></el-input>
+          </el-col>
+          <el-col :span="4">
+            <el-input placeholder="请输入参数值" size="small" clearable></el-input>
+          </el-col>
+        </el-row>
         <el-form-item
           prop="email"
           :rules="[
@@ -28,8 +73,8 @@
           <el-input v-model="domain.value"></el-input><el-button @click.prevent="removeDomain(domain)">删除</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submitForm('dynamicValidateForm')">提交</el-button>
-          <el-button @click="addDomain">新增域名</el-button>
+          <el-button type="primary" @click="submitForm('dynamicValidateForm')">保存</el-button>
+          <el-button @click="addDomain">新增参数</el-button>
           <el-button @click="resetForm('dynamicValidateForm')">重置</el-button>
         </el-form-item>
       </el-form>
@@ -43,7 +88,9 @@ export default {
     return {
       dynamicValidateForm: {
         domains: [{
-          value: ''
+          value: '',
+          paramType: '',
+          paramRemark: ''
         }],
         email: ''
       }
@@ -81,5 +128,32 @@ export default {
 <style socped>
   .el-breadcrumb>>>.el-breadcrumb__inner.is-link:hover {
     color: #04aa51;
+  }
+  .el-row {
+    margin: 20px 0px;
+    width: 80%;
+    &:last-child {
+    margin-bottom: 0;
+    }
+  }
+  .el-col {
+    border-radius: 4px;
+  }
+  .bg-purple-dark {
+    background: #99a9bf;
+  }
+  .bg-purple {
+    background: #d3dce6;
+  }
+  .bg-purple-light {
+    background: #e5e9f2;
+  }
+  .grid-content {
+    border-radius: 4px;
+    min-height: 36px;
+  }
+  .row-bg {
+    padding: 10px 0;
+    background-color: #f9fafc;
   }
 </style>

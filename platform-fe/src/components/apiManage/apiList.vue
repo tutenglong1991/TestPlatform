@@ -76,7 +76,7 @@
           </el-table-column>
           <el-table-column label="域名/IP" width="180">
             <template slot-scope="scope">
-              <span>{{ scope.row.DemoOrIP }}</span>
+              <span>{{ scope.row.apiDomain }}</span>
             </template>
           </el-table-column>
           <el-table-column label="地址" width="200">
@@ -138,7 +138,7 @@ export default {
         'ownPro': '选推服务',
         'ownGroup': '选品服务',
         'apiName': '获取汇率',
-        'DemoOrIP': 'www.trader-gb.com',
+        'apiDomain': 'www.trader-gb.com',
         'apiPath': 'cockpit/public/site-currency-list',
         'netProtocol': 'http',
         'reqMethod': 'get',
@@ -148,7 +148,7 @@ export default {
         'ownPro': '选推服务',
         'ownGroup': '选品服务',
         'apiName': '获取ips数据',
-        'DemoOrIP': 'www.trader-gb.com',
+        'apiDomain': 'www.trader-gb.com',
         'apiPath': 'cockpit/public/main-data',
         'netProtocol': 'http',
         'reqMethod': 'get',
