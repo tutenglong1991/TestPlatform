@@ -8,50 +8,61 @@
       </el-breadcrumb>
     </el-header>
     <el-main>
+      <div style="width:100%; height:50px">
+        <el-form :model="dynamicValidateForm" ref="dynamicValidateForm" label-width="80px" class="demo-dynamic" style="display: flex; justify-content: left;">
+          <el-form-item label="接口名称" prop="apiName">
+            <el-input v-model="dynamicValidateForm.apiName" autocomplete="off" placeholder="请输入接口名称"></el-input>
+          </el-form-item>
+          <el-form-item label="接口地址" prop="apiPath">
+            <el-input v-model="dynamicValidateForm.apiPath" autocomplete="off" placeholder="请输入接口地址"></el-input>
+          </el-form-item>
+          <el-form-item label="域名/ip" prop="apiDomain">
+            <el-input v-model="dynamicValidateForm.apiDomain" autocomplete="off" placeholder="请选择域名/ip"></el-input>
+          </el-form-item>
+          <el-form-item label="网络协议" prop="netProtocol">
+            <el-input v-model="dynamicValidateForm.netProtocol" autocomplete="off" placeholder="请选择网络协议"></el-input>
+          </el-form-item>
+        </el-form>
+      </div>
+      <div style="width:100%; height:50px">
+        <el-form :model="dynamicValidateForm" ref="dynamicValidateForm" label-width="80px" class="demo-dynamic" style="display: flex; justify-content: left;">
+          <el-form-item label="请求方式" prop="reqMethods">
+            <el-input v-model="dynamicValidateForm.reqMethods" autocomplete="off" placeholder="请选择请求方式"></el-input>
+          </el-form-item>
+          <el-form-item label="所属分组" prop="ownGroup">
+            <el-input v-model="dynamicValidateForm.ownGroup" autocomplete="off" placeholder="请选择接口分组"></el-input>
+          </el-form-item>
+          <el-form-item label="所属项目" prop="ownPro">
+            <el-input v-model="dynamicValidateForm.ownPro" autocomplete="off" placeholder="请选择所属项目"></el-input>
+          </el-form-item>
+        </el-form>
+      </div>
       <el-form :model="dynamicValidateForm" ref="dynamicValidateForm" label-width="100px" class="demo-dynamic">
-        <el-form-item label="接口名称" prop="apiName">
-          <el-input autocomplete="off" placeholder="请输入接口名称"></el-input>
-        </el-form-item>
-        <el-form-item label="接口地址" prop="apiPath">
-          <el-input autocomplete="off" placeholder="请输入接口地址"></el-input>
-        </el-form-item>
-        <el-form-item label="域名/ip" prop="apiDomain">
-          <el-input autocomplete="off" placeholder="请选择域名/ip"></el-input>
-        </el-form-item>
-        <el-form-item label="网络协议" prop="netProtocol">
-          <el-input autocomplete="off" placeholder="请选择网络协议"></el-input>
-        </el-form-item>
-        <el-form-item label="请求方式" prop="reqMethods">
-          <el-input autocomplete="off" placeholder="请选择请求方式"></el-input>
-        </el-form-item>
-        <el-form-item label="所属分组" prop="ownGroup">
-          <el-input autocomplete="off" placeholder="请选择接口分组"></el-input>
-        </el-form-item>
-        <el-form-item label="所属项目" prop="ownPro">
-          <el-input autocomplete="off" placeholder="请选择所属项目"></el-input>
-        </el-form-item>
-        <el-row :gutter="20">
-          <el-col :span="4"><span>参数名</span></el-col>
-          <el-col :span="4"><span>参数值</span></el-col>
-          <el-col :span="4"><span>是否必选</span></el-col>
-          <el-col :span="4"><span>参数类型</span></el-col>
-          <el-col :span="4"><span>备注</span></el-col>
+        <el-row :gutter="20" style="font-family: 'Avenir', Helvetica, Arial, sans-serif; font-size: 14px; color: #606266">
+          <el-col :span="4" push="1"><span>参数名称</span></el-col>
+          <el-col :span="4" push="1"><span>参数值</span></el-col>
+          <el-col :span="3" push="1"><span>是否必选</span></el-col>
+          <el-col :span="5" push="2"><span>类型</span></el-col>
+          <el-col :span="4" push="1"><span>备注</span></el-col>
         </el-row>
-        <el-row :gutter="20">
-          <el-col :span="4">
+        <el-row :gutter="20" style="margin-left: 2px;">
+          <el-col :span="3">
             <el-input placeholder="请输入参数名" size="small" clearable></el-input>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="5">
             <el-input placeholder="请输入参数值" size="small" clearable></el-input>
           </el-col>
-          <el-col :span="4">
-            <el-input placeholder="请输入参数值" size="small" clearable></el-input>
+          <el-col :span="3">
+            <el-input placeholder="请选择是否必选" size="small" clearable></el-input>
           </el-col>
           <el-col :span="4">
-            <el-input placeholder="请输入参数值" size="small" clearable></el-input>
+            <el-input placeholder="请选择参数类型" size="small" clearable></el-input>
+          </el-col>
+          <el-col :span="5">
+            <el-input placeholder="请输入参数备注信息" size="small" clearable></el-input>
           </el-col>
           <el-col :span="4">
-            <el-input placeholder="请输入参数值" size="small" clearable></el-input>
+            <el-button type="danger" @click="add" icon="el-icon-delete" size="small">删除</el-button>
           </el-col>
         </el-row>
         <el-form-item
@@ -74,7 +85,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitForm('dynamicValidateForm')">保存</el-button>
-          <el-button @click="addDomain">新增参数</el-button>
+          <el-button @click="addDomain" type="primary" icon="el-icon-plus">新增参数</el-button>
           <el-button @click="resetForm('dynamicValidateForm')">重置</el-button>
         </el-form-item>
       </el-form>
@@ -92,7 +103,14 @@ export default {
           paramType: '',
           paramRemark: ''
         }],
-        email: ''
+        email: '',
+        apiName: '',
+        apiPath: '',
+        apiDomain: '',
+        netProtocol: '',
+        reqMethods: '',
+        ownGroup: '',
+        ownPro: ''
       }
     }
   },
