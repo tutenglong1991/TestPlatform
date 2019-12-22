@@ -80,7 +80,7 @@
           </el-submenu>
         </el-menu>
       </el-aside>
-      <el-main>
+      <el-main class="father-main" style="height: 800px">
         <router-view></router-view>
       </el-main>
     </el-container>
