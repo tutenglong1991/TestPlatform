@@ -29,18 +29,25 @@
           <el-form-item label="请求方式" prop="reqMethods">
             <el-input v-model="apidata.reqMethods" autocomplete="off" placeholder="请选择请求方式"></el-input>
           </el-form-item>
+          <el-form-item label="设置UA" prop="reqUa">
+            <el-input v-model="apidata.reqMethods" autocomplete="off" placeholder="请选择请求方式"></el-input>
+          </el-form-item>
           <el-form-item label="所属分组" prop="ownGroup">
             <el-input v-model="apidata.ownGroup" autocomplete="off" placeholder="请选择接口分组"></el-input>
           </el-form-item>
           <el-form-item label="所属项目" prop="ownPro">
             <el-input v-model="apidata.ownPro" autocomplete="off" placeholder="请选择所属项目"></el-input>
           </el-form-item>
-          <el-form-item style="margin-left:-65px">
-            <el-button @click="addParam" type="primary" size="small">运行接口</el-button>
-            <el-button type="primary" @click="submitForm('apidata')" size="small">保存</el-button>
-          </el-form-item>
+<!--          <el-form-item style="margin-left:-65px">-->
+<!--            <el-button @click="addParam" type="primary" size="small">运行接口</el-button>-->
+<!--            <el-button type="primary" @click="submitForm('apidata')" size="small">保存</el-button>-->
+<!--          </el-form-item>-->
         </el-form>
       </div>
+      <el-row style="margin-left: 12px">
+          <el-button @click="addParam" type="primary" size="small">运行接口</el-button>
+          <el-button type="primary" @click="submitForm('apidata')" size="small">保存</el-button>
+      </el-row>
       <el-form :model="apidata" ref="dynamicValidateForm" label-width="100px" class="demo-dynamic">
         <el-row :gutter="20" style="font-family: 'Avenir', Helvetica, Arial, sans-serif; font-size: 14px; color: #606266">
           <el-col :span="4" :push="1"><span>参数名称</span></el-col>
@@ -72,6 +79,7 @@
           </el-col>
         </el-row>
       </el-form>
+
     </el-main>
   </el-container>
 </template>
@@ -89,6 +97,7 @@ export default {
         apiDomain: '',
         netProtocol: '',
         reqMethods: '',
+        reqUa: '',
         ownGroup: '',
         ownPro: ''
       }
