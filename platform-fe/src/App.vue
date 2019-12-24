@@ -3,7 +3,7 @@
     <el-container>
       <router-view></router-view>
     </el-container>
-    <el-footer>© 2019 - 2020 环球易购-电子产品研发中心. All Rights Reserved.</el-footer>
+    <el-footer>© 2019 - 2020 XXXX-XXXX研发中心. All Rights Reserved.</el-footer>
   </el-container>
 </template>
 
