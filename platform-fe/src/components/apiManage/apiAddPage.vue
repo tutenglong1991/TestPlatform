@@ -57,13 +57,13 @@
       <el-row style="margin-left: 12px">
         <el-button @click="addParam" type="primary" size="small">格式化请求入参</el-button>
         <el-button @click="addParam" type="primary" size="small">运行接口</el-button>
-        <el-button type="primary" @click="submitForm('apidata')" size="small">保存</el-button>
+        <el-button type="primary" @click="addApi('apidata')" size="small">保存</el-button>
       </el-row>
       <el-input class='create-text' type="textarea" :rows="10" placeholder="请求参数..." v-model="reqTextarea" style="margin-left:12px; width:45%;">
       </el-input>
       <el-input class='create-text' type="textarea" :rows="10" placeholder="返回参数..." v-model="respTextarea" style="margin-left:12px; width:45%;">
       </el-input>
-      <el-form :model="apidata" ref="dynamicValidateForm" label-width="100px" class="demo-dynamic">
+      <el-form :model="apidata" ref="apidata" label-width="100px" class="demo-dynamic">
         <el-row :gutter="20" style="font-family: 'Avenir', Helvetica, Arial, sans-serif; font-size: 14px; color: #606266">
           <el-col :span="4" :push="1"><span>参数名称</span></el-col>
           <el-col :span="3"><span>参数值</span></el-col>
@@ -139,10 +139,32 @@ export default {
     }
   },
   methods: {
-    submitForm (formName) {
+    addApi (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!')
+          // let param = JSON.stringify(this.apidata)
+          let param = JSON.stringify({'name': 'hemeilong', 'age': 28})
+          console.log(param)
+          return this.$axios.post('/apiAutoTest/apiInfo/addApi', param).then(response => {
+            if (response.status === 200) {
+              console.log('发送Ajax请求,请求成功', response.data)
+              this.$message({
+                message: '项目创建成功',
+                type: 'success',
+                color: 'green'
+              })
+              this.queryProject('searchForm')
+            } else {
+              this.$message({
+                showClose: true,
+                message: '项目创建失败',
+                type: 'error'
+              })
+            }
+          }).catch(response => {
+            console.log('发送Ajax请求,' +
+            '请求失败', response)
+          })
         } else {
           console.log('error submit!!')
           return false

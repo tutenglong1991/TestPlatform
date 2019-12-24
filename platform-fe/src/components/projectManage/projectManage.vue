@@ -274,24 +274,24 @@ export default {
           }
           instance.validate(valid => {
             if (!valid) return
-            this.addProjectParams = {...instance.editRuleForm}
-            let projectStartTime = new Date(this.addProjectParams.projectCycle[0])
-            let projectEndTime = new Date(this.addProjectParams.projectCycle[1])
+            this.editProjectParams = {...instance.editRuleForm}
+            let projectStartTime = new Date(this.editProjectParams.projectCycle[0])
+            let projectEndTime = new Date(this.editProjectParams.projectCycle[1])
             if (projectStartTime.getTime() > new Date().getTime()) { // 还需要设置控件开始时间只能选择大于等于当前时间，且结束时间不能小于开始时间
-              this.addProjectParams['status'] = '2' // 未开始
+              this.editProjectParams['status'] = '2' // 未开始
             } else if (projectStartTime.getTime() <= new Date().getTime() && projectEndTime.getTime() > new Date().getTime()) {
-              this.addProjectParams['status'] = '1' // 进行中
+              this.editProjectParams['status'] = '1' // 进行中
             }
             if (projectEndTime.getTime() < new Date().getTime()) {
-              this.addProjectParams['status'] = '0' // 已结束
+              this.editProjectParams['status'] = '0' // 已结束
             }
             done()
             console.log(new Date())
-            this.addProjectParams['update_time'] = new Date().getTime()
-            this.addProjectParams['creator'] = 'hemeilong' // 后续需动态获取当前登录的用户名，暂时先写死
+            this.editProjectParams['update_time'] = new Date().getTime()
+            this.editProjectParams['creator'] = 'hemeilong' // 后续需动态获取当前登录的用户名，暂时先写死
             // 去除编辑会自动更新的字段，无需提交
-            delete (this.addProjectParams.created_time)
-            let param = JSON.stringify(this.addProjectParams)
+            delete (this.editProjectParams.created_time)
+            let param = JSON.stringify(this.editProjectParams)
             return this.$axios.post('/home/apitest/projectList/editPro', param).then(response => {
               if (response.status === 200) {
                 console.log('发送Ajax请求,请求成功', response.data)
