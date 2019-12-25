@@ -20,7 +20,7 @@ from django.views.generic.base import TemplateView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path(r'', TemplateView.as_view(template_name="index.html")),
-    path('home/apitest/', include('apitest.urls')),
+    path('apiAutoTest/projectManage/', include('projectManage.urls')),
     path('login', include('login.urls')),
-    path('apiAutoTest', include('apitest.urls')),
+    path('apiAutoTest/apiInfo/', include('apiManage.urls')),
 ]

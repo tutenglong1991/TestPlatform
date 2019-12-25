@@ -193,7 +193,7 @@ export default {
             done()
             this.addProjectParams['creator'] = 'hemeilong' // 后续需动态获取当前登录的用户名，暂时先写死
             let param = JSON.stringify(this.addProjectParams)
-            return this.$axios.post('/home/apitest/projectList/addPro', param).then(response => {
+            return this.$axios.post('/apiAutoTest/projectManage/projectList/addPro', param).then(response => {
               if (response.status === 200) {
                 console.log('发送Ajax请求,请求成功', response.data)
                 this.$message({
@@ -235,7 +235,7 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.$axios
-            .get('/home/apitest/projectList/find', { params: this.finalSearchParams })
+            .get('/apiAutoTest/projectManage/projectList/find', { params: this.finalSearchParams })
             .then(response => {
               let responseJsonData = response.data
               this.tableData = responseJsonData['data']['data']
@@ -292,7 +292,7 @@ export default {
             // 去除编辑会自动更新的字段，无需提交
             delete (this.editProjectParams.created_time)
             let param = JSON.stringify(this.editProjectParams)
-            return this.$axios.post('/home/apitest/projectList/editPro', param).then(response => {
+            return this.$axios.post('/apiAutoTest/projectManage/projectList/editPro', param).then(response => {
               if (response.status === 200) {
                 console.log('发送Ajax请求,请求成功', response.data)
                 this.$message({
@@ -323,7 +323,7 @@ export default {
         type: 'warning'
       }).then(() => {
         let param = JSON.stringify({'id': row.id})
-        return this.$axios.post('/home/apitest/projectList/delPro', param).then(response => {
+        return this.$axios.post('/apiAutoTest/projectManage/projectList/delPro', param).then(response => {
           if (response.status === 200) {
             console.log('发送Ajax请求,请求成功', response.data)
             this.$message({

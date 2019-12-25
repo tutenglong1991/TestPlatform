@@ -36,8 +36,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'apitest',
-    'login'
+    'projectManage',
+    'login',
+    'apiManage'
 ]
 
 MIDDLEWARE = [

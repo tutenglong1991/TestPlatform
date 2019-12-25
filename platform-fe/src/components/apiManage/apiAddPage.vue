@@ -44,13 +44,22 @@
             </el-select>
           </el-form-item>
           <el-form-item label="设置UA" prop="reqUa">
-            <el-input v-model="apidata.reqMethods" autocomplete="off" placeholder="请选择请求方式"></el-input>
+            <el-input v-model="apidata.reqUa" autocomplete="off" placeholder="请选择请求方式"></el-input>
           </el-form-item>
           <el-form-item label="所属分组" prop="ownGroup">
             <el-input v-model="apidata.ownGroup" autocomplete="off" placeholder="请选择接口分组"></el-input>
           </el-form-item>
           <el-form-item label="所属项目" prop="ownPro">
-            <el-input v-model="apidata.ownPro" autocomplete="off" placeholder="请选择所属项目"></el-input>
+            <el-select v-model="apidata.ownPro" clearable autocomplete="off" placeholder="请选择所属项目">
+              <el-option
+                v-for="item in apiDataSelection.projectOptions"
+                :key="item.id"
+                :label="item.projectName"
+                :value="item.id">
+                <span style="float: left">{{ item.projectName }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.id }}</span>
+              </el-option>
+            </el-select>
           </el-form-item>
         </el-form>
       </div>
@@ -105,21 +114,22 @@ export default {
     return {
       apiDataSelection: {
         netProtocol: [{
-          value: '0',
+          value: 0,
           label: 'http'
         },
         {
-          value: '1',
+          value: 1,
           label: 'https'
         }],
         reqMethods: [{
-          value: '0',
+          value: 0,
           label: 'get'
         },
         {
-          value: '1',
+          value: 1,
           label: 'post'
-        }]
+        }],
+        projectOptions: []
       },
       apidata: {
         parameters: [
@@ -128,8 +138,8 @@ export default {
         apiName: '',
         apiPath: '',
         apiDomain: '',
-        netProtocol: '',
-        reqMethods: '',
+        netProtocol: 0,
+        reqMethods: 0,
         reqUa: '',
         ownGroup: '',
         ownPro: ''
@@ -142,14 +152,13 @@ export default {
     addApi (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          // let param = JSON.stringify(this.apidata)
-          let param = JSON.stringify({'name': 'hemeilong', 'age': 28})
+          let param = JSON.stringify(this.apidata)
           console.log(param)
           return this.$axios.post('/apiAutoTest/apiInfo/addApi', param).then(response => {
             if (response.status === 200) {
               console.log('发送Ajax请求,请求成功', response.data)
               this.$message({
-                message: '项目创建成功',
+                message: '接口添加成功',
                 type: 'success',
                 color: 'green'
               })
@@ -169,6 +178,15 @@ export default {
           console.log('error submit!!')
           return false
         }
+      })
+    },
+    getProjectOptions () {
+      this.$axios.get('/apiAutoTest/projectManage/projectList/find').then(response => {
+        let responseJsonData = response.data
+        this.apiDataSelection.projectOptions = responseJsonData['data']
+        console.log(this.apiDataSelection)
+      }).catch(error => {
+        console.log('系统错误' + error)
       })
     },
     resetParm (index) {
@@ -192,6 +210,9 @@ export default {
         this.apidata.parameters.splice(index, 1)
       }
     }
+  },
+  mounted () {
+    this.getProjectOptions()
   }
 }
 </script>
@@ -243,5 +264,14 @@ export default {
   }
   .el-input--suffix .el-input__inner {
     padding-right: 15px;
+  }
+  .el-select .el-input__inner:hover {
+    border-color: #04aa51;
+  }
+  .el-select .el-input__inner:focus {
+    border-color: #04aa51;
+  }
+  .el-select .el-input.is-focus .el-input__inner {
+    border-color: #04aa51;
   }
 </style>
