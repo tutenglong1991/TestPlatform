@@ -10,6 +10,7 @@ import json
 class ApiManage:
 
     def add_api(self, **resp):
+        print('test')
         # for key in resp:
         #     dict_key = json.loads(key)
         # projectCycle_list = dict_key['projectCycle']
