@@ -396,6 +396,9 @@ export default {
   .input-with-select>>>.el-input__inner:hover {
     border-color: #04aa51;
   }
+  .input-with-select>>>.el-input__inner:focus {
+    border-color: #04aa51;
+  }
   .el-input-group__prepend div.el-select>>>.el-input__inner {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
   }

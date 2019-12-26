@@ -9,7 +9,7 @@
     </el-header>
     <el-main>
       <div style="width:100%;">
-        <el-form :model="apidata" ref="apidata" label-width="80px" class="demo-dynamic" style="display: flex; justify-content: left;">
+        <el-form :model="apidata" ref="submitForm1" :rules="rules" label-width="80px" class="demo-dynamic" style="display: flex; justify-content: left;">
           <el-form-item label="接口名称" prop="apiName">
             <el-input v-model="apidata.apiName" autocomplete="off" placeholder="请输入接口名称"></el-input>
           </el-form-item>
@@ -32,7 +32,7 @@
         </el-form>
       </div>
       <div style="width:100%; border-bottom: 1px solid #bbbcbf59;">
-        <el-form :model="apidata" ref="apidata" label-width="80px" class="demo-dynamic" style="display: flex; justify-content: left;">
+        <el-form :model="apidata" ref="submitForm2" :rules="rules" label-width="80px" class="demo-dynamic" style="display: flex; justify-content: left;">
           <el-form-item label="请求方式" prop="reqMethods">
             <el-select v-model="apidata.reqMethods" clearable autocomplete="off" placeholder="请选择网络协议">
               <el-option
@@ -44,10 +44,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="设置UA" prop="reqUa">
-            <el-input v-model="apidata.reqUa" autocomplete="off" placeholder="请选择请求方式"></el-input>
-          </el-form-item>
-          <el-form-item label="所属分组" prop="ownGroup">
-            <el-input v-model="apidata.ownGroup" autocomplete="off" placeholder="请选择接口分组"></el-input>
+            <el-input v-model="apidata.reqUa" autocomplete="off" placeholder="请设置接口请求UA"></el-input>
           </el-form-item>
           <el-form-item label="所属项目" prop="ownPro">
             <el-select v-model="apidata.ownPro" clearable autocomplete="off" placeholder="请选择所属项目">
@@ -61,12 +58,15 @@
               </el-option>
             </el-select>
           </el-form-item>
+          <el-form-item label="所属模块" prop="ownGroup">
+            <el-input v-model="apidata.ownGroup" autocomplete="off" placeholder="请选择接口分组"></el-input>
+          </el-form-item>
         </el-form>
       </div>
       <el-row style="margin-left: 12px">
         <el-button @click="addParam" type="primary" size="small">格式化请求入参</el-button>
         <el-button @click="addParam" type="primary" size="small">运行接口</el-button>
-        <el-button type="primary" @click="addApi('apidata')" size="small">保存</el-button>
+        <el-button type="primary" @click="addApi('submitForm1', 'submitForm2')" size="small">保存</el-button>
       </el-row>
       <el-input class='create-text' type="textarea" :rows="10" placeholder="请求参数..." v-model="reqTextarea" style="margin-left:12px; width:45%;">
       </el-input>
@@ -103,7 +103,6 @@
           </el-col>
         </el-row>
       </el-form>
-
     </el-main>
   </el-container>
 </template>
@@ -135,27 +134,37 @@ export default {
         parameters: [
           {paramName: '', paramValue: '', isForce: '', paramType: '', paramRemark: ''}
         ],
-        apiName: '',
-        apiPath: '',
-        apiDomain: '',
+        apiName: null,
+        apiPath: null,
+        apiDomain: null,
         netProtocol: 0,
         reqMethods: 0,
-        reqUa: '',
-        ownGroup: '',
-        ownPro: ''
+        reqUa: null,
+        ownGroup: null,
+        ownPro: null,
+        runStatus: 0
       },
       reqTextarea: '',
-      respTextarea: ''
+      respTextarea: '',
+      rules: {
+        apiName: [{ required: true, message: '接口名称不能为空', trigger: 'blur', color: 'green' }],
+        apiPath: [{ required: true, message: '接口地址不能为空', trigger: 'blur' }],
+        apiDomain: [{ required: true, message: '接口域名或ip不能为空', trigger: 'blur' }],
+        netProtocol: [{ required: true, message: '网络协议不能为空', trigger: 'change' }],
+        reqMethods: [{ required: true, message: '请求方式不能为空', trigger: 'change' }],
+        ownGroup: [{ required: true, message: '所属模块不能为空', trigger: 'blur' }],
+        ownPro: [{ required: true, message: '所属项目不能为空', trigger: 'change' }]
+      }
     }
   },
   methods: {
-    addApi (formName) {
-      this.$refs[formName].validate((valid) => {
+    addApi (form1Name, form2Name) {
+      this.$refs[form1Name].validate((valid) => {
         if (valid) {
           let param = JSON.stringify(this.apidata)
           console.log(param)
           return this.$axios.post('/apiAutoTest/apiInfo/addApi', param).then(response => {
-            if (response.status === 200) {
+            if (response.status === 200 && response.data.code === 200) {
               console.log('发送Ajax请求,请求成功', response.data)
               this.$message({
                 message: '接口添加成功',
@@ -166,7 +175,7 @@ export default {
             } else {
               this.$message({
                 showClose: true,
-                message: '项目创建失败',
+                message: '接口添加失败',
                 type: 'error'
               })
             }
@@ -272,6 +281,12 @@ export default {
     border-color: #04aa51;
   }
   .el-select .el-input.is-focus .el-input__inner {
+    border-color: #04aa51;
+  }
+  .el-input__inner:hover {
+    border-color: #04aa51;
+  }
+  .el-input.is-active .el-input__inner, .el-input__inner:focus {
     border-color: #04aa51;
   }
 </style>

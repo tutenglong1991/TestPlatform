@@ -2,7 +2,7 @@
 from django.db import models
 
 
-class Api(models.Model):
+class ApiSet(models.Model):
     id = models.IntegerField(primary_key=True)  # 此处不能设置default，否则不是自增，是update
     apiName = models.CharField(max_length=200, unique=True, verbose_name='接口名称')
     apiPath = models.CharField(max_length=1024, verbose_name='接口地址')
@@ -11,7 +11,7 @@ class Api(models.Model):
     reqMethods = models.IntegerField(verbose_name='请求方式，0为get，1为post')
     reqUa = models.CharField(max_length=200, null=True, verbose_name='域名或ip')
     ownGroup = models.CharField(max_length=200, verbose_name='接口分组')
-    ownPro = models.CharField(max_length=200, unique=True, verbose_name='项目ID')
+    ownPro = models.CharField(max_length=200, verbose_name='项目ID')
     runStatus = models.IntegerField(default=0, verbose_name='接口执行状态，0：未执行，1：成功，2：失败')
 
     class Meta:
@@ -20,13 +20,10 @@ class Api(models.Model):
         verbose_name_plural = verbose_name  # 显示的复数名称
         ordering = ['id']
 
-    def __str__(self):
-        return self.apiName
-
 
 class ApiParameters(models.Model):
-    # id = models.IntegerField(primary_key=True)
-    ownApi = models.ForeignKey(Api, related_name='api_params', null=True, blank=True, on_delete=models.SET_NULL, default=3)
+    id = models.IntegerField(primary_key=True)
+    ownApi = models.ForeignKey(to='ApiSet', to_field='id', related_name='api_params', on_delete=models.SET_NULL, blank=True, null=True,)
     paramName = models.CharField(max_length=200, verbose_name='参数名称')
     paramValue = models.CharField(max_length=200, null=True, verbose_name='参数值')
     isForce = models.CharField(max_length=1, verbose_name='是否必选')

@@ -64,7 +64,7 @@
               <span>{{ scope.row.ownPro }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="所属分组" width="130">
+          <el-table-column label="所属模块" width="130">
             <template slot-scope="scope">
               <span>{{ scope.row.ownGroup }}</span>
             </template>

@@ -49,9 +49,6 @@
           <el-form-item label="设置UA" prop="reqUa">
             <el-input v-model="apidata.reqUa" autocomplete="off" placeholder="请选择请求方式"></el-input>
           </el-form-item>
-          <el-form-item label="所属分组" prop="ownGroup">
-            <el-input v-model="apidata.ownGroup" autocomplete="off" placeholder="请选择接口分组"></el-input>
-          </el-form-item>
           <el-form-item label="所属项目" prop="ownPro">
             <el-select v-model="apidata.ownPro" clearable autocomplete="off" placeholder="请选择所属项目">
               <el-option
@@ -63,6 +60,9 @@
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.id }}</span>
               </el-option>
             </el-select>
+          </el-form-item>
+          <el-form-item label="所属模块" prop="ownGroup">
+            <el-input v-model="apidata.ownGroup" autocomplete="off" placeholder="请选择接口分组"></el-input>
           </el-form-item>
         </el-form>
         <el-link :underline="false" v-model="apidata" type="success">URL：{{apidata.netProtocol+'://'+apidata.apiDomain+apidata.apiPath}}</el-link>
