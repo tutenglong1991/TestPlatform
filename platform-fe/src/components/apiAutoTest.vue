@@ -42,8 +42,7 @@
               <span>接口管理</span>
             </template>
             <el-menu-item index="/apiAutoTest/apiList">接口列表</el-menu-item>
-            <el-menu-item index="/apiAutoTest/apiDetail">接口详情</el-menu-item>
-            <el-menu-item index="/apiAutoTest/apiGroup">接口分组</el-menu-item>
+            <el-menu-item index="/apiAutoTest/apiDetail">修改记录</el-menu-item>
             <el-menu-item index="/apiAutoTest/apiRunLog">执行日志</el-menu-item>
           </el-submenu>
           <el-submenu index="/apiAutoTest/caseManage">

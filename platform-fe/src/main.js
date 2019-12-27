@@ -14,6 +14,16 @@ Vue.prototype.$axios = axios
 
 /* eslint-disable no-new */
 /* eslint-disable no-new */
+Vue.prototype.getProjectOptions = function () {
+  let proResp = {}
+  return this.$axios.get('/apiAutoTest/projectManage/projectList/find').then(response => {
+    proResp = response.data
+    return proResp
+  }).catch(error => {
+    console.log('系统错误' + error)
+  })
+}
+
 if (navigator.userAgent.indexOf('Trident') > -1) {
   alert('请使用chrome访问本站点！')
 } else {
@@ -26,19 +36,3 @@ if (navigator.userAgent.indexOf('Trident') > -1) {
     router: router
   })
 }
-
-// router.beforeEach((to, form, next) => {
-//   if (to.meta.is_login) {
-//     if (localStorage.getItem('user')) {
-//       next()
-//     } else {
-//       next(
-//         {
-//           path: '/'
-//         }
-//       )
-//     }
-//   } else {
-//     next()
-//   }
-// })

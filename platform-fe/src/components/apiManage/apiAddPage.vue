@@ -78,6 +78,7 @@
         </el-row>
       </el-form>
       <el-row style="margin-left: 12px">
+        <el-button v-if="apidata.parameters.length===0" @click="addParam" type="primary" icon="el-icon-plus" size="small">新增参数</el-button>
         <el-button @click="addParam" type="primary" size="small">格式化请求入参</el-button>
         <el-button @click="addParam" type="primary" size="small">运行接口</el-button>
         <el-button type="primary" @click="addApi('submitForm1', 'submitForm2')" size="small">保存</el-button>
@@ -120,9 +121,9 @@
               <el-input v-model="kv.paramRemark" placeholder="请输入参数备注信息" size="small" clearable></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="6" style="margin-top:5px">
             <el-button @click="addParam" type="primary" icon="el-icon-plus" size="small">新增参数</el-button>
-            <el-button v-if="apidata.parameters.length>1" type="danger" @click.prevent="removeParam(kv)" icon="el-icon-minus" size="small">删除参数</el-button>
+            <el-button type="danger" @click.prevent="removeParam(kv)" icon="el-icon-minus" size="small">删除参数</el-button>
             <el-button @click="resetParm(index)" size="small">重置</el-button>
           </el-col>
         </el-row>
@@ -156,7 +157,6 @@ export default {
       },
       apidata: {
         parameters: [
-          {paramName: '', paramValue: '', isForce: '', paramType: '', paramRemark: ''}
         ],
         apiName: null,
         apiPath: null,
@@ -189,10 +189,10 @@ export default {
   methods: {
     addApi (formName1, formName2) { // 第一个参数是接口必要信息表单，第二个参数是接口对应参数的表单
       let isParamsCheckedPass = this.validParams(formName2)
+      console.log(isParamsCheckedPass)
       this.$refs[formName1].validate((valid) => {
         if (valid && isParamsCheckedPass) {
           let param = JSON.stringify(this.apidata)
-          console.log(param)
           return this.$axios.post('/apiAutoTest/apiInfo/addApi', param).then(response => {
             if (response.status === 200 && response.data.code === 200) {
               console.log('发送Ajax请求,请求成功', response.data)
@@ -201,7 +201,7 @@ export default {
                 type: 'success',
                 color: 'green'
               })
-              this.queryProject('searchForm')
+              // this.queryProject('searchForm')
             } else {
               this.$message({
                 showClose: true,
@@ -220,27 +220,23 @@ export default {
       })
     },
     validParams (formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          return true
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
-    },
-    getProjectOptions () {
-      this.$axios.get('/apiAutoTest/projectManage/projectList/find').then(response => {
-        let responseJsonData = response.data
-        this.apiDataSelection.projectOptions = responseJsonData['data']
-        console.log(this.apiDataSelection)
-      }).catch(error => {
-        console.log('系统错误' + error)
-      })
+      console.log(this.apidata.parameters)
+      if (this.apidata.parameters.length !== 0) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            return true
+          } else {
+            console.log('error submit!!')
+            return false
+          }
+        })
+      } else { // 若无参数则不需要校验参数必填项
+        return true
+      }
     },
     resetParm (index) {
       let resetParameter = this.apidata.parameters[index]
-      for (var k in resetParameter) {
+      for (let k in resetParameter) {
         this.apidata.parameters[index][k] = ''
       }
     },
@@ -254,14 +250,15 @@ export default {
       })
     },
     removeParam (item) {
-      var index = this.apidata.parameters.indexOf(item)
+      let index = this.apidata.parameters.indexOf(item)
       if (index !== -1) {
         this.apidata.parameters.splice(index, 1)
       }
     }
   },
   mounted () {
-    this.getProjectOptions()
+    this.getProjectOptions().then(response => { this.apiDataSelection.projectOptions = response.data }) // 获取项目共筛选
+    console.log(this.apiDataSelection)
   }
 }
 </script>
