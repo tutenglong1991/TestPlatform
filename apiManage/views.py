@@ -14,22 +14,24 @@ def api_manage(request, operate):
         pro_data = {}
         try:
             if operate == 'addApi':
-                pro_data = api.add_api(**resp)
+                api_data = api.add_api(**resp)
             elif operate == 'editApi':
-                pro_data = api.edit_api(**resp)
+                api_data = api.edit_api(**resp)
             elif operate == 'delApi':
-                pro_data = api.del_api(**resp)
-            code = pro_data['status']
-            return JsonResponse({"code": code, "data": pro_data})
+                api_data = api.del_api(**resp)
+            code = api_data['status']
+            return JsonResponse({"code": code, "data": api_data})
         except Exception as e:
             print(e)
             return JsonResponse({"code": 500, "msg": e})
     else:
         resp = request.GET.dict()
-        try:
-            if operate == 'apiList':
-                pro_data = api.query_apis(**resp)
-            return JsonResponse({"code": 200, "data": pro_data})
-        except Exception as e:
-            print(e)
-            return JsonResponse({"code": 500, "msg": "查找项目失败"})
+        # try:
+        if operate == 'apiList':
+            api_data = api.query_apiInfo(**resp)
+        elif operate == 'options-apiModule':
+            api_data = api.query_api_options()
+        return JsonResponse({"code": 200, "data": api_data})
+        # except Exception as e:
+        #     print(e)
+        #     return JsonResponse({"code": 500, "msg": "查找项目失败"})

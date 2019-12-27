@@ -11,7 +11,7 @@
       <div class="searchApi">
         <el-form ref="searchForm" :model="searchParams" label-width="75px" style="display:flex; justify-content: left;">
           <el-form-item class="ownPro" label="所属项目" prop="ownPro">
-            <el-cascader
+            <el-cascader v-model="searchParams.ownPro"
               placeholder="请选择接口所属项目"
               :options="multipleSelection.ownPro"
               :props="{ label: 'projectName', value: 'id' }"
@@ -20,7 +20,7 @@
             </el-cascader>
           </el-form-item>
           <el-form-item label="所属模块" prop="apiModule" style="margin-left:30px">
-            <el-cascader
+            <el-cascader v-model="searchParams.apiModule"
               placeholder="请选择接口所属模块"
               :options="multipleSelection.apiModule"
               filterable
@@ -28,12 +28,16 @@
             </el-cascader>
           </el-form-item>
           <el-form-item label="名称/地址" prop="apiName" style="margin-left:30px">
-            <el-cascader
-              placeholder="请选择接口"
-              :options="multipleSelection.apiName"
-              filterable
-              clearable>
-            </el-cascader>
+            <el-select v-model="searchParams.apiName" clearable placeholder="请选择接口">
+              <el-option
+                v-for="n in multipleSelection.apiName"
+                :key="n.apiName"
+                :label="n.apiPath"
+                :value="n.apiName">
+                <span style="float: left">{{ n.apiName }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ n.apiPath }}</span>
+              </el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="执行状态" prop="runStatus" style="margin-left:30px">
             <el-select class="runStatus" v-model="searchParams.runStatus" clearable placeholder="请选择接口执行状态">
@@ -143,12 +147,6 @@ export default {
           label: '失败'
         }]
       },
-      // rules: {
-      //   selectedParamsKey: [{require: true, message: '请选择任一种搜索方式', trigger: 'blur'}],
-      //   selectedParamsValue: [{require: false, trigger: 'blur'}],
-      //   creator: [{require: false, trigger: 'blur'}],
-      //   status: [{require: false, trigger: 'blur'}]
-      // },
       apiTableData: [{
         'ownPro': '选推服务',
         'ownGroup': '选品服务',
@@ -170,9 +168,9 @@ export default {
         'runState': '失败'
       }],
       searchParams: {
-        ownPro: '',
-        apiModule: '',
-        apiName: '',
+        ownPro: [],
+        apiModule: [],
+        apiName: [],
         runStatus: ''
       }
     }
@@ -200,8 +198,18 @@ export default {
             '请求失败', response)
       })
     },
-    getSearchParams () {
-
+    // 获取接口和模块供搜索下拉选项
+    getApisAndModules () {
+      return this.$axios.get('/apiAutoTest/apiInfo/options-apiModule').then(response => {
+        let apiObj = response.data['data']
+        for (let i in apiObj) {
+          console.log(apiObj[i]['ownGroup'])
+          this.multipleSelection.apiModule.push({label: apiObj[i]['ownGroup'], value: apiObj[i]['ownGroup']})
+          this.multipleSelection.apiName.push({apiName: apiObj[i]['apiName'], apiPath: apiObj[i]['apiPath']})
+        }
+      }).catch(error => {
+        console.log('系统错误' + error)
+      })
     },
     goToAddPage () {
       this.$router.push('/apiAutoTest/apiAddPage')
@@ -231,7 +239,7 @@ export default {
         this.multipleSelection.ownPro.push(response.data[i])
       }
     })
-    console.log(this.multipleSelection.ownPro)
+    this.getApisAndModules()
   }
 }
 </script>

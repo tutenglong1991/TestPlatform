@@ -48,6 +48,30 @@ class ApiManage:
                 msg = '存在必填参数未填写，请检查后再提交'
             return {'status': 500, 'msg': msg}
 
+    # 仅查询接口名称和所属的模块数据
+    def query_api_options(self):
+        api_data_list = []
+        api_options_querySet = ApiSet.objects.values('id', 'apiName', 'apiPath', 'ownGroup').order_by('id').reverse()
+        print(api_options_querySet)
+        for qs in api_options_querySet:
+            api_datas_obj = dict()
+            api_datas_obj['id'] = qs['id']
+            api_datas_obj['apiName'] = qs['apiName']
+            api_datas_obj['apiPath'] = qs['apiPath']
+            api_datas_obj['ownGroup'] = qs['ownGroup']
+            api_data_list.append(api_datas_obj)
+        return api_data_list
+    
+    # 查询接口全部数据
+    def query_apiInfo(self):
+        pass
+
+    def edit_api(self):
+        pass
+
+    def del_api(self):
+        pass
+
 
 if __name__ == '__main__':
     API = ApiManage()
