@@ -16,7 +16,7 @@ class ApiManage:
         api_add_data = {'apiName': dict_key['apiName'], 'apiPath': dict_key['apiPath'],
                         'apiDomain': dict_key['apiDomain'], 'netProtocol': dict_key['netProtocol'],
                         'reqMethods': dict_key['reqMethods'], 'reqUa': dict_key['reqUa'], 'ownPro': dict_key['ownPro'],
-                        'ownGroup': dict_key['ownGroup'], 'runStatus': dict_key['runStatus']}
+                        'apiModule': dict_key['apiModule'], 'runStatus': dict_key['runStatus']}
         try:
             # 插入接口信息到接口表
             api_add_data_obj = ApiSet(**api_add_data)
@@ -51,20 +51,39 @@ class ApiManage:
     # 仅查询接口名称和所属的模块数据
     def query_api_options(self):
         api_data_list = []
-        api_options_querySet = ApiSet.objects.values('id', 'apiName', 'apiPath', 'ownGroup').order_by('id').reverse()
+        api_options_querySet = ApiSet.objects.values('id', 'apiName', 'apiPath', 'apiModule').order_by('id').reverse()
         print(api_options_querySet)
         for qs in api_options_querySet:
             api_datas_obj = dict()
             api_datas_obj['id'] = qs['id']
             api_datas_obj['apiName'] = qs['apiName']
             api_datas_obj['apiPath'] = qs['apiPath']
-            api_datas_obj['ownGroup'] = qs['ownGroup']
+            api_datas_obj['apiModule'] = qs['apiModule']
             api_data_list.append(api_datas_obj)
         return api_data_list
     
     # 查询接口全部数据
-    def query_apiInfo(self):
-        pass
+    def query_apiInfo(self, **resp):
+        apiList_result_list = []
+        if len(resp) == 0:
+            apiList_querySet = ApiSet.objects.values_list().order_by('id').reverse()
+        else:
+            apiList_querySet = ApiSet.objects.filter(**resp).values_list()
+        for apiTuple_querySet in apiList_querySet:
+            apiList_result = dict()  # 此处必须每次循环重新生成一个字段对象用来保存一条接口信息，若在外面定义则是重新赋值
+            apiList_result['id'] = apiTuple_querySet[0]
+            apiList_result['apiName'] = apiTuple_querySet[1]
+            apiList_result['apiPath'] = apiTuple_querySet[2]
+            apiList_result['apiDomain'] = apiTuple_querySet[3]
+            apiList_result['netProtocol'] = apiTuple_querySet[4]
+            apiList_result['reqMethods'] = apiTuple_querySet[5]
+            apiList_result['reqUa'] = apiTuple_querySet[6]
+            apiList_result['apiModule'] = apiTuple_querySet[7]
+            apiList_result['ownPro'] = apiTuple_querySet[8]
+            apiList_result['runStatus'] = apiTuple_querySet[9]
+            apiList_result_list.append(apiList_result)
+        print(apiList_result_list)
+        return apiList_result_list
 
     def edit_api(self):
         pass

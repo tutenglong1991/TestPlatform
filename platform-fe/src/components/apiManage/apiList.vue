@@ -12,7 +12,7 @@
         <el-form ref="searchForm" :model="searchParams" label-width="75px" style="display:flex; justify-content: left;">
           <el-form-item class="ownPro" label="所属项目" prop="ownPro">
             <el-cascader v-model="searchParams.ownPro"
-              placeholder="请选择接口所属项目"
+              placeholder="请选择或输入接口所属项目"
               :options="multipleSelection.ownPro"
               :props="{ label: 'projectName', value: 'id' }"
               filterable
@@ -28,13 +28,13 @@
             </el-cascader>
           </el-form-item>
           <el-form-item label="名称/地址" prop="apiName" style="margin-left:30px">
-            <el-select v-model="searchParams.apiName" clearable placeholder="请选择接口">
+            <el-select :filterable=true v-model="searchParams.apiName" clearable placeholder="请选择接口">
               <el-option
                 v-for="n in multipleSelection.apiName"
                 :key="n.apiName"
                 :label="n.apiPath"
                 :value="n.apiName">
-                <span style="float: left">{{ n.apiName }}</span>
+                <span style="float: left; margin-right: 20px">{{ n.apiName }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ n.apiPath }}</span>
               </el-option>
             </el-select>
@@ -147,26 +147,7 @@ export default {
           label: '失败'
         }]
       },
-      apiTableData: [{
-        'ownPro': '选推服务',
-        'ownGroup': '选品服务',
-        'apiName': '获取汇率',
-        'apiDomain': 'www.trader-gb.com',
-        'apiPath': 'cockpit/public/site-currency-list',
-        'netProtocol': 'http',
-        'reqMethod': 'get',
-        'runState': '成功'
-      },
-      {
-        'ownPro': '选推服务',
-        'ownGroup': '选品服务',
-        'apiName': '获取ips数据',
-        'apiDomain': 'www.trader-gb.com',
-        'apiPath': 'cockpit/public/main-data',
-        'netProtocol': 'http',
-        'reqMethod': 'get',
-        'runState': '失败'
-      }],
+      apiTableData: [],
       searchParams: {
         ownPro: [],
         apiModule: [],
@@ -177,19 +158,32 @@ export default {
   },
   methods: {
     searchApi () {
-      let param = JSON.stringify(this.searchParams)
-      return this.$axios.post('/apiAutoTest/apiInfo/addApi', param).then(response => {
+      // let param = JSON.stringify(this.searchParams)
+      let finalParams = {}
+      for (let obj in this.searchParams) {
+        if (obj === 'ownPro' || obj === 'apiModule') {
+          finalParams[obj] = this.searchParams[obj][0]
+        } else {
+          if (this.searchParams[obj] === '') {
+            continue
+          } else {
+            finalParams[obj] = this.searchParams[obj]
+          }
+        }
+      }
+      return this.$axios.get('/apiAutoTest/apiInfo/apiList', { params: finalParams }).then(response => {
         if (response.status === 200 && response.data.code === 200) {
           console.log('发送Ajax请求,请求成功', response.data)
+          this.apiTableData = response.data['data']
           this.$message({
-            message: '接口添加成功',
+            message: '接口查询成功',
             type: 'success',
             color: 'green'
           })
         } else {
           this.$message({
             showClose: true,
-            message: '接口添加失败',
+            message: '接口查询失败',
             type: 'error'
           })
         }
@@ -203,8 +197,7 @@ export default {
       return this.$axios.get('/apiAutoTest/apiInfo/options-apiModule').then(response => {
         let apiObj = response.data['data']
         for (let i in apiObj) {
-          console.log(apiObj[i]['ownGroup'])
-          this.multipleSelection.apiModule.push({label: apiObj[i]['ownGroup'], value: apiObj[i]['ownGroup']})
+          this.multipleSelection.apiModule.push({label: apiObj[i]['apiModule'], value: apiObj[i]['apiModule']})
           this.multipleSelection.apiName.push({apiName: apiObj[i]['apiName'], apiPath: apiObj[i]['apiPath']})
         }
       }).catch(error => {
@@ -240,6 +233,7 @@ export default {
       }
     })
     this.getApisAndModules()
+    this.searchApi()
   }
 }
 </script>

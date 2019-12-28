@@ -71,8 +71,8 @@
             </el-form-item>
           </el-col>
           <el-col :span='6'>
-            <el-form-item label="所属模块" prop="ownGroup">
-              <el-input v-model="apidata.ownGroup" autocomplete="off" placeholder="请选择接口分组"></el-input>
+            <el-form-item label="所属模块" prop="apiModule">
+              <el-input v-model="apidata.apiModule" autocomplete="off" placeholder="请选择接口分组"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -164,7 +164,7 @@ export default {
         netProtocol: 0,
         reqMethods: 0,
         reqUa: null,
-        ownGroup: null,
+        apiModule: null,
         ownPro: null,
         runStatus: 0
       },
@@ -176,7 +176,7 @@ export default {
         apiDomain: [{ required: true, message: '接口域名或ip不能为空', trigger: 'blur' }],
         netProtocol: [{ required: true, message: '网络协议不能为空', trigger: 'change' }],
         reqMethods: [{ required: true, message: '请求方式不能为空', trigger: 'change' }],
-        ownGroup: [{ required: true, message: '所属模块不能为空', trigger: 'blur' }],
+        apiModule: [{ required: true, message: '所属模块不能为空', trigger: 'blur' }],
         ownPro: [{ required: true, message: '所属项目不能为空', trigger: 'change' }],
         paramName: [{ required: true, message: '参数名不能为空', trigger: 'blur' }],
         paramValue: [{ required: false }],

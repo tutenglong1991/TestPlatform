@@ -9,9 +9,9 @@ from django.views.decorators.csrf import csrf_exempt
 @csrf_exempt
 def api_manage(request, operate):
     api = ApiManage()
+    api_data = {}
     if request.method == "POST":
         resp = request.POST.dict()
-        pro_data = {}
         try:
             if operate == 'addApi':
                 api_data = api.add_api(**resp)
@@ -26,12 +26,12 @@ def api_manage(request, operate):
             return JsonResponse({"code": 500, "msg": e})
     else:
         resp = request.GET.dict()
-        # try:
-        if operate == 'apiList':
-            api_data = api.query_apiInfo(**resp)
-        elif operate == 'options-apiModule':
-            api_data = api.query_api_options()
-        return JsonResponse({"code": 200, "data": api_data})
-        # except Exception as e:
-        #     print(e)
-        #     return JsonResponse({"code": 500, "msg": "查找项目失败"})
+        try:
+            if operate == 'apiList':
+                api_data = api.query_apiInfo(**resp)
+            elif operate == 'options-apiModule':
+                api_data = api.query_api_options()
+            return JsonResponse({"code": 200, "data": api_data})
+        except Exception as e:
+            print(e)
+            return JsonResponse({"code": 500, "msg": "查找项目失败"})

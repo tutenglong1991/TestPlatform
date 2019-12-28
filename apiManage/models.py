@@ -10,7 +10,7 @@ class ApiSet(models.Model):
     netProtocol = models.IntegerField(verbose_name='网络协议，0为http，1为https')
     reqMethods = models.IntegerField(verbose_name='请求方式，0为get，1为post')
     reqUa = models.CharField(max_length=200, null=True, verbose_name='域名或ip')
-    ownGroup = models.CharField(max_length=200, verbose_name='接口分组')
+    apiModule = models.CharField(max_length=200, verbose_name='所属模块')
     ownPro = models.CharField(max_length=200, verbose_name='项目ID')
     runStatus = models.IntegerField(default=0, verbose_name='接口执行状态，0：未执行，1：成功，2：失败')
 
