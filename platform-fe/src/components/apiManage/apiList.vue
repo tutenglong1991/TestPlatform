@@ -74,7 +74,7 @@
           </el-table-column>
           <el-table-column label="所属模块" width="130">
             <template slot-scope="scope">
-              <span>{{ scope.row.ownGroup }}</span>
+              <span>{{ scope.row.apiModule }}</span>
             </template>
           </el-table-column>
           <el-table-column label="名称" width="140">
@@ -99,12 +99,12 @@
           </el-table-column>
           <el-table-column label="请求方式" width="100">
             <template slot-scope="scope">
-              <span>{{ scope.row.reqMethod }}</span>
+              <span>{{ scope.row.reqMethods }}</span>
             </template>
           </el-table-column>
           <el-table-column label="执行状态" width="100">
             <template slot-scope="scope">
-              <span>{{ scope.row.runState }}</span>
+              <span>{{ scope.row.runStatus }}</span>
             </template>
           </el-table-column>
           <el-table-column label="操作">

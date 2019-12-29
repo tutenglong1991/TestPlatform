@@ -87,7 +87,7 @@
       </el-input>
       <el-input class='create-text' type="textarea" :rows="10" placeholder="返回参数..." v-model="respTextarea" style="margin-left:12px; width:45%;">
       </el-input>
-      <el-form :model="apidata" ref="submitForm2" :rules='rules' label-width="0px" class="demo-dynamic">
+      <el-form :model="apidata" ref="submitForm2" label-width="0px" class="demo-dynamic">
         <el-row :gutter="20" style="font-family: 'Avenir', Helvetica, Arial, sans-serif; font-size: 14px; color: #606266">
           <el-col :span="4" :push="1"><span>参数名称</span></el-col>
           <el-col :span="3"><span>参数值</span></el-col>
@@ -95,9 +95,12 @@
           <el-col :span="4" :push="2"><span>类型</span></el-col>
           <el-col :span="4" :push="2"><span>注释</span></el-col>
         </el-row>
-        <el-row :gutter="20" v-for="(kv, index) in apidata.parameters" :key="index" style="margin-left: 2px;">
+        <el-row :gutter="20" v-for="(kv, index) in apidata.parameters" :key="kv.key" style="margin-left: 2px;">
           <el-col :span="3">
-            <el-form-item prop="paramName">
+            <el-form-item
+              :prop="'parameters.' + index + '.paramName'"
+              :rules="[{ required: true, message: '参数名不能为空', trigger: 'blur' }]"
+            >
               <el-input v-model="kv.paramName" placeholder="请输入参数名" size="small" clearable></el-input>
             </el-form-item>
           </el-col>
@@ -107,12 +110,18 @@
             </el-form-item>
           </el-col>
           <el-col :span="3">
-            <el-form-item prop="isForce">
+            <el-form-item
+              :prop="'parameters.' + index + '.isForce'"
+              :rules="[{ required: true, message: '参数是否必选不能为空', trigger: 'blur' }]"
+            >
               <el-input v-model="kv.isForce" placeholder="请选择是否必选" size="small" clearable></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="3">
-            <el-form-item prop="paramType">
+            <el-form-item
+              :prop="'parameters.' + index + '.paramType'"
+              :rules="[{ required: true, message: '参数类型不能为空', trigger: 'blur' }]"
+            >
               <el-input v-model="kv.paramType" placeholder="请选择参数类型" size="small" clearable></el-input>
             </el-form-item>
           </el-col>
@@ -156,8 +165,7 @@ export default {
         projectOptions: []
       },
       apidata: {
-        parameters: [
-        ],
+        parameters: [],
         apiName: null,
         apiPath: null,
         apiDomain: null,
@@ -177,21 +185,17 @@ export default {
         netProtocol: [{ required: true, message: '网络协议不能为空', trigger: 'change' }],
         reqMethods: [{ required: true, message: '请求方式不能为空', trigger: 'change' }],
         apiModule: [{ required: true, message: '所属模块不能为空', trigger: 'blur' }],
-        ownPro: [{ required: true, message: '所属项目不能为空', trigger: 'change' }],
-        paramName: [{ required: true, message: '参数名不能为空', trigger: 'blur' }],
-        paramValue: [{ required: false }],
-        isForce: [{ required: true, message: '参数是否必选不能为空', trigger: 'blur' }],
-        paramType: [{ required: true, message: '参数类型不能为空', trigger: 'blur' }],
-        paramRemark: [{ required: false }]
-      }
+        ownPro: [{ required: true, message: '所属项目不能为空', trigger: 'change' }]
+      },
+      isParamsCheckedPass: false
     }
   },
   methods: {
     addApi (formName1, formName2) { // 第一个参数是接口必要信息表单，第二个参数是接口对应参数的表单
-      let isParamsCheckedPass = this.validParams(formName2)
-      console.log(isParamsCheckedPass)
+      this.validParams(formName2)
+      console.log(this.isParamsCheckedPass)
       this.$refs[formName1].validate((valid) => {
-        if (valid && isParamsCheckedPass) {
+        if (valid && this.isParamsCheckedPass) {
           let param = JSON.stringify(this.apidata)
           return this.$axios.post('/apiAutoTest/apiInfo/addApi', param).then(response => {
             if (response.status === 200 && response.data.code === 200) {
@@ -220,18 +224,19 @@ export default {
       })
     },
     validParams (formName) {
-      console.log(this.apidata.parameters)
       if (this.apidata.parameters.length !== 0) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            return true
+            this.isParamsCheckedPass = true
+            console.log(this.apidata.parameters)
           } else {
             console.log('error submit!!')
-            return false
+            console.log(this.apidata.parameters)
+            this.isParamsCheckedPass = false
           }
         })
       } else { // 若无参数则不需要校验参数必填项
-        return true
+        this.isParamsCheckedPass = true
       }
     },
     resetParm (index) {
