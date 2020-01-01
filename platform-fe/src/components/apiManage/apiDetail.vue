@@ -20,7 +20,7 @@
           </el-col>
           <el-col :span='6'>
             <el-form-item label="接口地址" prop="apiPath">
-              <el-input v-model="apidata.apiPath" autocomplete="off" placeholder="请输入接口地址"></el-input>
+             <el-input v-model="apidata.apiPath" autocomplete="off" placeholder="请输入接口地址"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span='6'>
@@ -74,14 +74,15 @@
             </el-form-item>
           </el-col>
           <el-col :span='6'>
-            <el-form-item label="所属模块" prop="ownGroup">
-              <el-input v-model="apidata.ownGroup" autocomplete="off" placeholder="请选择接口分组"></el-input>
+            <el-form-item label="所属模块" prop="apiModule">
+              <el-input v-model="apidata.apiModule" autocomplete="off" placeholder="请选择接口分组"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
-        <el-link :underline="false" v-model="apidata" type="success">URL：{{apidata.netProtocol+'://'+apidata.apiDomain+apidata.apiPath}}</el-link>
+        <el-link :underline="false" v-model="apidata" type="success">URL：{{URL}}</el-link>
       </el-form>
       <el-row style="margin-left: 12px">
+        <el-button v-if="apidata.parameters.length===0" @click="addParam" type="primary" icon="el-icon-plus" size="small">新增参数</el-button>
         <el-button @click="addParam" type="primary" size="small">格式化请求入参</el-button>
         <el-button @click="addParam" type="primary" size="small">运行接口</el-button>
         <el-button type="primary" @click="addApi('submitForm1', 'submitForm2')" size="small">保存</el-button>
@@ -90,7 +91,7 @@
       </el-input>
       <el-input class='create-text' type="textarea" :rows="10" placeholder="返回参数..." v-model="respTextarea" style="margin-left:12px; width:45%;">
       </el-input>
-      <el-form :model="apidata" ref="submitForm2" :rules='rules' label-width="0px" class="demo-dynamic">
+      <el-form :model="apidata" ref="submitForm2" label-width="0px">
         <el-row :gutter="20" style="font-family: 'Avenir', Helvetica, Arial, sans-serif; font-size: 14px; color: #606266">
           <el-col :span="4" :push="1"><span>参数名称</span></el-col>
           <el-col :span="3"><span>参数值</span></el-col>
@@ -98,9 +99,12 @@
           <el-col :span="4" :push="2"><span>类型</span></el-col>
           <el-col :span="4" :push="2"><span>注释</span></el-col>
         </el-row>
-        <el-row :gutter="20" v-for="(kv, index) in apidata.parameters" :key="index" style="margin-left: 2px;">
+        <el-row :gutter="20" v-for="(kv, index) in apidata.parameters" :key="kv.key" style="margin-left: 2px;">
           <el-col :span="3">
-            <el-form-item prop="paramName">
+            <el-form-item
+              :prop="'parameters.' + index + '.paramName'"
+              :rules="[{ required: true, message: '参数名不能为空', trigger: 'blur' }]"
+            >
               <el-input v-model="kv.paramName" placeholder="请输入参数名" size="small" clearable></el-input>
             </el-form-item>
           </el-col>
@@ -110,12 +114,18 @@
             </el-form-item>
           </el-col>
           <el-col :span="3">
-            <el-form-item prop="isForce">
+            <el-form-item
+              :prop="'parameters.' + index + '.isForce'"
+              :rules="[{ required: true, message: '参数是否必选不能为空', trigger: 'blur' }]"
+            >
               <el-input v-model="kv.isForce" placeholder="请选择是否必选" size="small" clearable></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="3">
-            <el-form-item prop="paramType">
+            <el-form-item
+              :prop="'parameters.' + index + '.paramType'"
+              :rules="[{ required: true, message: '参数类型不能为空', trigger: 'blur' }]"
+            >
               <el-input v-model="kv.paramType" placeholder="请选择参数类型" size="small" clearable></el-input>
             </el-form-item>
           </el-col>
@@ -124,9 +134,9 @@
               <el-input v-model="kv.paramRemark" placeholder="请输入参数备注信息" size="small" clearable></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="6" style="margin-top:5px">
             <el-button @click="addParam" type="primary" icon="el-icon-plus" size="small">新增参数</el-button>
-            <el-button v-if="apidata.parameters.length>1" type="danger" @click.prevent="removeParam(kv)" icon="el-icon-minus" size="small">删除参数</el-button>
+            <el-button type="danger" @click.prevent="removeParam(kv)" icon="el-icon-minus" size="small">删除参数</el-button>
             <el-button @click="resetParm(index)" size="small">重置</el-button>
           </el-col>
         </el-row>
@@ -137,7 +147,7 @@
 
 <script>
 export default {
-  name: 'apiDetail',
+  name: 'apiAddPage',
   data () {
     return {
       apiDataSelection: {
@@ -160,33 +170,80 @@ export default {
         projectOptions: []
       },
       apidata: {
-        parameters: [
-          {paramName: 'skuList', paramValue: '104785395366169032', isForce: 'Y', paramType: 'string | array', paramRemark: 'sku列表'},
-          {paramName: '', paramValue: '', isForce: '', paramType: '', paramRemark: ''}
-        ],
-        apiName: '',
-        apiPath: '',
-        apiDomain: '',
-        netProtocol: null,
-        reqMethods: null,
-        reqUa: '',
-        ownGroup: '',
-        ownPro: ''
+        parameters: [],
+        apiName: null,
+        apiPath: null,
+        apiDomain: null,
+        netProtocol: 0,
+        reqMethods: 0,
+        reqUa: null,
+        apiModule: null,
+        ownPro: null,
+        runStatus: 0
       },
+      URL: '', // apidata.netProtocol+'://'+apidata.apiDomain+apidata.apiPath
       reqTextarea: '',
-      respTextarea: ''
+      respTextarea: '',
+      rules: {
+        apiName: [{ required: true, message: '接口名称不能为空', trigger: 'blur', color: 'green' }],
+        apiPath: [{ required: true, message: '接口地址不能为空', trigger: 'blur' }],
+        apiDomain: [{ required: true, message: '接口域名或ip不能为空', trigger: 'blur' }],
+        netProtocol: [{ required: true, message: '网络协议不能为空', trigger: 'change' }],
+        reqMethods: [{ required: true, message: '请求方式不能为空', trigger: 'change' }],
+        apiModule: [{ required: true, message: '所属模块不能为空', trigger: 'blur' }],
+        ownPro: [{ required: true, message: '所属项目不能为空', trigger: 'change' }]
+      },
+      isParamsCheckedPass: false
     }
   },
   methods: {
-    submitForm (formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          alert('submit!')
+    addApi (formName1, formName2) { // 第一个参数是接口必要信息表单，第二个参数是接口对应参数的表单
+      this.validParams(formName2)
+      console.log(this.isParamsCheckedPass)
+      this.$refs[formName1].validate((valid) => {
+        if (valid && this.isParamsCheckedPass) {
+          let param = JSON.stringify(this.apidata)
+          return this.$axios.post('/apiAutoTest/apiInfo/addApi', param).then(response => {
+            if (response.status === 200 && response.data.code === 200) {
+              console.log('发送Ajax请求,请求成功', response.data)
+              this.$message({
+                message: '接口添加成功',
+                type: 'success',
+                color: 'green'
+              })
+              // this.queryProject('searchForm')
+            } else {
+              this.$message({
+                showClose: true,
+                message: '接口添加失败',
+                type: 'error'
+              })
+            }
+          }).catch(response => {
+            console.log('发送Ajax请求,' +
+            '请求失败', response)
+          })
         } else {
           console.log('error submit!!')
           return false
         }
       })
+    },
+    validParams (formName) {
+      if (this.apidata.parameters.length !== 0) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            this.isParamsCheckedPass = true
+            console.log(this.apidata.parameters)
+          } else {
+            console.log('error submit!!')
+            console.log(this.apidata.parameters)
+            this.isParamsCheckedPass = false
+          }
+        })
+      } else { // 若无参数则不需要校验参数必填项
+        this.isParamsCheckedPass = true
+      }
     },
     resetParm (index) {
       let resetParameter = this.apidata.parameters[index]
@@ -208,11 +265,21 @@ export default {
       if (index !== -1) {
         this.apidata.parameters.splice(index, 1)
       }
+    },
+    fallbackEditDate () {
+      this.apidata.apiName = this.$route.params.apiName
+      this.apidata.apiPath = this.$route.params.apiPath
+      this.apidata.apiDomain = this.$route.params.apiDomain
+      this.apidata.netProtocol = this.$route.params.netProtocol
+      this.apidata.reqMethods = this.$route.params.reqMethods
+      this.apidata.apiModule = this.$route.params.apiModule
+      this.apidata.ownPro = this.$route.params.ownPro
+      this.apidata.runStatus = this.$route.params.runStatus
     }
   },
   mounted () {
     this.getProjectOptions().then(response => { this.apiDataSelection.projectOptions = response.data }) // 获取项目共筛选
-    console.log(this.apiDataSelection)
+    this.fallbackEditDate()
   }
 }
 </script>
@@ -237,16 +304,15 @@ export default {
     margin-left: 12px;
     margin-bottom: 10px;
   }
-
   .el-breadcrumb>>>.el-breadcrumb__inner.is-link:hover {
-    color: #04aa51;;
+    color: #04aa51;
   }
   .el-row {
     margin: 20px 0px;
     width: 80%;
-  &:last-child {
-     margin-bottom: 0;
-   }
+    &:last-child {
+    margin-bottom: 0;
+    }
   }
   .el-col {
     border-radius: 4px;
@@ -283,13 +349,19 @@ export default {
     background-color: #04aa51;
     border-color: #04aa51;
   }
-  .el-select>>>.el-input--suffix .el-input__inner {
-    padding-right: 15px;
-  }
-  .el-select>>>.el-input--suffix .el-input__inner:hover {
+  .el-select .el-input__inner:hover {
     border-color: #04aa51;
   }
-  .el-select>>>.el-input--suffix .el-input__inner:focus {
+  .el-select .el-input__inner:focus {
+    border-color: #04aa51;
+  }
+  .el-select .el-input.is-focus .el-input__inner {
+    border-color: #04aa51;
+  }
+  .el-input__inner:hover {
+    border-color: #04aa51;
+  }
+  .el-input.is-active .el-input__inner, .el-input__inner:focus {
     border-color: #04aa51;
   }
 </style>

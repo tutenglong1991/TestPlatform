@@ -109,7 +109,7 @@
           </el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <el-button @click="goToDetailPage" size="mini" >详情
+              <el-button @click="goToDetailPage(scope.row)" size="mini" >详情
               </el-button>
               <el-button size="mini">执行日志
               </el-button>
@@ -207,8 +207,11 @@ export default {
     goToAddPage () {
       this.$router.push('/apiAutoTest/apiAddPage')
     },
-    goToDetailPage () {
-      this.$router.push('/apiAutoTest/apiDetail')
+    goToDetailPage (row) {
+      this.$router.push({
+        name: 'apiDetail',
+        params: row
+      })
     },
     toggleSelection (rows) {
       if (rows) {
@@ -237,7 +240,6 @@ export default {
   }
 }
 </script>
-
 <style scoped>
   .el-breadcrumb>>>.el-breadcrumb__inner.is-link:hover {
     color: #04aa51;

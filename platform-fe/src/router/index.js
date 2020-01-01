@@ -7,7 +7,6 @@ import projectMembers from '@/components/projectManage/projectMembers'
 import apiList from '@/components/apiManage/apiList'
 import apiAddPage from '@/components/apiManage/apiAddPage'
 import apiGroup from '@/components/apiManage/apiGroup'
-import apiDetail from '@/components/apiManage/apiDetail'
 import apiRunLog from '@/components/apiManage/apiRunLog'
 import caseList from '@/components/caseManage/caseList'
 import caseDetail from '@/components/caseManage/caseDetail'
@@ -59,7 +58,7 @@ export default new Router({
       {
         path: '/apiAutoTest/apiDetail',
         name: 'apiDetail',
-        component: apiDetail
+        component: () => import('@/components/apiManage/apiDetail.vue')
       },
       {
         path: '/apiAutoTest/apiRunLog',

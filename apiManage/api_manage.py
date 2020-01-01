@@ -2,6 +2,7 @@
 # -*-coding:utf-8-*-
 
 from .models import ApiSet, ApiParameters
+from projectManage.models import Project
 import datetime
 import time
 import json
@@ -75,14 +76,25 @@ class ApiManage:
             apiList_result['apiName'] = apiTuple_querySet[1]
             apiList_result['apiPath'] = apiTuple_querySet[2]
             apiList_result['apiDomain'] = apiTuple_querySet[3]
-            apiList_result['netProtocol'] = apiTuple_querySet[4]
-            apiList_result['reqMethods'] = apiTuple_querySet[5]
+            if apiTuple_querySet[4] == 0:                
+                apiList_result['netProtocol'] = 'http'
+            elif apiTuple_querySet[4] == 1:
+                apiList_result['netProtocol'] = 'https'
+            if apiTuple_querySet[5] == 0:
+                apiList_result['reqMethods'] = 'get'
+            elif apiTuple_querySet[5] == 1:
+                apiList_result['reqMethods'] = 'post'
             apiList_result['reqUa'] = apiTuple_querySet[6]
             apiList_result['apiModule'] = apiTuple_querySet[7]
-            apiList_result['ownPro'] = apiTuple_querySet[8]
-            apiList_result['runStatus'] = apiTuple_querySet[9]
+            ownProName = Project.objects.values('projectName').filter(id=apiTuple_querySet[8])
+            apiList_result['ownPro'] = ownProName[0]['projectName']
+            if apiTuple_querySet[9] == 0:
+                apiList_result['runStatus'] = '未执行'
+            elif apiTuple_querySet[9] == 1:
+                apiList_result['runStatus'] = '成功'
+            elif apiTuple_querySet[9] == 2:
+                apiList_result['runStatus'] = '失败'
             apiList_result_list.append(apiList_result)
-        print(apiList_result_list)
         return apiList_result_list
 
     def edit_api(self):

@@ -87,7 +87,7 @@
       </el-input>
       <el-input class='create-text' type="textarea" :rows="10" placeholder="返回参数..." v-model="respTextarea" style="margin-left:12px; width:45%;">
       </el-input>
-      <el-form :model="apidata" ref="submitForm2" label-width="0px" class="demo-dynamic">
+      <el-form :model="apidata" ref="submitForm2" label-width="0px">
         <el-row :gutter="20" style="font-family: 'Avenir', Helvetica, Arial, sans-serif; font-size: 14px; color: #606266">
           <el-col :span="4" :push="1"><span>参数名称</span></el-col>
           <el-col :span="3"><span>参数值</span></el-col>
@@ -270,6 +270,9 @@ export default {
 <style socped>
   .el-breadcrumb>>>.el-breadcrumb__inner.is-link:hover {
     color: #04aa51;
+  }
+  .el-form.demo-dynamic {
+    border-bottom: 1px solid #c0c4cc;
   }
   .el-row {
     margin: 20px 0px;
