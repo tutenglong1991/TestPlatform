@@ -193,7 +193,6 @@ export default {
   methods: {
     addApi (formName1, formName2) { // 第一个参数是接口必要信息表单，第二个参数是接口对应参数的表单
       this.validParams(formName2)
-      console.log(this.isParamsCheckedPass)
       this.$refs[formName1].validate((valid) => {
         if (valid && this.isParamsCheckedPass) {
           let param = JSON.stringify(this.apidata)

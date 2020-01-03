@@ -79,13 +79,13 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-link :underline="false" v-model="apidata" type="success">URL：{{URL}}</el-link>
+        <el-link :underline="false" v-model="apidata" type="success">URL：{{this.apiDataSelection.netProtocol[0].label + '://' + this.apidata.apiDomain + this.apidata.apiPath}}</el-link>
       </el-form>
       <el-row style="margin-left: 12px">
         <el-button v-if="apidata.parameters.length===0" @click="addParam" type="primary" icon="el-icon-plus" size="small">新增参数</el-button>
         <el-button @click="addParam" type="primary" size="small">格式化请求入参</el-button>
         <el-button @click="addParam" type="primary" size="small">运行接口</el-button>
-        <el-button type="primary" @click="addApi('submitForm1', 'submitForm2')" size="small">保存</el-button>
+        <el-button type="primary" @click="editApi('submitForm1', 'submitForm2')" size="small">保存</el-button>
       </el-row>
       <el-input class='create-text' type="textarea" :rows="10" placeholder="请求参数..." v-model="reqTextarea" style="margin-left:12px; width:45%;">
       </el-input>
@@ -181,7 +181,6 @@ export default {
         ownPro: null,
         runStatus: 0
       },
-      URL: '', // apidata.netProtocol+'://'+apidata.apiDomain+apidata.apiPath
       reqTextarea: '',
       respTextarea: '',
       rules: {
@@ -197,13 +196,12 @@ export default {
     }
   },
   methods: {
-    addApi (formName1, formName2) { // 第一个参数是接口必要信息表单，第二个参数是接口对应参数的表单
+    editApi (formName1, formName2) { // 第一个参数是接口必要信息表单，第二个参数是接口对应参数的表单
       this.validParams(formName2)
-      console.log(this.isParamsCheckedPass)
       this.$refs[formName1].validate((valid) => {
         if (valid && this.isParamsCheckedPass) {
           let param = JSON.stringify(this.apidata)
-          return this.$axios.post('/apiAutoTest/apiInfo/addApi', param).then(response => {
+          return this.$axios.post('/apiAutoTest/apiInfo/editApi', param).then(response => {
             if (response.status === 200 && response.data.code === 200) {
               console.log('发送Ajax请求,请求成功', response.data)
               this.$message({
@@ -211,7 +209,7 @@ export default {
                 type: 'success',
                 color: 'green'
               })
-              // this.queryProject('searchForm')
+              // this.queryProject('searchForm')保存成功后回到列表页
             } else {
               this.$message({
                 showClose: true,
@@ -272,9 +270,11 @@ export default {
       this.apidata.apiDomain = this.$route.params.apiDomain
       this.apidata.netProtocol = this.$route.params.netProtocol
       this.apidata.reqMethods = this.$route.params.reqMethods
+      this.apidata.reqUa = this.$route.params.reqUa
       this.apidata.apiModule = this.$route.params.apiModule
       this.apidata.ownPro = this.$route.params.ownPro
       this.apidata.runStatus = this.$route.params.runStatus
+      console.log(this.apidata)
     }
   },
   mounted () {

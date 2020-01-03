@@ -109,7 +109,7 @@
           </el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <el-button @click="goToDetailPage(scope.row)" size="mini" >详情
+              <el-button @click="goToDetailPage(scope.row)" size="mini" >编辑
               </el-button>
               <el-button size="mini">执行日志
               </el-button>

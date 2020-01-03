@@ -49,7 +49,7 @@ class ApiManage:
                 msg = '存在必填参数未填写，请检查后再提交'
             return {'status': 500, 'msg': msg}
 
-    # 仅查询接口名称和所属的模块数据
+    # 仅查询接口名称和所属的模块数据，用于下拉选项
     def query_api_options(self):
         api_data_list = []
         api_options_querySet = ApiSet.objects.values('id', 'apiName', 'apiPath', 'apiModule').order_by('id').reverse()
@@ -63,7 +63,7 @@ class ApiManage:
             api_data_list.append(api_datas_obj)
         return api_data_list
     
-    # 查询接口全部数据
+    # 查询接口全部数据,用于接口列表展示
     def query_apiInfo(self, **resp):
         apiList_result_list = []
         if len(resp) == 0:
@@ -97,8 +97,8 @@ class ApiManage:
             apiList_result_list.append(apiList_result)
         return apiList_result_list
 
-    def edit_api(self):
-        pass
+    def edit_api(self, **resp):
+        return {'status': 200, 'msg': 'succeed'}
 
     def del_api(self):
         pass
