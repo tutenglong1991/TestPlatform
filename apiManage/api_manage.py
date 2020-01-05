@@ -42,7 +42,6 @@ class ApiManage:
             return {'status': 200, 'msg': msg}
         except Exception as e:
             error = str(e)
-            print(error)
             if error.__contains__('UNIQUE '):
                 msg = '接口已存在，请重新输入接口或去详情编辑接口'
             elif error.__contains__('NULL'):
@@ -53,7 +52,6 @@ class ApiManage:
     def query_api_options(self):
         api_data_list = []
         api_options_querySet = ApiSet.objects.values('id', 'apiName', 'apiPath', 'apiModule').order_by('id').reverse()
-        print(api_options_querySet)
         for qs in api_options_querySet:
             api_datas_obj = dict()
             api_datas_obj['id'] = qs['id']
@@ -97,7 +95,48 @@ class ApiManage:
             apiList_result_list.append(apiList_result)
         return apiList_result_list
 
+    # 编辑接口时查询接口下的参数，供回写
+    def query_api_params(self, **resp):
+        param_querySet = ApiParameters.objects.values_list().filter(ownApi_id=resp['id'])
+        param_list = []
+        for param in param_querySet:
+            print(param)
+            param_obj = dict()
+            param_obj['id'] = param[1]
+            param_obj['paramName'] = param[2]
+            param_obj['paramValue'] = param[3]
+            param_obj['isForce'] = param[4]
+            param_obj['paramType'] = param[5]
+            param_obj['paramRemark'] = param[6]
+            param_obj['ownApi_id'] = int(resp['id'])
+            param_list.append(param_obj)
+        return param_list
+
     def edit_api(self, **resp):
+        for key in resp:
+            dict_key = json.loads(key)
+        params = dict_key['parameters']
+        dict_key.pop('parameters')
+        print(dict_key)
+        ApiSet.objects.filter(id=dict_key['id']).values_list().update(**dict_key)
+        print(params)
+        print(dict_key)
+        for pa in params:
+            print(pa)
+            if pa.id == '':
+                pa.pop('id')
+                apiObj = ApiParameters(**pa).save()
+            else:
+                try:
+                    _t = ApiParameters.objects.filter(id=pa['id']).values_list()
+                    if _t:
+                        _t.update(**pa)
+                        msg = '更新项目数据数据成功'
+                    else:
+                        msg = '编辑项目失败，未找到该项目'
+                except Exception as e:
+                    print(e)
+                    msg = '更新项目数据失败,请联系管理员'
         return {'status': 200, 'msg': 'succeed'}
 
     def del_api(self):

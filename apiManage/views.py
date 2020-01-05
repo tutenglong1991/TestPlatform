@@ -31,6 +31,8 @@ def api_manage(request, operate):
                 api_data = api.query_apiInfo(**resp)
             elif operate == 'options-apiModule':
                 api_data = api.query_api_options()
+            elif operate == 'parameterOfApi':
+                api_data = api.query_api_params(**resp)
             return JsonResponse({"code": 200, "data": api_data})
         except Exception as e:
             print(e)

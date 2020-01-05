@@ -87,7 +87,7 @@
       </el-input>
       <el-input class='create-text' type="textarea" :rows="10" placeholder="返回参数..." v-model="respTextarea" style="margin-left:12px; width:45%;">
       </el-input>
-      <el-form :model="apidata" ref="submitForm2" label-width="0px">
+      <el-form :model="apidata" ref="submitForm2" label-width="0px" class="add_params_options">
         <el-row :gutter="20" style="font-family: 'Avenir', Helvetica, Arial, sans-serif; font-size: 14px; color: #606266">
           <el-col :span="4" :push="1"><span>参数名称</span></el-col>
           <el-col :span="3"><span>参数值</span></el-col>
@@ -112,17 +112,31 @@
           <el-col :span="3">
             <el-form-item
               :prop="'parameters.' + index + '.isForce'"
-              :rules="[{ required: true, message: '参数是否必选不能为空', trigger: 'blur' }]"
+              :rules="[{ required: true, message: '参数是否必选不能为空', trigger: 'change' }]"
             >
-              <el-input v-model="kv.isForce" placeholder="请选择是否必选" size="small" clearable></el-input>
+              <el-select class="add_params_options" v-model="kv.isForce" clearable autocomplete="off" placeholder="请选择是否必选">
+                <el-option
+                  v-for="op in apiDataSelection.isForce"
+                  :key="op.value"
+                  :label="op.label"
+                  :value="op.value">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="3">
             <el-form-item
               :prop="'parameters.' + index + '.paramType'"
-              :rules="[{ required: true, message: '参数类型不能为空', trigger: 'blur' }]"
+              :rules="[{ required: true, message: '参数类型不能为空', trigger: 'change' }]"
             >
-              <el-input v-model="kv.paramType" placeholder="请选择参数类型" size="small" clearable></el-input>
+              <el-select class="add_params_options" v-model="kv.paramType" clearable autocomplete="off" placeholder="请选择参数类型">
+                <el-option
+                  v-for="op in apiDataSelection.paramType"
+                  :key="op.value"
+                  :label="op.label"
+                  :value="op.value">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="5" prop="paramRemark">
@@ -162,6 +176,17 @@ export default {
           value: 1,
           label: 'post'
         }],
+        isForce: [
+          {label: 'Y', value: 'Y'},
+          {label: 'N', value: 'N'}
+        ],
+        paramType: [
+          {label: 'String', value: 'String'},
+          {label: 'Int', value: 'Int'},
+          {label: 'float', value: 'float'},
+          {label: 'boolean', value: 'boolean'},
+          {label: 'Array', value: 'Array'},
+          {label: 'Object', value: 'Object'}],
         projectOptions: []
       },
       apidata: {
@@ -262,7 +287,6 @@ export default {
   },
   mounted () {
     this.getProjectOptions().then(response => { this.apiDataSelection.projectOptions = response.data }) // 获取项目共筛选
-    console.log(this.apiDataSelection)
   }
 }
 </script>
@@ -282,6 +306,10 @@ export default {
   }
   .el-col {
     border-radius: 4px;
+  }
+  .add_params_options.el-select .el-input__inner {
+    height: 32px;
+    margin-top: 4px;
   }
   .bg-purple-dark {
     background: #99a9bf;

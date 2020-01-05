@@ -113,20 +113,34 @@
               <el-input v-model="kv.paramValue" placeholder="请输入参数值" size="small" clearable></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="3">
+          <el-col :span="3" class="params_options">
             <el-form-item
               :prop="'parameters.' + index + '.isForce'"
-              :rules="[{ required: true, message: '参数是否必选不能为空', trigger: 'blur' }]"
+              :rules="[{ required: true, message: '参数是否必选不能为空', trigger: 'change' }]"
             >
-              <el-input v-model="kv.isForce" placeholder="请选择是否必选" size="small" clearable></el-input>
+              <el-select v-model="kv.isForce" clearable autocomplete="off" placeholder="请选择是否必选">
+                <el-option
+                  v-for="op in apiDataSelection.isForce"
+                  :key="op.value"
+                  :label="op.label"
+                  :value="op.value">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="3">
+          <el-col :span="3" class="params_options">
             <el-form-item
               :prop="'parameters.' + index + '.paramType'"
-              :rules="[{ required: true, message: '参数类型不能为空', trigger: 'blur' }]"
+              :rules="[{ required: true, message: '参数类型不能为空', trigger: 'change' }]"
             >
-              <el-input v-model="kv.paramType" placeholder="请选择参数类型" size="small" clearable></el-input>
+              <el-select v-model="kv.paramType" clearable autocomplete="off" placeholder="请选择参数类型">
+                <el-option
+                  v-for="op in apiDataSelection.paramType"
+                  :key="op.value"
+                  :label="op.label"
+                  :value="op.value">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="5" prop="paramRemark">
@@ -167,6 +181,17 @@ export default {
           value: 1,
           label: 'post'
         }],
+        isForce: [
+          {label: 'Y', value: 'Y'},
+          {label: 'N', value: 'N'}
+        ],
+        paramType: [
+          {label: 'String', value: 'String'},
+          {label: 'Int', value: 'Int'},
+          {label: 'float', value: 'float'},
+          {label: 'boolean', value: 'boolean'},
+          {label: 'Array', value: 'Array'},
+          {label: 'Object', value: 'Object'}],
         projectOptions: []
       },
       apidata: {
@@ -205,15 +230,15 @@ export default {
             if (response.status === 200 && response.data.code === 200) {
               console.log('发送Ajax请求,请求成功', response.data)
               this.$message({
-                message: '接口添加成功',
+                message: '接口修改成功',
                 type: 'success',
                 color: 'green'
               })
-              // this.queryProject('searchForm')保存成功后回到列表页
+              this.$router.push('/apiAutoTest/apiList')
             } else {
               this.$message({
                 showClose: true,
-                message: '接口添加失败',
+                message: '接口修改失败',
                 type: 'error'
               })
             }
@@ -243,6 +268,26 @@ export default {
         this.isParamsCheckedPass = true
       }
     },
+    getApiParameter () {
+      let apiObj = {'id': this.$route.params.id}
+      this.apidata['id'] = this.$route.params.id // 给apidata加上接口id，便于后面编辑传给后端
+      return this.$axios.get('/apiAutoTest/apiInfo/parameterOfApi', { params: apiObj }).then(response => {
+        if (response.status === 200 && response.data.code === 200) {
+          console.log('发送Ajax请求,请求成功', response.data)
+          this.apidata.parameters = response.data['data']
+          // this.queryProject('searchForm')保存成功后回到列表页
+        } else {
+          this.$message({
+            showClose: true,
+            message: '获取接口参数失败',
+            type: 'error'
+          })
+        }
+      }).catch(response => {
+        console.log('发送Ajax请求,' +
+        '请求失败', response)
+      })
+    },
     resetParm (index) {
       let resetParameter = this.apidata.parameters[index]
       for (let k in resetParameter) {
@@ -251,11 +296,13 @@ export default {
     },
     addParam () {
       this.apidata.parameters.push({
+        id: '',
         paramName: '',
         paramValue: '',
         isForce: '',
         paramType: '',
-        paramRemark: ''
+        paramRemark: '',
+        ownApi_id: this.$route.params.id,
       })
     },
     removeParam (item) {
@@ -274,12 +321,12 @@ export default {
       this.apidata.apiModule = this.$route.params.apiModule
       this.apidata.ownPro = this.$route.params.ownPro
       this.apidata.runStatus = this.$route.params.runStatus
-      console.log(this.apidata)
     }
   },
   mounted () {
     this.getProjectOptions().then(response => { this.apiDataSelection.projectOptions = response.data }) // 获取项目共筛选
     this.fallbackEditDate()
+    this.getApiParameter()
   }
 }
 </script>
@@ -316,6 +363,10 @@ export default {
   }
   .el-col {
     border-radius: 4px;
+  }
+  .params_options>>>.el-select .el-input__inner {
+    height: 32px;
+    margin-top: 4px;
   }
   .bg-purple-dark {
     background: #99a9bf;
