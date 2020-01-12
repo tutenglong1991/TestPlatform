@@ -19,6 +19,8 @@ def api_manage(request, operate):
                 api_data = api.edit_api(**resp)
             elif operate == 'delApi':
                 api_data = api.del_api(**resp)
+            elif operate == 'runApi':
+                api_data = api.run_api(**resp)
             code = api_data['status']
             return JsonResponse({"code": code, "data": api_data})
         except Exception as e:

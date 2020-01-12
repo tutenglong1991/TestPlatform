@@ -24,6 +24,7 @@
         <el-menu style="height: 100%"
                  active-text-color="#04aa51"
                  :default-active="$router.path"
+                 :unique-opened="true"
                  class="el-menu-vertical-demo"
                  @open="handleOpen"
                  @close="handleClose"

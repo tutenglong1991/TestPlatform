@@ -3,9 +3,11 @@
 
 from .models import ApiSet, ApiParameters
 from projectManage.models import Project
+from .requestMain import runApiMain
 import datetime
 import time
 import json
+import requests
 
 
 class ApiManage:
@@ -117,27 +119,38 @@ class ApiManage:
             dict_key = json.loads(key)
         params = dict_key['parameters']
         dict_key.pop('parameters')
-        print(dict_key)
         ApiSet.objects.filter(id=dict_key['id']).values_list().update(**dict_key)
-        print(params)
-        print(dict_key)
         for pa in params:
             print(pa)
-            if pa.id == '':
+            if pa['id'] is None:
                 pa.pop('id')
                 apiObj = ApiParameters(**pa).save()
+                msg='添加参数成功'
             else:
                 try:
                     _t = ApiParameters.objects.filter(id=pa['id']).values_list()
                     if _t:
                         _t.update(**pa)
-                        msg = '更新项目数据数据成功'
+                        msg = '修改参数成功'
                     else:
-                        msg = '编辑项目失败，未找到该项目'
+                        msg = '修改参数失败'
                 except Exception as e:
                     print(e)
-                    msg = '更新项目数据失败,请联系管理员'
-        return {'status': 200, 'msg': 'succeed'}
+                    msg = '修改参数失败'
+        return {'status': 200, 'msg': msg}
+
+    def run_api(self, **resp):
+        rAm = runApiMain()
+        for key in resp:
+            dict_key = json.loads(key)
+        print(dict_key)
+        method = dict_key['reqMethods']
+        # param_list = dict_key['parameters']
+        # req_param_data = dict()
+        req_param_url = 'http://49.232.45.80/apiAutoTest/projectManage/projectList/find?selectedParamsKey=projectName&selectedParamsValue=&creator=&status=1'
+        runResp = rAm.run_Main('get', req_param_url)
+        msg = '接口运行成功'
+        return {'status': 200, 'msg': msg, 'runResp': runResp, 'runParam': ''}
 
     def del_api(self):
         pass

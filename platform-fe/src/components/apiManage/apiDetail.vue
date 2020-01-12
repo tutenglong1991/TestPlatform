@@ -84,7 +84,7 @@
       <el-row style="margin-left: 12px">
         <el-button v-if="apidata.parameters.length===0" @click="addParam" type="primary" icon="el-icon-plus" size="small">新增参数</el-button>
         <el-button @click="addParam" type="primary" size="small">格式化请求入参</el-button>
-        <el-button @click="addParam" type="primary" size="small">运行接口</el-button>
+        <el-button @click="runApi('submitForm1', 'submitForm2')" type="primary" size="small">运行接口</el-button>
         <el-button type="primary" @click="editApi('submitForm1', 'submitForm2')" size="small">保存</el-button>
       </el-row>
       <el-input class='create-text' type="textarea" :rows="10" placeholder="请求参数..." v-model="reqTextarea" style="margin-left:12px; width:45%;">
@@ -252,6 +252,36 @@ export default {
         }
       })
     },
+    runApi (formName1, formName2) {
+      this.validParams(formName2)
+      this.$refs[formName1].validate((valid) => {
+        if (valid && this.isParamsCheckedPass) {
+          let param = JSON.stringify(this.apidata)
+          return this.$axios.post('/apiAutoTest/apiInfo/runApi', param).then(response => {
+            if (response.status === 200 && response.data.code === 200) {
+              console.log('发送Ajax请求,请求成功', response.data)
+              this.$message({
+                message: '接口执行成功',
+                type: 'success',
+                color: 'green'
+              })
+            } else {
+              this.$message({
+                showClose: true,
+                message: '接口执行失败',
+                type: 'error'
+              })
+            }
+          }).catch(response => {
+            console.log('发送Ajax请求,' +
+            '请求失败', response)
+          })
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    },
     validParams (formName) {
       if (this.apidata.parameters.length !== 0) {
         this.$refs[formName].validate((valid) => {
@@ -296,13 +326,13 @@ export default {
     },
     addParam () {
       this.apidata.parameters.push({
-        id: '',
+        id: null,
         paramName: '',
         paramValue: '',
         isForce: '',
         paramType: '',
         paramRemark: '',
-        ownApi_id: this.$route.params.id,
+        ownApi_id: this.$route.params.id
       })
     },
     removeParam (item) {
@@ -312,19 +342,40 @@ export default {
       }
     },
     fallbackEditDate () {
+      console.log(this.$route.params)
       this.apidata.apiName = this.$route.params.apiName
       this.apidata.apiPath = this.$route.params.apiPath
       this.apidata.apiDomain = this.$route.params.apiDomain
-      this.apidata.netProtocol = this.$route.params.netProtocol
-      this.apidata.reqMethods = this.$route.params.reqMethods
+      if (this.$route.params.netProtocol === 'http') {
+        this.apidata.netProtocol = 0
+      } else if (this.$route.params.netProtocol === 'https') {
+        this.apidata.netProtocol = 1
+      }
+      if (this.$route.params.reqMethods === 'get') {
+        this.apidata.reqMethods = 0
+      } else if (this.$route.params.netProtocol === 'post') {
+        this.apidata.reqMethods = 1
+      }
+      if (this.$route.params.runStatus === '未执行') {
+        this.apidata.runStatus = 0
+      } else if (this.$route.params.runStatus === '成功') {
+        this.apidata.runStatus = 1
+      } else if (this.$route.params.runStatus === '失败') {
+        this.apidata.runStatus = 2
+      }
       this.apidata.reqUa = this.$route.params.reqUa
       this.apidata.apiModule = this.$route.params.apiModule
-      this.apidata.ownPro = this.$route.params.ownPro
-      this.apidata.runStatus = this.$route.params.runStatus
     }
   },
   mounted () {
-    this.getProjectOptions().then(response => { this.apiDataSelection.projectOptions = response.data }) // 获取项目共筛选
+    this.getProjectOptions().then(response => {
+      this.apiDataSelection.projectOptions = response.data
+      for (let index in this.apiDataSelection.projectOptions) {
+        if (this.apiDataSelection.projectOptions[index]['projectName'] === this.$route.params.ownPro) {
+          this.apidata.ownPro = this.apiDataSelection.projectOptions[index]['id']
+        }
+      }
+    }) // 获取项目共筛选
     this.fallbackEditDate()
     this.getApiParameter()
   }
