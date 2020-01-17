@@ -4,10 +4,7 @@
 from .models import ApiSet, ApiParameters
 from projectManage.models import Project
 from .requestMain import runApiMain
-import datetime
-import time
 import json
-import requests
 
 
 class ApiManage:
@@ -34,7 +31,8 @@ class ApiManage:
                                         'paramRemark': param['paramRemark']}
                 api_params_add_data_obj = ApiParameters(**api_params_data_objs)
                 # 外键插入（ownApi_id），即将添加接口和输入的参数关联
-                api_params_add_data_obj.ownApi_id = ApiSet.objects.values('id').filter(apiName=dict_key['apiName'])[0]['id']
+                api_params_add_data_obj.ownApi_id = ApiSet.objects.values('id').filter(apiName=dict_key['apiName'])[0][
+                    'id']
                 api_params_add_data_obj.save()
             # 通过relate_name查询主键中某个值与外键关联表中的数据
             # ownApi = ApiSet.objects.values('id').filter(apiName=dict_key['apiName'])[0]['id']
@@ -62,7 +60,7 @@ class ApiManage:
             api_datas_obj['apiModule'] = qs['apiModule']
             api_data_list.append(api_datas_obj)
         return api_data_list
-    
+
     # 查询接口全部数据,用于接口列表展示
     def query_apiInfo(self, **resp):
         apiList_result_list = []
@@ -76,7 +74,7 @@ class ApiManage:
             apiList_result['apiName'] = apiTuple_querySet[1]
             apiList_result['apiPath'] = apiTuple_querySet[2]
             apiList_result['apiDomain'] = apiTuple_querySet[3]
-            if apiTuple_querySet[4] == 0:                
+            if apiTuple_querySet[4] == 0:
                 apiList_result['netProtocol'] = 'http'
             elif apiTuple_querySet[4] == 1:
                 apiList_result['netProtocol'] = 'https'
@@ -104,19 +102,20 @@ class ApiManage:
         for param in param_querySet:
             print(param)
             param_obj = dict()
-            param_obj['id'] = param[1]
+            param_obj['id'] = param[0]
             param_obj['paramName'] = param[2]
             param_obj['paramValue'] = param[3]
             param_obj['isForce'] = param[4]
             param_obj['paramType'] = param[5]
             param_obj['paramRemark'] = param[6]
-            param_obj['ownApi_id'] = int(resp['id'])
+            param_obj['ownApi_id'] = param[1]
             param_list.append(param_obj)
         return param_list
 
     def edit_api(self, **resp):
         for key in resp:
             dict_key = json.loads(key)
+        print(dict_key)
         params = dict_key['parameters']
         dict_key.pop('parameters')
         ApiSet.objects.filter(id=dict_key['id']).values_list().update(**dict_key)
@@ -124,8 +123,8 @@ class ApiManage:
             print(pa)
             if pa['id'] is None:
                 pa.pop('id')
-                apiObj = ApiParameters(**pa).save()
-                msg='添加参数成功'
+                ApiParameters(**pa).save()
+                msg = '添加参数成功'
             else:
                 try:
                     _t = ApiParameters.objects.filter(id=pa['id']).values_list()
@@ -140,17 +139,53 @@ class ApiManage:
         return {'status': 200, 'msg': msg}
 
     def run_api(self, **resp):
-        rAm = runApiMain()
         for key in resp:
             dict_key = json.loads(key)
-        print(dict_key)
-        method = dict_key['reqMethods']
-        # param_list = dict_key['parameters']
-        # req_param_data = dict()
-        req_param_url = 'http://49.232.45.80/apiAutoTest/projectManage/projectList/find?selectedParamsKey=projectName&selectedParamsValue=&creator=&status=1'
-        runResp = rAm.run_Main('get', req_param_url)
+        reqMethods = dict_key['reqMethods']
+        netProtocol = dict_key['netProtocol']
+        if reqMethods == 0:
+            methods = 'get'
+        else:
+            methods = 'post'
+        if netProtocol == 0:
+            net = 'http'
+        else:
+            net = 'https'
+        apiDomain = dict_key['apiDomain']
+        apiPath = dict_key['apiPath']
+        param_list = dict_key['parameters']
+        req_param_data = dict()
+        for param in param_list:
+            paramType = param['paramType']
+            # 此处参数类型由字符串转换成其他各种类型后续再补充
+            if paramType == 'Int':
+                req_param_data[param['paramName']] = int(param['paramValue'])
+            elif paramType == 'float':
+                req_param_data[param['paramName']] = float(param['paramValue'])
+            elif paramType == 'String':
+                req_param_data[param['paramName']] = param['paramValue']
+        req_param_url = net + '://' + apiDomain + apiPath
+
+        rAm = runApiMain()
+        cookies = rAm.login_GBT()
+        print(type(cookies.get_dict()))
+        default_headers = json.loads(dict_key['reqUa'])
+        if len(req_param_data) == 0:
+            req_param_data = None
+        api_obj = ApiSet.objects.filter(id=dict_key['id'])
+        try:
+            print(req_param_data)
+            runResp = rAm.run_main(methods, req_param_url, req_data=req_param_data, headers=default_headers)
+            runResp_dict = json.loads(runResp)
+            if runResp_dict['code'] == 0:
+                api_obj.update(runStatus=1)
+            else:
+                api_obj.update(runStatus=2)
+        except Exception as e:
+            api_obj.update(runStatus=2)
         msg = '接口运行成功'
-        return {'status': 200, 'msg': msg, 'runResp': runResp, 'runParam': ''}
+        runParam = json.dumps(req_param_data)
+        return {'status': 200, 'msg': msg, 'runResp': runResp, 'runParam': runParam}
 
     def del_api(self):
         pass

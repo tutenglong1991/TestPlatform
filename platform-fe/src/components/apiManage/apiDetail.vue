@@ -44,7 +44,7 @@
         <el-row>
           <el-col :span='6'>
             <el-form-item label="请求方式" prop="reqMethods">
-              <el-select v-model="apidata.reqMethods" clearable autocomplete="off" placeholder="请选择网络协议">
+              <el-select v-model="apidata.reqMethods" clearable autocomplete="off" placeholder="请选择请求方式">
                 <el-option
                   v-for="m in apiDataSelection.reqMethods"
                   :key="m.value"
@@ -55,8 +55,9 @@
             </el-form-item>
           </el-col>
           <el-col :span='6'>
-            <el-form-item label="设置UA" prop="reqUa">
-              <el-input v-model="apidata.reqUa" autocomplete="off" placeholder="请设置接口请求UA"></el-input>
+            <el-form-item label="请求头" prop="reqUa">
+              <el-input v-model="apidata.reqUa" autocomplete="off" placeholder="设置请求头不设置即为默认值">
+              </el-input>
             </el-form-item>
           </el-col>
           <el-col :span='6'>
@@ -79,12 +80,12 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-link :underline="false" v-model="apidata" type="success">URL：{{this.apiDataSelection.netProtocol[0].label + '://' + this.apidata.apiDomain + this.apidata.apiPath}}</el-link>
+        <el-link :underline="false" v-model="apidata" type="success">URL：{{ (this.apiDataSelection.netProtocol[this.apidata.netProtocol]).label + '://' + this.apidata.apiDomain + this.apidata.apiPath }}</el-link>
       </el-form>
       <el-row style="margin-left: 12px">
         <el-button v-if="apidata.parameters.length===0" @click="addParam" type="primary" icon="el-icon-plus" size="small">新增参数</el-button>
-        <el-button @click="addParam" type="primary" size="small">格式化请求入参</el-button>
-        <el-button @click="runApi('submitForm1', 'submitForm2')" type="primary" size="small">运行接口</el-button>
+        <el-button @click="addParam" type="primary" size="small" disabled>格式化请求入参</el-button>
+        <el-button @click="runSingleApi('submitForm1', 'submitForm2')" type="primary" size="small">运行接口</el-button>
         <el-button type="primary" @click="editApi('submitForm1', 'submitForm2')" size="small">保存</el-button>
       </el-row>
       <el-input class='create-text' type="textarea" :rows="10" placeholder="请求参数..." v-model="reqTextarea" style="margin-left:12px; width:45%;">
@@ -199,9 +200,9 @@ export default {
         apiName: null,
         apiPath: null,
         apiDomain: null,
-        netProtocol: 0,
-        reqMethods: 0,
-        reqUa: null,
+        netProtocol: null,
+        reqMethods: null,
+        reqUa: '{"Accept-Encoding": "utf-8","User-Agent": "hemeilong","Content-Type": "application/x-www-form-urlencoded"}',
         apiModule: null,
         ownPro: null,
         runStatus: 0
@@ -234,7 +235,7 @@ export default {
                 type: 'success',
                 color: 'green'
               })
-              this.$router.push('/apiAutoTest/apiList')
+              // this.$router.push('/apiAutoTest/apiList')
             } else {
               this.$message({
                 showClose: true,
@@ -252,12 +253,12 @@ export default {
         }
       })
     },
-    runApi (formName1, formName2) {
+    runSingleApi (formName1, formName2) {
       this.validParams(formName2)
       this.$refs[formName1].validate((valid) => {
         if (valid && this.isParamsCheckedPass) {
           let param = JSON.stringify(this.apidata)
-          return this.$axios.post('/apiAutoTest/apiInfo/runApi', param).then(response => {
+          return this.$axios.post('/apiAutoTest/apiInfo/runSingleApi', param).then(response => {
             if (response.status === 200 && response.data.code === 200) {
               console.log('发送Ajax请求,请求成功', response.data)
               this.$message({
@@ -265,6 +266,9 @@ export default {
                 type: 'success',
                 color: 'green'
               })
+              console.log(response.data['data']['runResp'])
+              this.respTextarea = response.data['data']['runResp']
+              this.reqTextarea = response.data['data']['runParam']
             } else {
               this.$message({
                 showClose: true,
@@ -353,7 +357,7 @@ export default {
       }
       if (this.$route.params.reqMethods === 'get') {
         this.apidata.reqMethods = 0
-      } else if (this.$route.params.netProtocol === 'post') {
+      } else if (this.$route.params.reqMethods === 'post') {
         this.apidata.reqMethods = 1
       }
       if (this.$route.params.runStatus === '未执行') {
@@ -367,7 +371,11 @@ export default {
       this.apidata.apiModule = this.$route.params.apiModule
     }
   },
+  created () {
+    this.fallbackEditDate()
+  },
   mounted () {
+    // 获取项目共筛选
     this.getProjectOptions().then(response => {
       this.apiDataSelection.projectOptions = response.data
       for (let index in this.apiDataSelection.projectOptions) {
@@ -375,8 +383,7 @@ export default {
           this.apidata.ownPro = this.apiDataSelection.projectOptions[index]['id']
         }
       }
-    }) // 获取项目共筛选
-    this.fallbackEditDate()
+    })
     this.getApiParameter()
   }
 }

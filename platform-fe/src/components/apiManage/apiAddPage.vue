@@ -52,8 +52,8 @@
             </el-form-item>
           </el-col>
           <el-col :span='6'>
-            <el-form-item label="设置UA" prop="reqUa">
-              <el-input v-model="apidata.reqUa" autocomplete="off" placeholder="请设置接口请求UA"></el-input>
+            <el-form-item label="设置请求头" prop="reqUa">
+              <el-input v-model="apidata.reqUa" autocomplete="off" placeholder="设置请求头不设置即为默认值"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span='6'>
@@ -196,7 +196,7 @@ export default {
         apiDomain: null,
         netProtocol: 0,
         reqMethods: 0,
-        reqUa: null,
+        reqUa: "{'Accept-Encoding': 'utf-8','User-Agent': 'hemeilong','Content-Type': 'application/x-www-form-urlencoded'}",
         apiModule: null,
         ownPro: null,
         runStatus: 0
@@ -229,7 +229,7 @@ export default {
                 type: 'success',
                 color: 'green'
               })
-              // this.queryProject('searchForm')
+              this.$router.push('/apiAutoTest/apiList')
             } else {
               this.$message({
                 showClose: true,
@@ -271,6 +271,7 @@ export default {
     },
     addParam () {
       this.apidata.parameters.push({
+        id: null,
         paramName: '',
         paramValue: '',
         isForce: '',
