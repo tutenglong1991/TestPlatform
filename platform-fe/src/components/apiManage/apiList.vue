@@ -51,8 +51,8 @@
           </el-form-item>
           <el-form-item>
             <el-button @click="searchApi" class="searchApiBtn" type="primary">搜索</el-button>
-            <el-button class="addApiBtn" size="mini" @click="goToAddPage">添加</el-button>
-            <el-button class="addApiBtn" size="mini" @click="toggleSelection(multipleSelection)">执行</el-button>
+            <el-button class="addApiBtn" @click="goToAddPage">添加</el-button>
+            <el-button class="addApiBtn" @click="toggleSelection(multipleSelection)">执行</el-button>
           </el-form-item>
         </el-form>
       </div>

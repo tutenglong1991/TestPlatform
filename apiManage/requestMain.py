@@ -26,7 +26,7 @@ class runApiMain:
         doLogin_headers = {
             'Accept-Encoding': 'utf-8',
             'User-Agent': 'hemeilong',
-            'Content-Type': ''
+            'Content-Type': 'application/x-www-form-urlencoded'
         }
         php_get_cookie_url = 'http://www.trader-gb.com/base/login/login'
         self.run_main('get', url=php_get_cookie_url, headers=doLogin_headers)

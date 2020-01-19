@@ -5,6 +5,9 @@ from .models import ApiSet, ApiParameters
 from projectManage.models import Project
 from .requestMain import runApiMain
 import json
+from .config import user
+import datetime
+import time
 
 
 class ApiManage:
@@ -167,8 +170,26 @@ class ApiManage:
         req_param_url = net + '://' + apiDomain + apiPath
 
         rAm = runApiMain()
-        cookies = rAm.login_GBT()
-        print(type(cookies.get_dict()))
+        if len(user['cookies']) == 0:
+            # 调登录接口获取cookies并保存
+            cookies = rAm.login_GBT()
+            user['cookies'] = cookies.get_dict()
+            user['lastLoginTime'] = datetime.datetime.now()
+        else:
+            newLoginTime = datetime.datetime.now()
+            timeGap = (newLoginTime-user['lastLoginTime']).seconds
+            print(timeGap)
+            # 若已存在cookies，且cookies无效(暂时设置6h重新获取一次)
+            if timeGap >= 21600:
+                print('再调登录接口')
+                # 再调登录接口重新获取cookies并保存
+                cookies = rAm.login_GBT()
+                user['cookies'] = cookies.get_dict()
+                user['lastLoginTime'] = newLoginTime
+            else:
+                # 若已存在cookies，且cookies还有效，则将原来的cookies赋值给最新的会话
+                print(user['cookies'])
+                rAm.session.cookies.update(user['cookies'])
         default_headers = json.loads(dict_key['reqUa'])
         if len(req_param_data) == 0:
             req_param_data = None
