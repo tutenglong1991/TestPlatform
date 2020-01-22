@@ -15,6 +15,7 @@
               placeholder="请选择或输入接口所属项目"
               :options="multipleSelection.ownPro"
               :props="{ label: 'projectName', value: 'id' }"
+              @change="getProRelatedModule"
               filterable
               clearable>
             </el-cascader>
@@ -23,7 +24,8 @@
             <el-cascader v-model="searchParams.apiModule"
               placeholder="请选择接口所属模块"
               :options="multipleSelection.apiModule"
-              filterable
+              :props="props"
+              collapse-tags
               clearable>
             </el-cascader>
           </el-form-item>
@@ -31,11 +33,11 @@
             <el-select :filterable=true v-model="searchParams.apiName" clearable placeholder="请选择接口">
               <el-option
                 v-for="n in multipleSelection.apiName"
-                :key="n.apiName"
-                :label="n.apiPath"
-                :value="n.apiName">
-                <span style="float: left; margin-right: 20px">{{ n.apiName }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{ n.apiPath }}</span>
+                :key="n.value"
+                :label="n.label"
+                :value="n.value">
+                <span style="float: left; margin-right: 20px">{{ n.value }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ n.label }}</span>
               </el-option>
             </el-select>
           </el-form-item>
@@ -130,6 +132,7 @@ export default {
   name: 'apiList',
   data () {
     return {
+      props: { multiple: true },
       multipleSelection: {
         ownPro: [],
         apiModule: [],
@@ -158,7 +161,6 @@ export default {
   },
   methods: {
     searchApi () {
-      // let param = JSON.stringify(this.searchParams)
       let finalParams = {}
       for (let obj in this.searchParams) {
         if (obj === 'ownPro' || obj === 'apiModule') {
@@ -192,14 +194,12 @@ export default {
             '请求失败', response)
       })
     },
-    // 获取接口和模块供搜索下拉选项
-    getApisAndModules () {
-      return this.$axios.get('/apiAutoTest/apiInfo/options-apiModule').then(response => {
-        let apiObj = response.data['data']
-        for (let i in apiObj) {
-          this.multipleSelection.apiModule.push({label: apiObj[i]['apiModule'], value: apiObj[i]['apiModule']})
-          this.multipleSelection.apiName.push({apiName: apiObj[i]['apiName'], apiPath: apiObj[i]['apiPath']})
-        }
+    // 根据选择的项目异步获取接口和模块供搜索下拉选项
+    getProRelatedModule (value) {
+      console.log(value)
+      return this.$axios.get('/apiAutoTest/apiInfo/options-apiModule', { params: {'selected_pro': value[0]} }).then(response => {
+        this.multipleSelection.apiModule = response.data['data']['modules']
+        this.multipleSelection.apiName = response.data['data']['api']
       }).catch(error => {
         console.log('系统错误' + error)
       })
@@ -235,7 +235,7 @@ export default {
         this.multipleSelection.ownPro.push(response.data[i])
       }
     })
-    this.getApisAndModules()
+    this.getProRelatedModule({})
     this.searchApi()
   }
 }
@@ -284,6 +284,7 @@ export default {
   }
   .apiTableList {
     margin-top: 30px;
+    border-top: 1px solid #c0c4ccb8;
   }
   .apiTableList>>>.el-table th {
     background-color: #f4f5f975;

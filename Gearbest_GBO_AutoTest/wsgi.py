@@ -1,7 +1,7 @@
 """
 WSGI config for Gearbest_GBO_AutoTest project.
 
-It exposes the WSGI callable as a module-level variable named ``application``.
+It exposes the WSGI callable as a 选品工具-level variable named ``application``.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/2.2/howto/deployment/wsgi/

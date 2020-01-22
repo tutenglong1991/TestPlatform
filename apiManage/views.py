@@ -32,10 +32,10 @@ def api_manage(request, operate):
             if operate == 'apiList':
                 api_data = api.query_apiInfo(**resp)
             elif operate == 'options-apiModule':
-                api_data = api.query_api_options()
+                api_data = api.query_api_options(**resp)
             elif operate == 'parameterOfApi':
                 api_data = api.query_api_params(**resp)
             return JsonResponse({"code": 200, "data": api_data})
         except Exception as e:
             print(e)
-            return JsonResponse({"code": 500, "msg": "查找项目失败"})
+            return JsonResponse({"code": 500, "msg": "服务内部异常，请联系管理员"})

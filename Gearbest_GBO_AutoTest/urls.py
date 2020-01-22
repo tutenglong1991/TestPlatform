@@ -4,13 +4,13 @@ The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/2.2/topics/http/urls/
 Examples:
 Function views
-    1. Add an import:  from my_app import views
+    选推服务. Add an import:  from my_app import views
     2. Add a URL to urlpatterns:  path('', views.home, name='home')
 Class-based views
-    1. Add an import:  from other_app.views import Home
+    选推服务. Add an import:  from other_app.views import Home
     2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
 Including another URLconf
-    1. Import the include() function: from django.urls import include, path
+    选推服务. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
@@ -23,4 +23,5 @@ urlpatterns = [
     path('apiAutoTest/projectManage/', include('projectManage.urls')),
     path('login', include('login.urls')),
     path('apiAutoTest/apiInfo/', include('apiManage.urls')),
+    path('apiAutoTest/caseInfo/', include('caseManage.urls')),
 ]

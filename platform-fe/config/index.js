@@ -1,5 +1,5 @@
 'use strict'
-// Template version: 1.3.1
+// Template version: 选推服务.3.选推服务
 // see http://vuejs-templates.github.io/webpack for documentation.
 
 const path = require('path')
@@ -38,11 +38,20 @@ module.exports = {
           '^/apiAutoTest/apiInfo': '/apiAutoTest/apiInfo'//路径的替换规则
         //每次修改后需要重新npm run dev才能生效
         }
+      },
+      '/apiAutoTest/caseInfo': {
+        target: 'http://127.0.0.1:8000',//你要跨域的网址  比如  'http://news.baidu.com',
+        secure: true,  // 如果是https接口，需要配置这个参数
+        changeOrigin: true,//这个参数是用来回避跨站问题的，配置完之后发请求时会自动修改http header里面的host，但是不会修改别的
+        pathRewrite: {
+          '^/apiAutoTest/caseInfo': '/apiAutoTest/caseInfo'//路径的替换规则
+          //每次修改后需要重新npm run dev才能生效
+        }
       }
     },
 
     // Various Dev Server settings
-    host: '127.0.0.1', // can be overwritten by process.env.HOST
+    host: '127.0.0.选推服务', // can be overwritten by process.env.HOST
     port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: false,
     errorOverlay: true,
@@ -62,7 +71,7 @@ module.exports = {
      */
 
     // https://webpack.js.org/configuration/devtool/#development
-    devtool: 'cheap-module-eval-source-map',
+    devtool: 'cheap-选品工具-eval-source-map',
 
     // If you have problems debugging vue-files in devtools,
     // set this to false - it *may* help

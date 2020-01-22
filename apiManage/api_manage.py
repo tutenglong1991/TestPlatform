@@ -7,7 +7,6 @@ from .requestMain import runApiMain
 import json
 from .config import user
 import datetime
-import time
 
 
 class ApiManage:
@@ -39,8 +38,8 @@ class ApiManage:
                 api_params_add_data_obj.save()
             # 通过relate_name查询主键中某个值与外键关联表中的数据
             # ownApi = ApiSet.objects.values('id').filter(apiName=dict_key['apiName'])[0]['id']
-            # api = ApiSet.objects.get(id=ownApi['id'])
-            # param = api.api_params.values_list()
+            # caseSet = ApiSet.objects.get(id=ownApi['id'])
+            # param = caseSet.api_params.values_list()
             msg = '添加接口和参数成功'
             return {'status': 200, 'msg': msg}
         except Exception as e:
@@ -52,17 +51,24 @@ class ApiManage:
             return {'status': 500, 'msg': msg}
 
     # 仅查询接口名称和所属的模块数据，用于下拉选项
-    def query_api_options(self):
+    def query_api_options(self, **resp):
+        print(resp)
+        if len(resp) == 0:
+            sql = "select id, apiName, apiPath, apiModule from api_manage group by apiModule order by id ASC"
+        else:
+            project_id = int(resp['selected_pro'])
+            sql = "select id, apiName, apiPath, apiModule from api_manage where ownPro='%d' group by apiModule order by id ASC" % project_id
+        module_data_list = []
         api_data_list = []
-        api_options_querySet = ApiSet.objects.values('id', 'apiName', 'apiPath', 'apiModule').order_by('id').reverse()
-        for qs in api_options_querySet:
-            api_datas_obj = dict()
-            api_datas_obj['id'] = qs['id']
-            api_datas_obj['apiName'] = qs['apiName']
-            api_datas_obj['apiPath'] = qs['apiPath']
-            api_datas_obj['apiModule'] = qs['apiModule']
-            api_data_list.append(api_datas_obj)
-        return api_data_list
+        api_module_obj = dict()
+        for A in ApiSet.objects.raw(sql):
+            api_obj = {'value': A.apiName, 'label': A.apiPath}
+            module_obj = {'value': A.apiModule, 'label': A.apiModule}
+            module_data_list.append(module_obj)
+            api_data_list.append(api_obj)
+        api_module_obj['modules'] = module_data_list
+        api_module_obj['api'] = api_data_list
+        return api_module_obj
 
     # 查询接口全部数据,用于接口列表展示
     def query_apiInfo(self, **resp):
@@ -103,7 +109,6 @@ class ApiManage:
         param_querySet = ApiParameters.objects.values_list().filter(ownApi_id=resp['id'])
         param_list = []
         for param in param_querySet:
-            print(param)
             param_obj = dict()
             param_obj['id'] = param[0]
             param_obj['paramName'] = param[2]
@@ -118,27 +123,32 @@ class ApiManage:
     def edit_api(self, **resp):
         for key in resp:
             dict_key = json.loads(key)
-        print(dict_key)
         params = dict_key['parameters']
         dict_key.pop('parameters')
-        ApiSet.objects.filter(id=dict_key['id']).values_list().update(**dict_key)
-        for pa in params:
-            print(pa)
-            if pa['id'] is None:
-                pa.pop('id')
-                ApiParameters(**pa).save()
-                msg = '添加参数成功'
-            else:
-                try:
-                    _t = ApiParameters.objects.filter(id=pa['id']).values_list()
-                    if _t:
-                        _t.update(**pa)
-                        msg = '修改参数成功'
-                    else:
-                        msg = '修改参数失败'
-                except Exception as e:
-                    print(e)
-                    msg = '修改参数失败'
+        # 如果参数为空，接口无任何入参，则只更新接口
+        if len(params) == 0:
+            ApiSet.objects.filter(id=dict_key['id']).values_list().update(**dict_key)
+            msg = "接口更新成功"
+        else:
+            # 先更新接口，再更新接口下的参数
+            ApiSet.objects.filter(id=dict_key['id']).values_list().update(**dict_key)
+            for pa in params:
+                # 若参数无id则为新增参数，调用数据库模型插入保存方法
+                if pa['id'] is None:
+                    pa.pop('id')
+                    ApiParameters(**pa).save()
+                    msg = '更新接口，添加参数成功'
+                else:
+                    try:
+                        _t = ApiParameters.objects.filter(id=pa['id']).values_list()
+                        if _t:
+                            _t.update(**pa)
+                            msg = '更新接口，修改参数成功'
+                        else:
+                            msg = '更新接口，修改参数失败'
+                    except Exception as e:
+                        print(e)
+                        msg = '更新接口成功，修改参数失败'
         return {'status': 200, 'msg': msg}
 
     def run_api(self, **resp):
@@ -177,26 +187,25 @@ class ApiManage:
             user['lastLoginTime'] = datetime.datetime.now()
         else:
             newLoginTime = datetime.datetime.now()
-            timeGap = (newLoginTime-user['lastLoginTime']).seconds
-            print(timeGap)
-            # 若已存在cookies，且cookies无效(暂时设置6h重新获取一次)
-            if timeGap >= 21600:
-                print('再调登录接口')
+            timeGap = (newLoginTime - user['lastLoginTime']).seconds
+            # 若已存在cookies，且cookies无效(暂时设置3h重新获取一次)
+            if timeGap >= 10800:
                 # 再调登录接口重新获取cookies并保存
                 cookies = rAm.login_GBT()
                 user['cookies'] = cookies.get_dict()
                 user['lastLoginTime'] = newLoginTime
             else:
                 # 若已存在cookies，且cookies还有效，则将原来的cookies赋值给最新的会话
-                print(user['cookies'])
                 rAm.session.cookies.update(user['cookies'])
+        print(dict_key)
+        print(dict_key['reqUa'].replace('"', "'"))
         default_headers = json.loads(dict_key['reqUa'])
         if len(req_param_data) == 0:
             req_param_data = None
         api_obj = ApiSet.objects.filter(id=dict_key['id'])
         try:
-            print(req_param_data)
             runResp = rAm.run_main(methods, req_param_url, req_data=req_param_data, headers=default_headers)
+            print(req_param_url)
             runResp_dict = json.loads(runResp)
             if runResp_dict['code'] == 0:
                 api_obj.update(runStatus=1)

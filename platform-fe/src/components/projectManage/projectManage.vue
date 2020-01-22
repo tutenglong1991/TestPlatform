@@ -372,7 +372,6 @@ export default {
     width: 100%;
     height: 40px;
     padding-bottom: 40px;
-    border-bottom: 1px solid #bbbcbf59;
   }
   .el-form-item.choose_params.is-success>>>.el-form-item__content {
     margin-left: 0px !important;
@@ -423,9 +422,6 @@ export default {
   .select_projectCreate.el-input>>>.el-input__inner:hover {
     border-color: #04aa51;
   }
-  .searchBtn {
-    margin-left: 100px;
-  }
   .searchProject>.el-button:focus, .el-button:hover {
     color: #ffffff;
     border-color: #04aa51;
@@ -438,6 +434,7 @@ export default {
   }
   .projectTableList {
     margin-top: 30px;
+    border-top: 1px solid #c0c4ccb8;
   }
   .projectTableList>>>.el-table th {
     background-color: #f4f5f975;

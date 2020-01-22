@@ -10,27 +10,28 @@
     <el-main>
       <div class="searchCase">
         <el-form ref="searchForm" :model="caseSearchParam" label-width="70px" style="display:flex; justify-content: left;">
-          <el-form-item class="ownPro" label="所属项目" prop="ownPro">
-            <el-cascader v-model="caseSearchParam.ownPro" style="width: 160px;"
+          <el-form-item class="casePro" label="所属项目" prop="casePro">
+            <el-cascader v-model="caseSearchParam.casePro" style="width: 120px;"
                placeholder="选择用例所属项目"
-               :options="caseSearchOptions.ownPro"
+               :options="caseSearchOptions.casePro"
                :props="{ label: 'projectName', value: 'id' }"
+               @change="getProRelatedModule"
                filterable
                clearable>
             </el-cascader>
           </el-form-item>
-          <el-form-item prop="selectedParamsValue" class="choose_module_dem">
-            <span class="case_module_dem">所属模块或接口</span>
-            <el-cascader v-model="caseSearchParam.paramsSelectionKey" style="margin-left: 10px; width: 190px;"
+          <el-form-item prop="api_module" class="choose_module_dem">
+            <span class="case_module_dem">模块/接口</span>
+            <el-cascader v-model="caseSearchParam.api_module" style="margin-left: 10px; width: 350px;"
                placeholder="请选择所属模块和接口"
-               :options="caseSearchOptions.module_name"
+               :options="caseSearchOptions.api_module"
                :props="props"
                collapse-tags
                clearable>
             </el-cascader>
           </el-form-item>
           <el-form-item label="用例名称" prop="caseName" style="width: 200px; margin-left: 15px;">
-            <el-input class="select_caseName" v-model="finalSearchParams.creator" placeholder="请输入用例名称" clearable></el-input>
+            <el-input class="select_caseName" v-model="caseSearchParam.caseName" placeholder="请输入用例名称" clearable></el-input>
           </el-form-item>
           <el-form-item label="用例级别" prop="caseLevel" style="margin-left:35px">
             <el-select class="caseLevel" v-model="caseSearchParam.caseLevel" clearable placeholder="选择用例级别">
@@ -53,121 +54,105 @@
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button @click="searchApi" class="searchApiBtn" type="primary">搜索</el-button>
-            <el-button class="addApiBtn" @click="goToAddPage">添加</el-button>
-            <el-button class="addApiBtn" @click="toggleSelection(multipleSelection)">执行</el-button>
+            <el-button @click="searchCase" class="searchCaseBtn" type="primary">搜索</el-button>
+            <el-button @click="onCreateCase" class="addCaseBtn">添加</el-button>
           </el-form-item>
         </el-form>
       </div>
-<!--      <div class="apiTableList">-->
-<!--        <el-table-->
-<!--          ref="multipleTable"-->
-<!--          tooltip-effect="dark"-->
-<!--          @selection-change="handleSelectionChange"-->
-<!--          :data="apiTableData"-->
-<!--          style="width: 100%">-->
-<!--          <el-table-column-->
-<!--            type="selection"-->
-<!--            width="55">-->
-<!--          </el-table-column>-->
-<!--          <el-table-column label="所属项目" width="160">-->
-<!--            <template slot-scope="scope">-->
-<!--              <span>{{ scope.row.ownPro }}</span>-->
-<!--            </template>-->
-<!--          </el-table-column>-->
-<!--          <el-table-column label="所属模块" width="130">-->
-<!--            <template slot-scope="scope">-->
-<!--              <span>{{ scope.row.apiModule }}</span>-->
-<!--            </template>-->
-<!--          </el-table-column>-->
-<!--          <el-table-column label="名称" width="140">-->
-<!--            <template slot-scope="scope">-->
-<!--              <span>{{ scope.row.apiName }}</span>-->
-<!--            </template>-->
-<!--          </el-table-column>-->
-<!--          <el-table-column label="域名/IP" width="180">-->
-<!--            <template slot-scope="scope">-->
-<!--              <span>{{ scope.row.apiDomain }}</span>-->
-<!--            </template>-->
-<!--          </el-table-column>-->
-<!--          <el-table-column label="地址" width="200">-->
-<!--            <template slot-scope="scope">-->
-<!--              <span>{{ scope.row.apiPath }}</span>-->
-<!--            </template>-->
-<!--          </el-table-column>-->
-<!--          <el-table-column label="网络协议" width="100">-->
-<!--            <template slot-scope="scope">-->
-<!--              <span>{{ scope.row.netProtocol }}</span>-->
-<!--            </template>-->
-<!--          </el-table-column>-->
-<!--          <el-table-column label="请求方式" width="100">-->
-<!--            <template slot-scope="scope">-->
-<!--              <span>{{ scope.row.reqMethods }}</span>-->
-<!--            </template>-->
-<!--          </el-table-column>-->
-<!--          <el-table-column label="执行状态" width="100">-->
-<!--            <template slot-scope="scope">-->
-<!--              <span>{{ scope.row.runStatus }}</span>-->
-<!--            </template>-->
-<!--          </el-table-column>-->
-<!--          <el-table-column label="操作">-->
-<!--            <template slot-scope="scope">-->
-<!--              <el-button @click="goToDetailPage(scope.row)" size="mini" >编辑-->
-<!--              </el-button>-->
-<!--              <el-button size="mini">执行日志-->
-<!--              </el-button>-->
-<!--              <el-button size="mini" >关联用例-->
-<!--              </el-button>-->
-<!--              <el-button size="mini">删除-->
-<!--              </el-button>-->
-<!--            </template>-->
-<!--          </el-table-column>-->
-<!--        </el-table>-->
-<!--      </div>-->
+      <el-row>
+        <el-button class="addTaskBtn" type="primary" @click="createAutoTask">创建任务</el-button>
+        <el-button class="manualRunBtn" @click="toggleSelection(multipleSelection)">手动执行</el-button>
+      </el-row>
+      <div class="caseTableList">
+        <el-table
+          ref="multipleTable"
+          tooltip-effect="dark"
+          @selection-change="handleSelectionChange"
+          :data="caseTableData"
+          style="width: 100%">
+          <el-table-column
+            type="selection"
+            width="55">
+          </el-table-column>
+          <el-table-column label="用例ID" width="70">
+            <template slot-scope="scope">
+              <span>{{ scope.row.caseId }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="用例名称" width="220">
+            <template slot-scope="scope">
+              <span>{{ scope.row.caseName }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="用例级别" width="100">
+            <template slot-scope="scope">
+              <span>{{ scope.row.caseLevel }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="执行状态" width="100">
+            <template slot-scope="scope">
+              <span>{{ scope.row.caseRunStatus }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="所属项目" width="130">
+            <template slot-scope="scope">
+              <span>{{ scope.row.caseProName }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="所属模块" width="130">
+            <template slot-scope="scope">
+              <span>{{ scope.row.caseModule }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="所属接口" width="160">
+            <template slot-scope="scope">
+              <span style="text-align: center;">{{ scope.row.caseApiName }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="备注" width="235">
+            <template slot-scope="scope">
+              <span>{{ scope.row.caseRemark }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作">
+            <template slot-scope="scope">
+              <el-button @click="goToDetailPage(scope.row)" size="mini" >编辑
+              </el-button>
+              <el-button size="mini">删除
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
     </el-main>
   </el-container>
 </template>
 
 <script>
+import ConfirmMixin from '../../assets/confirm_mixin'
+import createCase from './createCase.vue'
+// import editProject from './editProject.vue'
 export default {
+  mixins: [ConfirmMixin],
   name: 'caseList',
   data () {
     return {
       props: { multiple: true },
       caseSearchOptions: {
-        ownPro: [],
-        module_name: [{
-          value: 'zhinan',
-          label: '指南',
-          children: [{
-            value: 'shejiyuanze',
-            label: '设计原则'
-          },
-          {
-            value: 'cexiangdaohang',
-            label: '侧向导航'
-          }
-          ]
-        },
-        {
-          value: 'daohang',
-          label: '导航',
-          children: [{
-            value: 'cexiangdaohang',
-            label: '侧向导航'
-          }]
-        }],
+        casePro: [],
+        api_module: [],
+        caseName: '',
         runStatus: [{
           value: 0,
-          label: '未执行'
+          label: 'Na(未执行)'
         },
         {
           value: 1,
-          label: '成功'
+          label: 'Pass(通过)'
         },
         {
           value: 2,
-          label: '失败'
+          label: 'Fail(失败)'
         }],
         caseLevel: [{
           value: 0,
@@ -180,39 +165,199 @@ export default {
         {
           value: 2,
           label: 'P1'
-        },
-        {
-          value: 3,
-          label: 'P2'
-        },
-        {
-          value: 4,
-          label: 'P3'
         }]
       },
-      defaultSelectedParamsLabel: '所属模块',
-      finalSearchParams: {
-        selectedParamsKey: '',
-        selectedParamsValue: ''
-      },
       caseSearchParam: { // 搜索前端展示参数
-        ownPro: [],
-        paramsSelectionKey: [],
-        paramsSelectionValue: [{'ownModule': [], 'ownApi': []}],
+        casePro: [],
+        api_module: [],
+        caseName: '',
         caseLevel: '',
-        select_caseName: '',
         runStatus: ''
-      }
+      },
+      caseTableData: [{
+        'caseId': 1,
+        'caseName': '获取选品数据列表',
+        'caseLevel': 'P',
+        'caseRunStatus': '通过',
+        'caseProName': '选推服务',
+        'caseModule': '选品工具',
+        'caseApiName': '获取选品数据列表',
+        'caseRemark': ''
+      },
+      {
+        'caseId': 2,
+        'caseName': '获取选品数据列表',
+        'caseLevel': 'P',
+        'caseRunStatus': '通过',
+        'caseProName': '选推服务',
+        'caseModule': '选品工具',
+        'caseApiName': '获取选品数据列表',
+        'caseRemark': ''
+      },
+      {
+        'caseId': 3,
+        'caseName': '获取选品数据列表',
+        'caseLevel': 'P',
+        'caseRunStatus': '通过',
+        'caseProName': '选推服务',
+        'caseProId': 1,
+        'caseModule': '选品工具',
+        'caseApiName': '获取选品数据列表',
+        'caseApiId': 3,
+        'caseRemark': ''
+      }],
+      addCaseParams: {}
     }
   },
   methods: {
-    getChangedParam (selectedTtem) { // 在查询条件选择组件变更后更新查询条件的key和value，value为当前输入框输入的值
-      this.finalSearchParams['selectedParamsKey'] = selectedTtem
-      this.finalSearchParams.selectedParamsValue = this.finalSearchParams.selectedParamsValue[selectedTtem] // 切换后清空搜索条件
+    handleSelectionChange (val) {
+      console.log(val)
+      this.multipleSelection = val
     },
-    onSelectInputChange (inputValue) { // 在输入框变更时，更新查询条件组件当前选择条件对应的value
-      this.finalSearchParams['selectedParamsValue'] = inputValue
+    toggleSelection (rows) {
+      console.log(rows)
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row)
+        })
+        let param = JSON.stringify({'runningCase': rows})
+        return this.$axios.post('/apiAutoTest/caseInfo/manualRunCase', param).then(response => {
+          if (response.status === 200 && response.data.code === 200) {
+            console.log('发送Ajax请求,请求成功', response.data)
+            this.$message({
+              message: '接口执行成功',
+              type: 'success',
+              color: 'green'
+            })
+            console.log(response.data['data']['runResp'])
+          } else {
+            this.$message({
+              showClose: true,
+              message: '接口执行失败',
+              type: 'error'
+            })
+          }
+        }).catch(response => {
+          console.log('发送Ajax请求,' +
+            '请求失败', response)
+        })
+      } else {
+        this.$refs.multipleTable.clearSelection()
+      }
+    },
+    getProRelatedModule (value) {
+      return this.$axios.get('/apiAutoTest/caseInfo/options-apiModule', { params: {'selected_pro': value[0]} }).then(response => {
+        this.caseSearchOptions.api_module = response.data['data']
+      }).catch(error => {
+        console.log('系统错误' + error)
+      })
+    },
+    searchCase () {
+      let finalParams = {}
+      for (let obj in this.caseSearchParam) {
+        if (obj === 'casePro' || obj === 'api_module') {
+          finalParams[obj] = this.caseSearchParam[obj][0]
+        } else {
+          if (this.caseSearchParam[obj] === '') {
+            continue
+          } else {
+            finalParams[obj] = this.caseSearchParam[obj]
+          }
+        }
+      }
+      return this.$axios.get('/apiAutoTest/caseInfo/caseList', { params: finalParams }).then(response => {
+        console.log(finalParams)
+        if (response.status === 200 && response.data.code === 200) {
+          console.log('发送Ajax请求,请求成功', response.data)
+          this.caseTableData = response.data['data']
+          this.$message({
+            message: '接口查询成功',
+            type: 'success',
+            color: 'green'
+          })
+        } else {
+          this.$message({
+            showClose: true,
+            message: '接口查询失败',
+            type: 'error'
+          })
+        }
+      }).catch(response => {
+        console.log('发送Ajax请求,' +
+            '请求失败', response)
+      })
+    },
+    onCreateCase () { // 创建项目方法
+      this.confirmBox({
+        title: '添加用例',
+        customClass: 'createCase_confirmBox',
+        closeOnClickModal: false, // 是否可通过点击遮罩关闭 MessageBox
+        showCancelButton: true,
+        showConfirmButton: true,
+        confirmButtonText: '确定',
+        component: createCase,
+        componentName: 'createCase',
+        confirmValidate: (action, formParms, done) => {
+          if (action === 'cancel') {
+            formParms.clearValidate() // 清空输入项
+            return done() // done用于关闭 MessageBox 实例
+          }
+          formParms.validate(valid => {
+            if (!valid) return
+            this.addCaseParams = {...formParms.addCaseForm}
+            let projectStartTime = new Date(this.addProjectParams.projectCycle[0])
+            let projectEndTime = new Date(this.addProjectParams.projectCycle[1])
+            if (projectStartTime.getTime() >= new Date().getTime()) { // 还需要设置控件开始时间只能选择大于等于当前时间
+              this.addProjectParams['status'] = '1' // 进行中
+            } else {
+              this.addProjectParams['status'] = '2' // 未开始
+            }
+            if (projectEndTime.getTime() < new Date().getTime()) {
+              this.addProjectParams['status'] = '0' // 已结束
+            } else {
+              this.addProjectParams['status'] = '1' // 进行中
+            }
+            formParms.clearValidate() // 清空输入项
+            done()
+            this.addProjectParams['creator'] = 'hemeilong' // 后续需动态获取当前登录的用户名，暂时先写死
+            let param = JSON.stringify(this.addProjectParams)
+            return this.$axios.post('/apiAutoTest/projectManage/projectList/addPro', param).then(response => {
+              if (response.status === 200) {
+                console.log('发送Ajax请求,请求成功', response.data)
+                this.$message({
+                  message: '项目创建成功',
+                  type: 'success',
+                  color: 'green'
+                })
+                this.queryProject('searchForm')
+              } else {
+                this.$message({
+                  showClose: true,
+                  message: '项目创建失败',
+                  type: 'error'
+                })
+              }
+            }).catch(response => {
+              console.log('发送Ajax请求,' +
+                  '请求失败', response)
+            })
+          })
+        }
+      }).catch(() => { })
+    },
+
+    createAutoTask () {
+      console.log('未完待续')
     }
+  },
+  mounted () {
+    // 获取项目共筛选
+    this.getProjectOptions().then(response => {
+      for (let i in response.data) {
+        this.caseSearchOptions.casePro.push(response.data[i])
+      }
+    })
+    this.getProRelatedModule({})
   }
 }
 </script>
@@ -294,7 +439,17 @@ export default {
   .select_caseName.el-input>>>.el-input__inner:hover {
     border-color: #04aa51;
   }
-  .searchApiBtn {
+  .searchCaseBtn {
     margin-left: -30px;
+  }
+  .caseTableList {
+    margin-top: 30px;
+    border-top: 1px solid #c0c4ccb8;
+  }
+  .caseTableList>>>.el-table th {
+    background-color: #f4f5f975;
+  }
+  .caseTableList>>>.el-table tr {
+    background-color: #f4f5f975;
   }
 </style>

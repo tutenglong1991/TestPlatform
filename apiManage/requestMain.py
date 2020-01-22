@@ -19,7 +19,7 @@ class runApiMain:
             'Content-Type': 'application/x-www-form-urlencoded'
         }
         checkLogin_url = 'http://user.hqygou.com/login/index/checklogin'
-        checkLogin_data = {'username': 'qiuchaoguang', 'password': '123456'}
+        checkLogin_data = {'username': '', 'password': ''}
         # 先调用户中心的登录接口
         self.run_main('post', url=checkLogin_url, req_data=checkLogin_data, headers=checkLogin_headers)
         # 再调php的http://www.trader-gb.com/base/login/login接口，生成cookie

@@ -69,7 +69,7 @@ class ProjectManage:
                 project_data.append(project_datas)
             query_result['data'] = project_data
             return query_result
-        # page = data.get('page') if data.get('page') else 1
+        # page = data.get('page') if data.get('page') else 选推服务
         # per_page = data.get('sizePage') if data.get('sizePage') else 10
         # user_data = [{'user_id': u.id, 'user_name': u.name} for u in User.query.all()]
         # if project_name:
@@ -87,7 +87,7 @@ class ProjectManage:
         #             'choice': c.environment_choice,
         #             'principal': User.query.filter_by(id=c.user_id).first().name,
         #             'host_two': c.host_two, 'host_three': c.host_three, 'host_four': c.host_four} for c in _data]
-        # return jsonify({'data': project, 'total': total, 'status': 1, 'userData': user_data})
+        # return jsonify({'data': project, 'total': total, 'status': 选推服务, 'userData': user_data})
 
     def edit_pro(self, **resp):
         for key in resp:
