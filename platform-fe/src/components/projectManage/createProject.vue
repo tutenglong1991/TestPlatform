@@ -35,7 +35,7 @@
 export default {
   name: 'createProject',
   data () {
-    var checkAge = (rule, value, callback) => {
+    let checkAge = (rule, value, callback) => {
       if (!value) {
         return callback(new Error('年龄不能为空'))
       }
@@ -51,17 +51,7 @@ export default {
         }
       }, 1000)
     }
-    var validatePass = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请输入密码'))
-      } else {
-        if (this.addRuleForm.checkPass !== '') {
-          this.$refs.add_fm.validateField('checkPass')
-        }
-        callback()
-      }
-    }
-    var validatePass2 = (rule, value, callback) => {
+    let validatePass2 = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请再次输入密码'))
       } else if (value !== this.addRuleForm.pass) {
@@ -80,15 +70,8 @@ export default {
         projectCycle: ''
       },
       rules: {
-        pass: [
-          { validator: validatePass, trigger: 'blur' }
-        ],
-        checkPass: [
-          { validator: validatePass2, trigger: 'blur' }
-        ],
-        age: [
-          { validator: checkAge, trigger: 'blur' }
-        ]
+        checkPass: [{ validator: validatePass2, trigger: 'blur' }],
+        age: [{ validator: checkAge, trigger: 'blur' }]
       }
     }
   },

@@ -21,6 +21,8 @@ def api_manage(request, operate):
                 api_data = api.del_api(**resp)
             elif operate == 'runSingleApi':
                 api_data = api.run_api(**resp)
+            elif operate == 'setCommonConf':
+                api_data = api.set_common_config(**resp)
             code = api_data['status']
             return JsonResponse({"code": code, "data": api_data})
         except Exception as e:

@@ -259,6 +259,7 @@ export default {
         if (valid && this.isParamsCheckedPass) {
           let param = JSON.stringify(this.apidata)
           return this.$axios.post('/apiAutoTest/apiInfo/runSingleApi', param).then(response => {
+            console.log(response.data)
             if (response.status === 200 && response.data.code === 200) {
               console.log('发送Ajax请求,请求成功', response.data)
               this.$message({
@@ -266,8 +267,8 @@ export default {
                 type: 'success',
                 color: 'green'
               })
-              console.log(response.data['data']['runResp'])
               this.respTextarea = response.data['data']['runResp']
+              console.log(response.data['data']['runResp'])
               this.reqTextarea = response.data['data']['runParam']
             } else {
               this.$message({

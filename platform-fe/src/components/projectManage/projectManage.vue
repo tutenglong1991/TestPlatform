@@ -442,6 +442,9 @@ export default {
   .projectTableList>>>.el-table tr {
     background-color: #f4f5f975;
   }
+  .projectTableList>>>.cell {
+    text-align: center;
+  }
   .searchProject>>>.el-button.addProjectBtn.el-button--default.el-button--mini {
     padding: 14px 22px;
   }

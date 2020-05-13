@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*-coding:utf-8-*-
 
-from .models import ApiSet, ApiParameters
+from .models import ApiSet, ApiParameters, CommonConf
 from projectManage.models import Project
 from .requestMain import runApiMain
 import json
@@ -120,6 +120,67 @@ class ApiManage:
             param_list.append(param_obj)
         return param_list
 
+    # 插入及更新公共配置信息
+    # def set_common_config(self, **resp):
+    #     # 先处理入参
+    #     for key in resp:
+    #         dict_key = json.loads(key)
+    #     api_common_cf = {'httpProtocol': dict_key['httpProtocol'], 'httpMethods': dict_key['httpMethods'],
+    #                      'httpDomain': dict_key['httpDomain'], 'httpPath': dict_key['httpPath'],
+    #                      'httpPort': dict_key['httpPort'], 'httpHeader': dict_key['httpHeader'],
+    #                      'userDefinedVar': dict_key['userDefinedVar'], 'relApiList': dict_key['relApiList'],
+    #                      'isForAllApi': dict_key['isForAllApi']}
+    #     # 查询该表，若结果为空则执行插入语句
+    #     apiConfig_querySet = CommonConf.objects.values_list().order_by('id')
+    #     if len(apiConfig_querySet) == 0:
+    #         try:
+    #             # 插入配置信息到配置表格
+    #             api_common_cf_obj = CommonConf(**api_common_cf)
+    #             api_common_cf_obj.save()
+    #             msg = '模板添加成功'
+    #             return {'status': 200, 'msg': msg}
+    #         except Exception as e:
+    #             error = str(e)
+    #             return {'status': 500, 'msg': error}
+    #     else:
+    #         try:
+    #             # 先更新公共配置表中的信息
+    #             apiConfig_querySet.update(**api_common_cf)
+    #             # 再更新关联了使用当前公共配置接口中的相关字段，如httpProtocol，httpMethods等
+    #             relApiList = api_common_cf['relApiList']
+    #             isForAllApi = api_common_cf['isForAllApi']
+    #             apiSetObj = dict()
+    #             apiSetObj['netProtocol'] = api_common_cf['httpProtocol']
+    #             apiSetObj['reqMethods'] = api_common_cf['httpMethods']
+    #             apiSetObj['apiDomain'] = api_common_cf['httpDomain']
+    #             apiSetObj['apiPath'] = api_common_cf['httpPath']
+    #             apiSetObj['apiPort'] = api_common_cf['httpPort']
+    #
+    #             # 是否选择全部接口，1表示全部
+    #             if isForAllApi == 1:
+    #                 # 判断公共配置对象中的header设置项是否与接口对象中的header差异，若存在相同的key
+    #                 # 则使用公共对象配置传入的value更新接口中该相同key的value值
+    #                 # 若接口对象中没有的key，则接口对象新增改key
+    #                 apiHeaderObj = ApiSet.objects.values_list()
+    #                 for attr_obj in api_common_cf['httpHeader']:
+    #                     apiHeaderObj.
+    #                     if apiHeaderObj[attr_obj] is not None:
+    #
+    #
+    #
+    #
+    #                 ApiSet.objects.values_list().update(**apiSetObj)
+    #                 msg = '公共配置已经更新到全部接口'
+    #                 return {'status': 200, 'msg': msg}
+    #             else:
+    #                 for apiId in relApiList:
+    #                     ApiSet.objects.filter(id=apiId).values_list().update(**apiSetObj)
+    #                 msg = '公共配置已经更新到所选择需要适用的接口'
+    #                 return {'status': 200, 'msg': msg}
+    #         except Exception as e:
+    #             error = str(e)
+    #             return {'status': 500, 'msg': error}
+
     def edit_api(self, **resp):
         for key in resp:
             dict_key = json.loads(key)
@@ -203,19 +264,24 @@ class ApiManage:
         if len(req_param_data) == 0:
             req_param_data = None
         api_obj = ApiSet.objects.filter(id=dict_key['id'])
+        runParam = json.dumps(req_param_data)
         try:
             runResp = rAm.run_main(methods, req_param_url, req_data=req_param_data, headers=default_headers)
-            print(req_param_url)
             runResp_dict = json.loads(runResp)
+            format_runResp = json.dumps(runResp_dict, indent=4, sort_keys=True, ensure_ascii=False)
             if runResp_dict['code'] == 0:
                 api_obj.update(runStatus=1)
+                status = 200
+                msg = '接口运行成功'
             else:
                 api_obj.update(runStatus=2)
+                status = 500
+                msg = '接口运行失败'
         except Exception as e:
             api_obj.update(runStatus=2)
-        msg = '接口运行成功'
-        runParam = json.dumps(req_param_data)
-        return {'status': 200, 'msg': msg, 'runResp': runResp, 'runParam': runParam}
+            status = 500
+            msg = '接口运行失败'
+        return {'status': status, 'msg': msg, 'runResp': format_runResp, 'runParam': runParam}
 
     def del_api(self):
         pass

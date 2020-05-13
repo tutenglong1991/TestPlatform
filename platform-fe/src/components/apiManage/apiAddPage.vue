@@ -7,8 +7,8 @@
         <el-breadcrumb-item>添加接口</el-breadcrumb-item>
       </el-breadcrumb>
     </el-header>
-    <el-main>
-      <el-form :model="apidata" ref="submitForm1" :rules="rules" label-width="80px" class="demo-dynamic" style="width:85%">
+    <el-main class="addApi_main">
+      <el-form :model="apidata" ref="submitForm1" :rules="rules" label-width="80px" class="addApi_form" style="width:85%">
         <el-row>
           <el-col :span='6'>
             <el-form-item label="接口名称" prop="apiName">
@@ -295,11 +295,11 @@ export default {
   .el-breadcrumb>>>.el-breadcrumb__inner.is-link:hover {
     color: #04aa51;
   }
-  .el-form.demo-dynamic {
+  .el-form.addApi_form {
     border-bottom: 1px solid #c0c4cc;
   }
-  .el-row {
-    margin: 20px 0px;
+  .el-main.addApi_main.el-row {
+    margin: 10px 0px;
     width: 80%;
     &:last-child {
     margin-bottom: 0;

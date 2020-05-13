@@ -2,14 +2,14 @@
   <el-container>
     <el-header style="height:35px">
       <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item>接口自动化</el-breadcrumb-item>
-        <el-breadcrumb-item :to="{ path: '/apiAutoTest/apiList'}">接口管理</el-breadcrumb-item>
+        <el-breadcrumb-item>功能自动化</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/mainHeader/apiList'}">接口管理</el-breadcrumb-item>
         <el-breadcrumb-item>接口列表</el-breadcrumb-item>
       </el-breadcrumb>
     </el-header>
     <el-main>
       <div class="searchApi">
-        <el-form ref="searchForm" :model="searchParams" label-width="75px" style="display:flex; justify-content: left;">
+        <el-form ref="searchForm" :model="searchParams" style="display:flex; justify-content: left;">
           <el-form-item class="ownPro" label="所属项目" prop="ownPro">
             <el-cascader v-model="searchParams.ownPro"
               placeholder="请选择或输入接口所属项目"
@@ -20,28 +20,16 @@
               clearable>
             </el-cascader>
           </el-form-item>
-          <el-form-item label="所属模块" prop="apiModule" style="margin-left:30px">
+          <el-form-item label="所属服务/接口/方法名" prop="apiModule" style="margin-left:30px; width:420px">
             <el-cascader v-model="searchParams.apiModule"
-              placeholder="请选择接口所属模块"
+              placeholder="请选择接口所属服务"
               :options="multipleSelection.apiModule"
               :props="props"
               collapse-tags
               clearable>
             </el-cascader>
           </el-form-item>
-          <el-form-item label="名称/地址" prop="apiName" style="margin-left:30px">
-            <el-select :filterable=true v-model="searchParams.apiName" clearable placeholder="请选择接口">
-              <el-option
-                v-for="n in multipleSelection.apiName"
-                :key="n.value"
-                :label="n.label"
-                :value="n.value">
-                <span style="float: left; margin-right: 20px">{{ n.value }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{ n.label }}</span>
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="执行状态" prop="runStatus" style="margin-left:30px">
+          <el-form-item label="执行状态" prop="runStatus" style="margin-left:-20px; width:250px">
             <el-select class="runStatus" v-model="searchParams.runStatus" clearable placeholder="请选择接口执行状态">
               <el-option
                 v-for="status in multipleSelection.runStatus"
@@ -51,7 +39,7 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item>
+          <el-form-item style="margin-left: 300px">
             <el-button @click="searchApi" class="searchApiBtn" type="primary">搜索</el-button>
             <el-button class="addApiBtn" @click="goToAddPage">添加</el-button>
             <el-button class="addApiBtn" @click="toggleSelection(multipleSelection)">执行</el-button>
@@ -74,37 +62,42 @@
               <span>{{ scope.row.ownPro }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="所属模块" width="130">
+          <el-table-column label="所属服务" width="130">
             <template slot-scope="scope">
               <span>{{ scope.row.apiModule }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="名称" width="140">
+          <el-table-column label="接口名称" width="160">
             <template slot-scope="scope">
               <span>{{ scope.row.apiName }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="域名/IP" width="180">
+          <el-table-column label="方法名称" width="130">
+            <template slot-scope="scope">
+              <span>{{ scope.row.apiFuncName }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="域名/IP" width="130">
             <template slot-scope="scope">
               <span>{{ scope.row.apiDomain }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="地址" width="200">
+          <el-table-column label="地址" width="150">
             <template slot-scope="scope">
               <span>{{ scope.row.apiPath }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="网络协议" width="100">
+          <el-table-column label="网络协议" width="80">
             <template slot-scope="scope">
               <span>{{ scope.row.netProtocol }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="请求方式" width="100">
+          <el-table-column label="请求方式" width="80">
             <template slot-scope="scope">
               <span>{{ scope.row.reqMethods }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="执行状态" width="100">
+          <el-table-column label="执行状态" width="80">
             <template slot-scope="scope">
               <span>{{ scope.row.runStatus }}</span>
             </template>
@@ -114,8 +107,6 @@
               <el-button @click="goToDetailPage(scope.row)" size="mini" >编辑
               </el-button>
               <el-button size="mini">执行日志
-              </el-button>
-              <el-button size="mini" >关联用例
               </el-button>
               <el-button size="mini">删除
               </el-button>
@@ -136,7 +127,6 @@ export default {
       multipleSelection: {
         ownPro: [],
         apiModule: [],
-        apiName: [],
         runStatus: [{
           value: 0,
           label: '未执行'
@@ -205,7 +195,7 @@ export default {
       })
     },
     goToAddPage () {
-      this.$router.push('/apiAutoTest/apiAddPage')
+      this.$router.push('/mainHeader/apiAddPage')
     },
     goToDetailPage (row) {
       this.$router.push({
@@ -247,6 +237,12 @@ export default {
   .el-form-item.ownPro>>>.el-form-item__label {  /* 首个搜索项对齐*/
     text-align: left !important;
   }
+  .el-form-item.ownPro>>>.el-form-item__content {
+    line-height: 40px;
+    position: relative;
+    font-size: 14px;
+    float: left; /*使所属项目水平对齐*/
+  }
   .el-cascader .el-input .el-input__inner {
     font-size: 14px;
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -261,7 +257,7 @@ export default {
     color: #606266;
     font-size: 14px;
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
-    width: 100px;
+    width: 180px;
   }
   .el-select.runStatus>>>.el-input__inner:focus {
     border-color: #04aa51;
@@ -291,6 +287,9 @@ export default {
   }
   .apiTableList>>>.el-table tr {
     background-color: #f4f5f975;
+  }
+  .apiTableList>>>.cell {
+    text-align: center;
   }
   .searchApi>>>.el-button.addApiBtn.el-button--default.el-button--mini {
     padding: 14px 22px;

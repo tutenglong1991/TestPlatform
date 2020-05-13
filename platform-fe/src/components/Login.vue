@@ -2,7 +2,7 @@
   <el-container style="height:100%; width:100%">
     <el-header>
       <el-menu background-color="#161616" text-color="#ffffff" active-text-color="#ffffff">
-        <el-menu-item class="platform_name">接口测试平台</el-menu-item>
+        <el-menu-item class="platform_name">测试平台</el-menu-item>
         <el-menu-item class="login_btn">
           <el-button class="login_sign_in" @click="go_to_login">Sign In</el-button>
         </el-menu-item>
@@ -57,7 +57,7 @@ export default {
             message: response.data.message,
             type: 'success'
           })
-          self.$router.push('/apiAutoTest/projectList')
+          self.$router.push('/mainHeader/caseList')
         } else {
           this.$message({
             showClose: true,

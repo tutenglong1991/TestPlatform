@@ -10,24 +10,18 @@
     <el-main>
       <div class="searchCase">
         <el-form ref="searchForm" :model="caseSearchParam" label-width="70px" style="display:flex; justify-content: left;">
-          <el-form-item class="casePro" label="所属项目" prop="casePro">
-            <el-cascader v-model="caseSearchParam.casePro" style="width: 120px;"
-               placeholder="选择用例所属项目"
-               :options="caseSearchOptions.casePro"
-               :props="{ label: 'projectName', value: 'id' }"
-               @change="getProRelatedModule"
-               filterable
-               clearable>
-            </el-cascader>
-          </el-form-item>
-          <el-form-item prop="api_module" class="choose_module_dem">
-            <span class="case_module_dem">模块/接口</span>
+          <el-form-item prop="api_module" class="choose_module_dem" style="margin-left: -20px">
+            <span class="case_module_dem">所属服务/接口/方法名</span>
             <el-cascader v-model="caseSearchParam.api_module" style="margin-left: 10px; width: 350px;"
-               placeholder="请选择所属模块和接口"
+               placeholder="请选择所属服务及接口及方法"
                :options="caseSearchOptions.api_module"
                :props="props"
                collapse-tags
                clearable>
+              <template slot-scope="{ node, data }">
+                <span>{{ data.label }}</span>
+                <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
+              </template>
             </el-cascader>
           </el-form-item>
           <el-form-item label="用例名称" prop="caseName" style="width: 200px; margin-left: 15px;">
@@ -61,7 +55,7 @@
       </div>
       <el-row>
         <el-button class="addTaskBtn" type="primary" @click="createAutoTask">创建任务</el-button>
-        <el-button class="manualRunBtn" @click="toggleSelection(multipleSelection)">手动执行</el-button>
+        <el-button class="manualRunBtn" @click="manualRunCase(multipleSelection)">手动执行</el-button>
       </el-row>
       <div class="caseTableList">
         <el-table
@@ -94,11 +88,6 @@
               <span>{{ scope.row.caseRunStatus }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="所属项目" width="130">
-            <template slot-scope="scope">
-              <span>{{ scope.row.caseProName }}</span>
-            </template>
-          </el-table-column>
           <el-table-column label="所属模块" width="130">
             <template slot-scope="scope">
               <span>{{ scope.row.caseModule }}</span>
@@ -117,6 +106,8 @@
           <el-table-column label="操作">
             <template slot-scope="scope">
               <el-button @click="goToDetailPage(scope.row)" size="mini" >编辑
+              </el-button>
+              <el-button size="mini">执行明细
               </el-button>
               <el-button size="mini">删除
               </el-button>
@@ -139,7 +130,6 @@ export default {
     return {
       props: { multiple: true },
       caseSearchOptions: {
-        casePro: [],
         api_module: [],
         caseName: '',
         runStatus: [{
@@ -168,7 +158,6 @@ export default {
         }]
       },
       caseSearchParam: { // 搜索前端展示参数
-        casePro: [],
         api_module: [],
         caseName: '',
         caseLevel: '',
@@ -179,7 +168,6 @@ export default {
         'caseName': '获取选品数据列表',
         'caseLevel': 'P',
         'caseRunStatus': '通过',
-        'caseProName': '选推服务',
         'caseModule': '选品工具',
         'caseApiName': '获取选品数据列表',
         'caseRemark': ''
@@ -189,7 +177,6 @@ export default {
         'caseName': '获取选品数据列表',
         'caseLevel': 'P',
         'caseRunStatus': '通过',
-        'caseProName': '选推服务',
         'caseModule': '选品工具',
         'caseApiName': '获取选品数据列表',
         'caseRemark': ''
@@ -199,8 +186,6 @@ export default {
         'caseName': '获取选品数据列表',
         'caseLevel': 'P',
         'caseRunStatus': '通过',
-        'caseProName': '选推服务',
-        'caseProId': 1,
         'caseModule': '选品工具',
         'caseApiName': '获取选品数据列表',
         'caseApiId': 3,
@@ -214,7 +199,7 @@ export default {
       console.log(val)
       this.multipleSelection = val
     },
-    toggleSelection (rows) {
+    manualRunCase (rows) {
       console.log(rows)
       if (rows) {
         rows.forEach(row => {
@@ -297,6 +282,7 @@ export default {
         confirmButtonText: '确定',
         component: createCase,
         componentName: 'createCase',
+        confirmData: this.caseSearchOptions,
         confirmValidate: (action, formParms, done) => {
           if (action === 'cancel') {
             formParms.clearValidate() // 清空输入项
@@ -305,22 +291,9 @@ export default {
           formParms.validate(valid => {
             if (!valid) return
             this.addCaseParams = {...formParms.addCaseForm}
-            let projectStartTime = new Date(this.addProjectParams.projectCycle[0])
-            let projectEndTime = new Date(this.addProjectParams.projectCycle[1])
-            if (projectStartTime.getTime() >= new Date().getTime()) { // 还需要设置控件开始时间只能选择大于等于当前时间
-              this.addProjectParams['status'] = '1' // 进行中
-            } else {
-              this.addProjectParams['status'] = '2' // 未开始
-            }
-            if (projectEndTime.getTime() < new Date().getTime()) {
-              this.addProjectParams['status'] = '0' // 已结束
-            } else {
-              this.addProjectParams['status'] = '1' // 进行中
-            }
             formParms.clearValidate() // 清空输入项
             done()
-            this.addProjectParams['creator'] = 'hemeilong' // 后续需动态获取当前登录的用户名，暂时先写死
-            let param = JSON.stringify(this.addProjectParams)
+            let param = JSON.stringify(this.addCaseParams)
             return this.$axios.post('/apiAutoTest/projectManage/projectList/addPro', param).then(response => {
               if (response.status === 200) {
                 console.log('发送Ajax请求,请求成功', response.data)
@@ -345,7 +318,6 @@ export default {
         }
       }).catch(() => { })
     },
-
     createAutoTask () {
       console.log('未完待续')
     }
@@ -365,9 +337,6 @@ export default {
 <style scoped>
   .el-breadcrumb>>>.el-breadcrumb__inner.is-link:hover {
     color: #04aa51;
-  }
-  .el-form-item.ownPro>>>.el-form-item__label {  /* 首个搜索项对齐*/
-    text-align: left !important;
   }
   .el-cascader .el-input .el-input__inner {
     font-size: 14px;

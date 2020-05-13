@@ -3,11 +3,10 @@
     <el-header>
       <el-menu :default-active="$route.path" class="el-menu-demo" mode="horizontal" background-color="#161616" text-color="#a9a9a9" active-text-color="#ffffff" router>
         <el-submenu index="/apiAuto">
-          <template slot="title">接口自动化</template>
+          <template slot="title">功能自动化</template>
           <el-menu-item index="/apiAuto/apiFunc">功能自动化</el-menu-item>
-          <el-menu-item index="/apiAuto/apiPerf">性能自动化</el-menu-item>
         </el-submenu>
-        <el-menu-item index='/uiAuto'>UI自动化</el-menu-item>
+        <el-menu-item index='/performanceAuto'>性能自动化</el-menu-item>
         <el-menu-item index='/dataReport'>数据采集</el-menu-item>
         <el-submenu index="/testTools">
           <template slot="title">测试工具集</template>
@@ -29,54 +28,55 @@
                  @open="handleOpen"
                  @close="handleClose"
                  router>
-          <el-submenu index="/apiAutoTest/projectManage">
+          <el-submenu index="/mainHeader/projectManage">
             <template slot="title">
               <i class="el-icon-user-solid"></i>
               <span>项目管理</span>
             </template>
-            <el-menu-item index="/apiAutoTest/projectList">项目列表</el-menu-item>
-            <el-menu-item index="/apiAutoTest/projectMembers">成员管理</el-menu-item>
+            <el-menu-item index="/mainHeader/projectList">项目列表</el-menu-item>
+            <el-menu-item index="/mainHeader/projectMembers">成员管理</el-menu-item>
           </el-submenu>
-          <el-submenu index="/apiAutoTest/apiManage">
+          <el-submenu index="/mainHeader/apiManage">
             <template slot="title">
               <i class="el-icon-menu"></i>
               <span>接口管理</span>
             </template>
-            <el-menu-item index="/apiAutoTest/apiList">接口列表</el-menu-item>
-            <el-menu-item index="/apiAutoTest/apiDetail">修改记录</el-menu-item>
-            <el-menu-item index="/apiAutoTest/apiRunLog">执行日志</el-menu-item>
+            <el-menu-item index="/mainHeader/commonConfig">公共配置</el-menu-item>
+            <el-menu-item index="/mainHeader/apiList">接口列表</el-menu-item>
+            <el-menu-item index="/mainHeader/apiDetail">修改记录</el-menu-item>
+            <el-menu-item index="/mainHeader/apiRunLog">执行日志</el-menu-item>
           </el-submenu>
-          <el-submenu index="/apiAutoTest/caseManage">
+          <el-submenu index="/mainHeader/caseManage">
             <template slot="title">
               <i class="el-icon-document"></i>
               <span>用例管理</span>
             </template>
-            <el-menu-item index="/apiAutoTest/caseList">用例列表</el-menu-item>
-            <el-menu-item index="/apiAutoTest/caseDetail">用例详情</el-menu-item>
+            <el-menu-item index="/mainHeader/caseList">用例列表</el-menu-item>
+            <el-menu-item index="/mainHeader/caseDetail">用例详情</el-menu-item>
           </el-submenu>
-          <el-submenu index="/apiAutoTest/taskManage">
+          <el-submenu index="/mainHeader/taskManage">
             <template slot="title">
               <i class="el-icon-bell"></i>
               <span>任务管理</span>
             </template>
-            <el-menu-item index="/apiAutoTest/taskList">任务列表</el-menu-item>
-            <el-menu-item index="/apiAutoTest/taskRunLog">执行日志</el-menu-item>
+            <el-menu-item index="/mainHeader/taskList">任务列表</el-menu-item>
+            <el-menu-item index="/mainHeader/taskRunLog">执行日志</el-menu-item>
           </el-submenu>
-          <el-submenu index="/apiAutoTest/programManage">
+          <el-submenu index="/mainHeader/programManage">
             <template slot="title">
               <i class="el-icon-notebook-1"></i>
               <span>测试方案</span>
             </template>
-            <el-menu-item index="/apiAutoTest/programList">方案列表</el-menu-item>
-            <el-menu-item index="/apiAutoTest/programDetail">方案详情</el-menu-item>
+            <el-menu-item index="/mainHeader/programList">方案列表</el-menu-item>
+            <el-menu-item index="/mainHeader/programDetail">方案详情</el-menu-item>
           </el-submenu>
-          <el-submenu index="/apiAutoTest/reportManage">
+          <el-submenu index="/mainHeader/reportManage">
             <template slot="title">
               <i class="el-icon-s-data"></i>
               <span>测试报告</span>
             </template>
-            <el-menu-item index="/apiAutoTest/reportList">报告列表</el-menu-item>
-            <el-menu-item index="/apiAutoTest/reportDetail">报告详情</el-menu-item>
+            <el-menu-item index="/mainHeader/reportList">报告列表</el-menu-item>
+            <el-menu-item index="/mainHeader/reportDetail">报告详情</el-menu-item>
           </el-submenu>
         </el-menu>
       </el-aside>
@@ -89,7 +89,7 @@
 
 <script>
 export default {
-  name: 'apiAutoTest',
+  name: 'mainHeader',
   data () {
     return {
     }

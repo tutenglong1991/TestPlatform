@@ -1,12 +1,13 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '@/components/Login'
-import apiAutoTest from '@/components/apiAutoTest'
+import mainHeader from '@/components/mainHeader'
 import projectManage from '@/components/projectManage/projectManage'
 import projectMembers from '@/components/projectManage/projectMembers'
 import apiList from '@/components/apiManage/apiList'
 import apiAddPage from '@/components/apiManage/apiAddPage'
-import apiGroup from '@/components/apiManage/apiGroup'
+import commonConfig from '@/components/apiManage/commonConfig'
+import updateRecord from '@/components/apiManage/updateRecord'
 import apiRunLog from '@/components/apiManage/apiRunLog'
 import caseList from '@/components/caseManage/caseList'
 import caseDetail from '@/components/caseManage/caseDetail'
@@ -22,86 +23,91 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/',
+      path: '/login',
       name: 'Login',
       component: Login
     },
     {
       path: '/apiAuto/apiFunc',
-      name: 'apiAutoTest',
-      component: apiAutoTest,
+      name: 'mainHeader',
+      component: mainHeader,
       children: [{
-        path: '/apiAutoTest/projectList',
+        path: '/mainHeader/projectList',
         name: 'projectManage',
         component: projectManage
       },
       {
-        path: '/apiAutoTest/projectMembers',
+        path: '/mainHeader/projectMembers',
         name: 'projectMembers',
         component: projectMembers
       },
       {
-        path: '/apiAutoTest/apiList',
+        path: '/mainHeader/apiList',
         name: 'apiList',
         component: apiList
       },
       {
-        path: '/apiAutoTest/apiAddPage',
+        path: '/mainHeader/apiAddPage',
         name: 'apiAddPage',
         component: apiAddPage
       },
       {
-        path: '/apiAutoTest/apiGroup',
-        name: 'apiGroup',
-        component: apiGroup
+        path: '/mainHeader/updateRecord',
+        name: 'updateRecord',
+        component: updateRecord
       },
       {
-        path: '/apiAutoTest/apiDetail',
+        path: '/mainHeader/commonConfig',
+        name: 'commonConfig',
+        component: commonConfig
+      },
+      {
+        path: '/mainHeader/apiDetail',
         name: 'apiDetail',
         component: () => import('@/components/apiManage/apiDetail.vue')
       },
       {
-        path: '/apiAutoTest/apiRunLog',
+        path: '/mainHeader/apiRunLog',
         name: 'apiRunLog',
         component: apiRunLog
       },
       {
-        path: '/apiAutoTest/caseList',
+        path: '/mainHeader/caseList',
         name: 'caseList',
         component: caseList
       },
       {
-        path: '/apiAutoTest/caseDetail',
+        path: '/mainHeader/caseDetail',
         name: 'caseDetail',
         component: caseDetail
       },
       {
-        path: '/apiAutoTest/taskList',
+        path: '/mainHeader/taskList',
         name: 'taskList',
         component: taskList
       },
       {
-        path: '/apiAutoTest/taskRunLog',
+        path: '/mainHeader/taskRunLog',
         name: 'taskRunLog',
         component: taskRunLog
       },
       {
-        path: '/apiAutoTest/programDetail',
+        path: '/mainHeader/programDetail',
         name: 'programDetail',
         component: programDetail
       },
       {
-        path: '/apiAutoTest/programList',
+        path: '/mainHeader/programList',
         name: 'programList',
         component: programList
       },
       {
-        path: '/apiAutoTest/reportList',
+        path: '/mainHeader/reportList',
         name: 'reportList',
         component: reportList
       },
       {
-        path: '/apiAutoTest/reportDetail',
+        path: '/mainHeader/reportDetail',
         name: 'reportDetail',
         component: reportDetail
       }]
