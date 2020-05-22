@@ -7,6 +7,7 @@ import projectMembers from '@/components/projectManage/projectMembers'
 import apiList from '@/components/apiManage/apiList'
 import apiAddPage from '@/components/apiManage/apiAddPage'
 import commonConfig from '@/components/apiManage/commonConfig'
+import configList from '@/components/apiManage/configList'
 import updateRecord from '@/components/apiManage/updateRecord'
 import apiRunLog from '@/components/apiManage/apiRunLog'
 import caseList from '@/components/caseManage/caseList'
@@ -55,6 +56,11 @@ export default new Router({
         path: '/mainHeader/updateRecord',
         name: 'updateRecord',
         component: updateRecord
+      },
+      {
+        path: '/mainHeader/configList',
+        name: 'configList',
+        component: configList
       },
       {
         path: '/mainHeader/commonConfig',

@@ -41,7 +41,7 @@
               <i class="el-icon-menu"></i>
               <span>接口管理</span>
             </template>
-            <el-menu-item index="/mainHeader/commonConfig">公共配置</el-menu-item>
+            <el-menu-item index="/mainHeader/configList">配置列表</el-menu-item>
             <el-menu-item index="/mainHeader/apiList">接口列表</el-menu-item>
             <el-menu-item index="/mainHeader/apiDetail">修改记录</el-menu-item>
             <el-menu-item index="/mainHeader/apiRunLog">执行日志</el-menu-item>
