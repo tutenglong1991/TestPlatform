@@ -4,7 +4,7 @@
       <el-breadcrumb separator-class="el-icon-arrow-right">
         <el-breadcrumb-item>功能自动化</el-breadcrumb-item>
         <el-breadcrumb-item :to="{ path: '/mainHeader/apiList'}">接口管理</el-breadcrumb-item>
-        <el-breadcrumb-item>公共配置</el-breadcrumb-item>
+        <el-breadcrumb-item>添加配置</el-breadcrumb-item>
       </el-breadcrumb>
     </el-header>
     <el-main>
@@ -101,7 +101,7 @@
       </el-form>
       <el-form :model="commonSet" ref="submitForm3" class="add_affected_apis">
         <el-row>
-          <h1>选择或批量更新需要使用该默认配置的接口</h1>
+          <h1>选择批量更新需要使用该配置的接口</h1>
         </el-row>
         <el-row style="margin-left: -10px">
           <el-form-item prop="api_module" class="choose_apis_apply_configs">
