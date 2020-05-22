@@ -127,6 +127,7 @@
   </el-container>
 </template>
 <script>
+/* eslint-disable */
 export default {
   name: 'commonConfig',
   data () {
