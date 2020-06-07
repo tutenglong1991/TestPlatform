@@ -57,7 +57,8 @@ export default {
             message: response.data.message,
             type: 'success'
           })
-          self.$router.push('/mainHeader/caseList')
+          // 登陆成功后直接跳转到功能自动化下面的项目列表页面
+          self.$router.push('/functionAuto/mainHeader/projectManage')
         } else {
           this.$message({
             showClose: true,

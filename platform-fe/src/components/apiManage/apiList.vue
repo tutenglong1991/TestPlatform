@@ -1,120 +1,123 @@
 <template>
   <el-container>
-    <el-header style="height:35px">
-      <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item>功能自动化</el-breadcrumb-item>
-        <el-breadcrumb-item :to="{ path: '/mainHeader/apiList'}">接口管理</el-breadcrumb-item>
-        <el-breadcrumb-item>接口列表</el-breadcrumb-item>
-      </el-breadcrumb>
-    </el-header>
-    <el-main>
-      <div class="searchApi">
-        <el-form ref="searchForm" :model="searchParams" style="display:flex; justify-content: left;">
-          <el-form-item class="ownPro" label="所属项目" prop="ownPro">
-            <el-cascader v-model="searchParams.ownPro"
-              placeholder="请选择或输入接口所属项目"
-              :options="multipleSelection.ownPro"
-              :props="{ label: 'projectName', value: 'id' }"
-              @change="getProRelatedModule"
-              filterable
-              clearable>
-            </el-cascader>
-          </el-form-item>
-          <el-form-item label="所属服务/接口/方法名" prop="apiModule" style="margin-left:30px; width:420px">
-            <el-cascader v-model="searchParams.apiModule"
-              placeholder="请选择接口所属服务"
-              :options="multipleSelection.apiModule"
-              :props="props"
-              collapse-tags
-              clearable>
-            </el-cascader>
-          </el-form-item>
-          <el-form-item label="执行状态" prop="runStatus" style="margin-left:-20px; width:250px">
-            <el-select class="runStatus" v-model="searchParams.runStatus" clearable placeholder="请选择接口执行状态">
-              <el-option
-                v-for="status in multipleSelection.runStatus"
-                :key="status.value"
-                :label="status.label"
-                :value="status.value">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item style="margin-left: 300px">
-            <el-button @click="searchApi" class="searchApiBtn" type="primary">搜索</el-button>
-            <el-button class="addApiBtn" @click="goToAddPage">添加</el-button>
-            <el-button class="addApiBtn" @click="toggleSelection(multipleSelection)">执行</el-button>
-          </el-form-item>
-        </el-form>
-      </div>
-      <div class="apiTableList">
-        <el-table
-          ref="multipleTable"
-          tooltip-effect="dark"
-          @selection-change="handleSelectionChange"
-          :data="apiTableData"
-          style="width: 100%">
-          <el-table-column
-            type="selection"
-            width="55">
-          </el-table-column>
-          <el-table-column label="所属项目" width="160">
-            <template slot-scope="scope">
-              <span>{{ scope.row.ownPro }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="所属服务" width="130">
-            <template slot-scope="scope">
-              <span>{{ scope.row.apiModule }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="接口名称" width="160">
-            <template slot-scope="scope">
-              <span>{{ scope.row.apiName }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="方法名称" width="130">
-            <template slot-scope="scope">
-              <span>{{ scope.row.apiFuncName }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="域名/IP" width="130">
-            <template slot-scope="scope">
-              <span>{{ scope.row.apiDomain }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="地址" width="150">
-            <template slot-scope="scope">
-              <span>{{ scope.row.apiPath }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="网络协议" width="80">
-            <template slot-scope="scope">
-              <span>{{ scope.row.netProtocol }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="请求方式" width="80">
-            <template slot-scope="scope">
-              <span>{{ scope.row.reqMethods }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="执行状态" width="80">
-            <template slot-scope="scope">
-              <span>{{ scope.row.runStatus }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作">
-            <template slot-scope="scope">
-              <el-button @click="goToDetailPage(scope.row)" size="mini" >编辑
-              </el-button>
-              <el-button size="mini">执行日志
-              </el-button>
-              <el-button size="mini">删除
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
-    </el-main>
+    <router-view></router-view>
+    <el-container>
+      <el-header style="height:35px">
+        <el-breadcrumb separator-class="el-icon-arrow-right">
+          <el-breadcrumb-item>功能自动化</el-breadcrumb-item>
+          <el-breadcrumb-item :to="{ path: '/functionAuto/mainHeader/apiList'}">接口管理</el-breadcrumb-item>
+          <el-breadcrumb-item>接口列表</el-breadcrumb-item>
+        </el-breadcrumb>
+      </el-header>
+      <el-main>
+        <div class="searchApi">
+          <el-form ref="searchForm" :model="searchParams" style="display:flex; justify-content: left;">
+            <el-form-item class="ownPro" label="所属项目" prop="ownPro">
+              <el-cascader v-model="searchParams.ownPro"
+                placeholder="请选择或输入接口所属项目"
+                :options="multipleSelection.ownPro"
+                :props="{ label: 'projectName', value: 'id' }"
+                @change="getProRelatedModule"
+                filterable
+                clearable>
+              </el-cascader>
+            </el-form-item>
+            <el-form-item label="所属服务/接口/方法名" prop="apiModule" style="margin-left:30px; width:420px">
+              <el-cascader v-model="searchParams.apiModule"
+                placeholder="请选择接口所属服务"
+                :options="multipleSelection.apiModule"
+                :props="props"
+                collapse-tags
+                clearable>
+              </el-cascader>
+            </el-form-item>
+            <el-form-item label="执行状态" prop="runStatus" style="margin-left:-20px; width:250px">
+              <el-select class="runStatus" v-model="searchParams.runStatus" clearable placeholder="请选择接口执行状态">
+                <el-option
+                  v-for="status in multipleSelection.runStatus"
+                  :key="status.value"
+                  :label="status.label"
+                  :value="status.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item style="margin-left: 300px">
+              <el-button @click="searchApi" class="searchApiBtn" type="primary">搜索</el-button>
+              <el-button class="addApiBtn" @click="goToAddPage">添加</el-button>
+              <el-button class="addApiBtn" @click="toggleSelection(multipleSelection)">执行</el-button>
+            </el-form-item>
+          </el-form>
+        </div>
+        <div class="apiTableList">
+          <el-table
+            ref="multipleTable"
+            tooltip-effect="dark"
+            @selection-change="handleSelectionChange"
+            :data="apiTableData"
+            style="width: 100%">
+            <el-table-column
+              type="selection"
+              width="55">
+            </el-table-column>
+            <el-table-column label="所属项目" width="160">
+              <template slot-scope="scope">
+                <span>{{ scope.row.ownPro }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="所属服务" width="130">
+              <template slot-scope="scope">
+                <span>{{ scope.row.apiModule }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="接口名称" width="160">
+              <template slot-scope="scope">
+                <span>{{ scope.row.apiName }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="方法名称" width="130">
+              <template slot-scope="scope">
+                <span>{{ scope.row.apiFuncName }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="域名/IP" width="130">
+              <template slot-scope="scope">
+                <span>{{ scope.row.apiDomain }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="地址" width="150">
+              <template slot-scope="scope">
+                <span>{{ scope.row.apiPath }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="网络协议" width="80">
+              <template slot-scope="scope">
+                <span>{{ scope.row.netProtocol }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="请求方式" width="80">
+              <template slot-scope="scope">
+                <span>{{ scope.row.reqMethods }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="执行状态" width="80">
+              <template slot-scope="scope">
+                <span>{{ scope.row.runStatus }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作">
+              <template slot-scope="scope">
+                <el-button @click="goToDetailPage(scope.row)" size="mini" >编辑
+                </el-button>
+                <el-button size="mini">执行日志
+                </el-button>
+                <el-button size="mini">删除
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+      </el-main>
+    </el-container>
   </el-container>
 </template>
 
@@ -195,7 +198,7 @@ export default {
       })
     },
     goToAddPage () {
-      this.$router.push('/mainHeader/apiAddPage')
+      this.$router.push('/functionAuto/mainHeader/apiAddPage')
     },
     goToDetailPage (row) {
       this.$router.push({

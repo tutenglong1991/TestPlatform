@@ -3,7 +3,7 @@
     <el-header style="height:15px">
       <el-breadcrumb separator-class="el-icon-arrow-right">
         <el-breadcrumb-item>功能自动化</el-breadcrumb-item>
-        <el-breadcrumb-item :to="{ path: '/mainHeader/apiList'}">接口管理</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/functionAuto/mainHeader/apiList'}">接口管理</el-breadcrumb-item>
         <el-breadcrumb-item>添加配置</el-breadcrumb-item>
       </el-breadcrumb>
     </el-header>

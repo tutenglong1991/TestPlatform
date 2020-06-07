@@ -3,7 +3,7 @@
     <el-header style="height:35px">
       <el-breadcrumb separator-class="el-icon-arrow-right">
         <el-breadcrumb-item>功能自动化</el-breadcrumb-item>
-        <el-breadcrumb-item :to="{ path: '/mainHeader/apiList'}">接口管理</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/functionAuto/mainHeader/apiList'}">接口管理</el-breadcrumb-item>
         <el-breadcrumb-item>配置列表</el-breadcrumb-item>
       </el-breadcrumb>
     </el-header>
@@ -155,7 +155,7 @@ export default {
       })
     },
     addTemplate() {
-      this.$router.push('/mainHeader/commonConfig')
+      this.$router.push('/functionAuto/mainHeader/commonConfig')
     },
     changeStatus() {
         console.log("改变")

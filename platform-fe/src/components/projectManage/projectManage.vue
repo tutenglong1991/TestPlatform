@@ -1,107 +1,110 @@
 <template>
   <el-container>
-    <el-header style="height:35px">
-      <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item>接口自动化</el-breadcrumb-item>
-        <el-breadcrumb-item :to="{ path: '/apiAutoTest/projectList' }">项目管理</el-breadcrumb-item>
-        <el-breadcrumb-item>项目列表</el-breadcrumb-item>
-      </el-breadcrumb>
-    </el-header>
-    <el-main>
-      <div class="searchProject">
-        <el-form ref="searchForm" :model="finalSearchParams" :rules="rules" label-width="75px" style="display:flex; justify-content: left;">
-          <el-form-item prop="selectedParamsValue" class="choose_params">
-            <el-input placeholder="请输入内容" @change="onSelectInputChange" v-model="finalSearchParams.selectedParamsValue" clearable  class="input-with-select">
-              <el-select @change="getChangedParam" v-model="defaultSelectedParamsLabel" slot="prepend" placeholder="请选择">
-                <el-option v-for="item in searchParams.paramsSelection" :key="item.value" :label="item.label" :value="item.value"></el-option>
+    <router-view></router-view>
+    <el-container>
+      <el-header style="height:35px">
+        <el-breadcrumb separator-class="el-icon-arrow-right">
+          <el-breadcrumb-item>接口自动化</el-breadcrumb-item>
+          <el-breadcrumb-item :to="{ path: '/apiAutoTest/projectList' }">项目管理</el-breadcrumb-item>
+          <el-breadcrumb-item>项目列表</el-breadcrumb-item>
+        </el-breadcrumb>
+      </el-header>
+      <el-main>
+        <div class="searchProject">
+          <el-form ref="searchForm" :model="finalSearchParams" :rules="rules" label-width="75px" style="display:flex; justify-content: left;">
+            <el-form-item prop="selectedParamsValue" class="choose_params">
+              <el-input placeholder="请输入内容" @change="onSelectInputChange" v-model="finalSearchParams.selectedParamsValue" clearable  class="input-with-select">
+                <el-select @change="getChangedParam" v-model="defaultSelectedParamsLabel" slot="prepend" placeholder="请选择">
+                  <el-option v-for="item in searchParams.paramsSelection" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                </el-select>
+              </el-input>
+            </el-form-item>
+            <el-form-item label="创建者" prop="creator" style="margin-left:30px">
+              <el-input class="select_projectCreate" v-model="finalSearchParams.creator" placeholder="请输入项目创建人" clearable></el-input>
+            </el-form-item>
+            <el-form-item label="项目状态" prop="status" style="margin-left:30px">
+              <el-select class="select_projectStatus" @change="getQueryStatus" v-model="defaultSelectedStatus" clearable placeholder="请选择">
+                <el-option
+                  v-for="status in searchParams.statusSelection"
+                  :key="status.value"
+                  :label="status.label"
+                  :value="status.value">
+                </el-option>
               </el-select>
-            </el-input>
-          </el-form-item>
-          <el-form-item label="创建者" prop="creator" style="margin-left:30px">
-            <el-input class="select_projectCreate" v-model="finalSearchParams.creator" placeholder="请输入项目创建人" clearable></el-input>
-          </el-form-item>
-          <el-form-item label="项目状态" prop="status" style="margin-left:30px">
-            <el-select class="select_projectStatus" @change="getQueryStatus" v-model="defaultSelectedStatus" clearable placeholder="请选择">
-              <el-option
-                v-for="status in searchParams.statusSelection"
-                :key="status.value"
-                :label="status.label"
-                :value="status.value">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item>
-            <el-button class="searchBtn" type="primary" @click="queryProject('searchForm')">搜索</el-button>
-            <el-button class="addProjectBtn" size="mini" @click="onCreateProject">新增</el-button>
-          </el-form-item>
-        </el-form>
-      </div>
-      <div class="projectTableList">
-        <el-table
-          :data="tableData"
-          style="width: 100%">
-          <el-table-column label="名称" width="160">
-            <template slot-scope="scope">
-              <span>{{ scope.row.projectName }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="类型" width="160">
-            <template slot-scope="scope">
-              <span>{{ scope.row.projectType }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="项目编号" width="160">
-            <template slot-scope="scope">
-              <span>{{ scope.row.code }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="所属部门" width="160">
-            <template slot-scope="scope">
-              <span>{{ scope.row.dept }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="IT部产品线" width="160">
-            <template slot-scope="scope">
-              <span>{{ scope.row.productLine }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="项目周期"
-            width="160">
-            <template slot-scope="scope">
-              <span style="margin-left: 10px">{{ scope.row.projectCycle }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="状态" width="160">
-            <template slot-scope="scope">
-              <span>{{ scope.row.status }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="创建人" width="160">
-            <template slot-scope="scope">
-              <span>{{ scope.row.creator }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="更新时间" width="160">
-            <template slot-scope="scope">
-              <span>{{ scope.row.update_time }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作">
-            <template slot-scope="scope">
-              <el-button
-                size="mini"
-                @click="projectEdit(scope.$index, scope.row)">编辑
-              </el-button>
-              <el-button
-                size="mini"
-                @click="projectDelete(scope.row)">删除
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
-    </el-main>
+            </el-form-item>
+            <el-form-item>
+              <el-button class="searchBtn" type="primary" @click="queryProject('searchForm')">搜索</el-button>
+              <el-button class="addProjectBtn" size="mini" @click="onCreateProject">新增</el-button>
+            </el-form-item>
+          </el-form>
+        </div>
+        <div class="projectTableList">
+          <el-table
+            :data="tableData"
+            style="width: 100%">
+            <el-table-column label="名称" width="160">
+              <template slot-scope="scope">
+                <span>{{ scope.row.projectName }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="类型" width="160">
+              <template slot-scope="scope">
+                <span>{{ scope.row.projectType }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="项目编号" width="160">
+              <template slot-scope="scope">
+                <span>{{ scope.row.code }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="所属部门" width="160">
+              <template slot-scope="scope">
+                <span>{{ scope.row.dept }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="IT部产品线" width="160">
+              <template slot-scope="scope">
+                <span>{{ scope.row.productLine }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="项目周期"
+              width="160">
+              <template slot-scope="scope">
+                <span style="margin-left: 10px">{{ scope.row.projectCycle }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="状态" width="160">
+              <template slot-scope="scope">
+                <span>{{ scope.row.status }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="创建人" width="160">
+              <template slot-scope="scope">
+                <span>{{ scope.row.creator }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="更新时间" width="160">
+              <template slot-scope="scope">
+                <span>{{ scope.row.update_time }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作">
+              <template slot-scope="scope">
+                <el-button
+                  size="mini"
+                  @click="projectEdit(scope.$index, scope.row)">编辑
+                </el-button>
+                <el-button
+                  size="mini"
+                  @click="projectDelete(scope.row)">删除
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+      </el-main>
+    </el-container>
   </el-container>
 </template>
 <script>

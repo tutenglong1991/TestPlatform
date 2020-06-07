@@ -18,10 +18,13 @@ import programList from '@/components/programManage/programList'
 import programDetail from '@/components/programManage/programDetail'
 import reportList from '@/components/reportManage/reportList'
 import reportDetail from '@/components/reportManage/reportDetail'
+import autoPressMonitorJMeter from '@/components/performance/autoPressMonitorJMeter'
+import autoPressMonitorService from '@/components/performance/autoPressMonitorService'
 
 Vue.use(Router)
 
 export default new Router({
+  mode: 'history', // 去除哈希值的#号
   routes: [
     {
       path: '/login',
@@ -29,91 +32,106 @@ export default new Router({
       component: Login
     },
     {
-      path: '/apiAuto/apiFunc',
+      path: '/performanceAuto/mainHeader',
       name: 'mainHeader',
       component: mainHeader,
       children: [{
-        path: '/mainHeader/projectList',
+        path: '/performanceAuto/mainHeader/autoPressMonitorJMeter',
+        name: 'autoPressMonitorJMeter',
+        component: autoPressMonitorJMeter
+      },
+      {
+        path: '/performanceAuto/mainHeader/autoPressMonitorService',
+        name: 'autoPressMonitorService',
+        component: autoPressMonitorService
+      }]
+    },
+    {
+      path: '/functionAuto/mainHeader',
+      name: 'mainHeader',
+      component: mainHeader,
+      children: [{
+        path: '/functionAuto/mainHeader/projectManage',
         name: 'projectManage',
         component: projectManage
       },
       {
-        path: '/mainHeader/projectMembers',
+        path: '/functionAuto/mainHeader/projectMembers',
         name: 'projectMembers',
         component: projectMembers
       },
       {
-        path: '/mainHeader/apiList',
+        path: '/functionAuto/mainHeader/apiList',
         name: 'apiList',
         component: apiList
       },
       {
-        path: '/mainHeader/apiAddPage',
+        path: '/functionAuto/mainHeader/apiAddPage',
         name: 'apiAddPage',
         component: apiAddPage
       },
       {
-        path: '/mainHeader/updateRecord',
+        path: '/functionAuto/mainHeader/updateRecord',
         name: 'updateRecord',
         component: updateRecord
       },
       {
-        path: '/mainHeader/configList',
+        path: '/functionAuto/mainHeader/configList',
         name: 'configList',
         component: configList
       },
       {
-        path: '/mainHeader/commonConfig',
+        path: '/functionAuto/mainHeader/commonConfig',
         name: 'commonConfig',
         component: commonConfig
       },
       {
-        path: '/mainHeader/apiDetail',
+        path: '/functionAuto/mainHeader/apiDetail',
         name: 'apiDetail',
         component: () => import('@/components/apiManage/apiDetail.vue')
       },
       {
-        path: '/mainHeader/apiRunLog',
+        path: '/functionAuto/mainHeader/apiRunLog',
         name: 'apiRunLog',
         component: apiRunLog
       },
       {
-        path: '/mainHeader/caseList',
+        path: '/functionAuto/mainHeader/caseList',
         name: 'caseList',
         component: caseList
       },
       {
-        path: '/mainHeader/caseDetail',
+        path: '/functionAuto/mainHeader/caseDetail',
         name: 'caseDetail',
         component: caseDetail
       },
       {
-        path: '/mainHeader/taskList',
+        path: '/functionAuto/mainHeader/taskList',
         name: 'taskList',
         component: taskList
       },
       {
-        path: '/mainHeader/taskRunLog',
+        path: '/functionAuto/mainHeader/taskRunLog',
         name: 'taskRunLog',
         component: taskRunLog
       },
       {
-        path: '/mainHeader/programDetail',
+        path: '/functionAuto/mainHeader/programDetail',
         name: 'programDetail',
         component: programDetail
       },
       {
-        path: '/mainHeader/programList',
+        path: '/functionAuto/mainHeader/programList',
         name: 'programList',
         component: programList
       },
       {
-        path: '/mainHeader/reportList',
+        path: '/functionAuto/mainHeader/reportList',
         name: 'reportList',
         component: reportList
       },
       {
-        path: '/mainHeader/reportDetail',
+        path: '/functionAuto/mainHeader/reportDetail',
         name: 'reportDetail',
         component: reportDetail
       }]
