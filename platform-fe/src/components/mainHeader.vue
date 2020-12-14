@@ -8,13 +8,13 @@
           <el-menu-item index="/performanceAuto/mainHeader/autoPressMonitorJMeter">JMeter客户端</el-menu-item>
           <el-menu-item index="/performanceAuto/mainHeader/autoPressMonitorService">被压测服务端</el-menu-item>
         </el-submenu>
-        <el-menu-item index='/continuousIntegration'>持续集成</el-menu-item>
+        <el-menu-item index='/continuousIntegration/mainHeader/ci'>持续集成</el-menu-item>
         <el-submenu index="/testTools">
           <template slot="title">测试工具集</template>
           <el-menu-item index="/testTools/querySkuTable">分表查询</el-menu-item>
           <el-menu-item index="/testTools/createAccount">商城测试账号创建</el-menu-item>
         </el-submenu>
-        <el-menu-item class="sign_out" index='/login'>
+        <el-menu-item class="sign_out" index='/homeLogin'>
           <el-button class="login_sign_out">Sign Out</el-button>
         </el-menu-item>
       </el-menu>
@@ -106,20 +106,35 @@ export default {
     getCurrentRoute () {
       let currentRoute = window.document.location.pathname.substr(1).split('/')[0]
       let fatherMain = document.querySelectorAll('.el-main.father-main')
-      console.log(fatherMain)
       if (currentRoute === 'functionAuto') {
         this.isUnderFunctionAutoRoute = true
         fatherMain[0].style.padding = '20px'
+        // 发生切换后将切换后的路由存入sessionStorage中，便于后面页面刷新候使用
+        window.sessionStorage.setItem('currentRoute', true)
       } else {
         this.isUnderFunctionAutoRoute = false
         fatherMain[0].style.padding = '0px'
+        // 保证非功能自动化tab页刷新后可全屏展示，省略左边tab
+        window.sessionStorage.setItem('currentRoute', false)
       }
-      console.log(fatherMain)
+      console.log(currentRoute)
     }
   },
-  // 监听路由变化后进行的处理
+  // 该方法无法处理浏览器刷新情况，刷新后数据会重新恢复成data中的默认值
   watch: {
     '$route': 'getCurrentRoute'
+  },
+  mounted () {
+    // 若刷新页面，会重新挂载，此时将sessionStorage中的值重新付给data中的值,控制重新渲染页面
+    // 这里需要注意，session存入后值变成了string，所以判断条件'true'
+    let fatherMain = document.querySelectorAll('.el-main.father-main')
+    if (window.sessionStorage.getItem('currentRoute') === 'true') {
+      this.isUnderFunctionAutoRoute = true
+      fatherMain[0].style.padding = '20px'
+    } else {
+      this.isUnderFunctionAutoRoute = false
+      fatherMain[0].style.padding = '0px'
+    }
   }
 }
 </script>

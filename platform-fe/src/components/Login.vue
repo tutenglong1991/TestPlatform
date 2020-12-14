@@ -35,7 +35,7 @@ export default {
     return {
       login_params: {
         account: 'hemeilong',
-        password: '12345678'
+        password: 's4662016'
       },
       is_need_login: true
     }
@@ -58,6 +58,7 @@ export default {
             type: 'success'
           })
           // 登陆成功后直接跳转到功能自动化下面的项目列表页面
+          window.sessionStorage.setItem('currentRoute', true)
           self.$router.push('/functionAuto/mainHeader/projectManage')
         } else {
           this.$message({

@@ -2,7 +2,8 @@
 # -*-coding:utf-8-*-
 
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 import json
 from functools import wraps
 
@@ -12,6 +13,7 @@ def is_admin(adminAccount, adminPwd):
         @wraps(func)
         def wrapper(request):
             resp = request.POST.dict()
+            print(resp)
             for k in resp:
                 account = json.loads(k)["account"]
                 password = json.loads(k)["password"]
@@ -28,8 +30,9 @@ def is_admin(adminAccount, adminPwd):
     return admin_decorator
 
 
+
 @csrf_exempt
-@is_admin('hemeilong', '12345678')  # 自定义验证是否是管理员身份登录的装饰器测试，可在登录之前进行前置验证
+@is_admin('hemeilong', 's4662016')  # 自定义验证是否是管理员身份登录的装饰器测试，可在登录之前进行前置验证
 def login(request, admin=False):
     # resp = request.POST.dict()
     # for k in resp:

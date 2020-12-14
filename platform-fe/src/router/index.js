@@ -20,6 +20,7 @@ import reportList from '@/components/reportManage/reportList'
 import reportDetail from '@/components/reportManage/reportDetail'
 import autoPressMonitorJMeter from '@/components/performance/autoPressMonitorJMeter'
 import autoPressMonitorService from '@/components/performance/autoPressMonitorService'
+import continuousIntegration from '@/components/continuousIntegration'
 
 Vue.use(Router)
 
@@ -27,9 +28,19 @@ export default new Router({
   mode: 'history', // 去除哈希值的#号
   routes: [
     {
-      path: '/login',
+      path: '/homeLogin',
       name: 'Login',
       component: Login
+    },
+    {
+      path: '/continuousIntegration/mainHeader',
+      name: 'mainHeader',
+      component: mainHeader,
+      children: [{
+        path: '/continuousIntegration/mainHeader/ci',
+        name: 'continuousIntegration',
+        component: continuousIntegration
+      }]
     },
     {
       path: '/performanceAuto/mainHeader',
