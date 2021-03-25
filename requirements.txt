@@ -7,4 +7,4 @@ django_redis==4.9.0
 requests==2.9.1
 Fabric==1.14.0
 django_celery==3.2.2
-PyYAML==3.13
+PyYAML==5.4
